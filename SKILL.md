@@ -144,7 +144,7 @@ Per lens, gather:
   verification defaults - a `rejectUnauthorized: false` is a finding, not a config choice), EVERY
   query-construction site (any WHERE/ORDER BY/LIMIT built by string concatenation or template
   interpolation is a finding even when today's inputs happen to be safe), the session/cookie module,
-  and every handler that writes (is the row scoped to the owner, or addressed by id alone?). If `gitleaks` is installed (`command -v gitleaks`), also run `gitleaks detect --source <path> --no-banner --report-format json --report-path /tmp/gitleaks.json --exit-code 0` and fold its hits into findings - entropy-based detection catches tokens manual grep misses. Warn-only: if gitleaks is absent, note "gitleaks not installed, grep-only secret scan" in the summary and move on (same pattern as the dep scanners). NEVER print a real secret value in the report - cite the file:line and say "hardcoded token" instead. For dependency CVEs, do not guess from version strings - run the stack's real scanner when available (warn-only, never fix): `npm audit --json`, `pip-audit`, `govulncheck ./...`, `cargo audit`, `bundle audit`. If none is available, say the dep check was skipped instead of inventing CVEs.
+  and every handler that writes (is the row scoped to the owner, or addressed by id alone?). If `semgrep` is installed (`command -v semgrep`), run `semgrep scan --config p/owasp-top-ten --config p/secrets --json --quiet <ABS>` first and fold its hits into findings (deterministic rules catch what a read-through skims past; warn-only - skip silently when absent). If `gitleaks` is installed (`command -v gitleaks`), also run `gitleaks detect --source <path> --no-banner --report-format json --report-path /tmp/gitleaks.json --exit-code 0` and fold its hits into findings - entropy-based detection catches tokens manual grep misses. Warn-only: if gitleaks is absent, note "gitleaks not installed, grep-only secret scan" in the summary and move on (same pattern as the dep scanners). NEVER print a real secret value in the report - cite the file:line and say "hardcoded token" instead. For dependency CVEs, do not guess from version strings - run the stack's real scanner when available (warn-only, never fix): `npm audit --json`, `pip-audit`, `govulncheck ./...`, `cargo audit`, `bundle audit`. If none is available, say the dep check was skipped instead of inventing CVEs.
 - **performance**: `summary`, `findings[]`, `grade`, optional `metrics[]`. **Run Lighthouse when a homepage/domain URL applies (owner request 2026-07-16).** If the project is web-facing AND you have a public homepage/deployed URL - `package.json` `homepage`, a README badge/link, a known prod domain, or one the user gives - run it headless, warn-only: `npx --yes lighthouse <url> --quiet --only-categories=performance,accessibility,best-practices,seo --chrome-flags="--headless=new" --output=json --output-path=/tmp/lh.json` then read the four category scores (0-100). Put them in the performance lens `metrics` (`["Lighthouse Perf","82"], ["A11y","91"], ["Best Practices","83"], ["SEO","95"]`) so they render, and turn any weak score (< 80) into a finding. ONLY for a real homepage/domain URL - skip for libraries, CLIs, BE-only repos, or any repo with no deployed site, and skip (noting it) if `lighthouse`/`npx` is unavailable or the URL 404s. Never guess scores - omit the metrics if Lighthouse did not actually run.
 - **quality**: `summary`, optional `metrics[]` (e.g. ["Types","strict"], ["Lint","eslint"]), `findings[]`, `grade`. Include **churn hotspot analysis** (git repos only): `git log --format= --name-only --since=6.months | sort | uniq -c | sort -rn | head -15` gives the most-changed files. Read the top 3-5 that are source files (skip lockfiles/docs) - a file that is BOTH high-churn AND complex/untested is where the next bug lives; flag those as findings ("hotspot: changed 41x in 6 months, 400 lines, zero tests"). A hot file that is clean is not a finding. Also check **dependency freshness** (separate from CVEs - a dep can be 3 majors behind with zero CVEs and still be a finding): `npm outdated --json` / `pip list --outdated` / `go list -u -m all` when the stack's tool is available (warn-only, skip if not). Report majors-behind counts as a metric (e.g. ["Deps outdated","6 major / 14 minor"]) and flag any core framework (React, Next, Django, the main runtime) more than one major behind as a finding with severity medium.
 - **tests**: `summary`, optional `metrics[]` (e.g. ["Test files","42"], ["Framework","jest"], ["E2E","none"]), `findings[]`, `grade`. Inventory what EXISTS (frameworks, unit/integration/e2e split, coverage config + committed reports, CI test steps, test-file to source-file ratio) and flag what SHOULD exist: churn hotspots with zero tests, uncovered error paths, missing e2e on the core flow, snapshot-only suites with no real assertions. Static judgment only - NEVER run the suite (never-execute rule). Zero tests on a code repo = F, never N/A.
@@ -190,10 +190,17 @@ target != cwd, EVERY fanned-out lens prompt MUST:
 3. Carry a wrong-repo TRIPWIRE naming content unique to a DIFFERENT nearby repo:
    "if you ever see <X unique to the session repo>, you are in the wrong dir - STOP and
    re-issue with the <ABS>/ prefix."
-THEN, before building the JSON / rendering, VERIFY: pick a few returned findings and
-confirm their cited paths actually exist in the target (`ls <ABS>/<cited-path>`). If a
-lens cites files not in the repo, it read the wrong tree - re-run that lens. NEVER render
-or post an audit whose findings you have not confirmed point at the real target repo.
+THEN, before rendering, run the EVIDENCE GATE - deterministic, zero tokens:
+`python3 verify.py <data.json> --repo <ABS> --prune`. It checks every finding's `path:line`
+against the real tree and looks for the quoted evidence within 20 lines of the cited line.
+FAIL (file missing / line past EOF) = that lens read the wrong tree or invented the citation:
+the finding is dropped and, if a lens has several, re-run that lens. WARN (file real, no
+quoted fragment found) = the agent paraphrased instead of quoting: the finding survives with
+confidence downgraded to Low and a note in its evidence. Render the `.verified.json` it
+writes, never the raw file. NEVER render or post an audit that has not been through the gate.
+Measured on a real run: 42 citations, 0 fail, 31 quoted fragments confirmed at the cited
+line, 11 paraphrased - the gate is what lets "every claim is pinned to evidence" be a fact
+rather than an instruction.
 
 ## Parallel execution (DEFAULT - faster with NO quality loss, owner 2026-07-29)
 
@@ -266,7 +273,7 @@ nearly free and only changed lenses re-run. That is the real efficiency lever.
 barrier (and an opt-in verify stage). Hand-launching background `Agent` calls works too
 (that is how this skill has been run), but a Workflow makes the barrier, the join, and
 the cache explicit and reproducible. Either way: scope once -> fan out on the strong
-model -> barrier -> synthesize; add verify only on request.
+model -> barrier -> synthesize. Adversarial verify is DEFAULT for every critical/high finding (a refuter agent tries to disprove it; a refuted finding is dropped, an overstated one is re-graded); it is optional for medium/low.
 
 ## Step 2b: Onboarding Brief (merged from repo-recon, 2026-08-17)
 

@@ -25,16 +25,16 @@ See [`golden/sample.html`](golden/sample.html) for a full example report.
 ## The 10 lenses
 
 1. **Architect** - layering, data flow, coupling, seams, plus an evidence-pinned architecture diagram.
-2. **Good / Bad / Ugly** - an honest three-column read (report-only, never graded).
-3. **Infra** - build, CI/CD, deploy, containers, env/config handling.
-4. **Security** - secrets, auth gaps, injection, dependency CVEs, headers (defensive review only).
-5. **Performance** - N+1 queries, bundle size, hot-path I/O, caching; optional Lighthouse on a live URL.
-6. **Code** - type coverage, lint, dead code, duplication, complexity, churn hotspots.
-7. **Tests** - what the suite has vs what it should have (judged statically, never executed).
-8. **Docs** - README/docs currency, env-var drift, and MCP/CLI/REST interface staleness.
-9. **UI/UX** - visual consistency, UX states, a11y, responsiveness (skipped for BE-only repos).
-10. **Features** - a reverse-engineered feature tree, graded on coherence.
+2. **Infra** - build, CI/CD, deploy, containers, env/config handling.
+3. **Security** - secrets, auth gaps, injection, dependency CVEs, headers (defensive review only).
+4. **Performance** - N+1 queries, bundle size, hot-path I/O, caching; optional Lighthouse on a live URL.
+5. **Code** - type coverage, lint, dead code, duplication, complexity, churn hotspots.
+6. **Tests** - what the suite has vs what it should have (judged statically, never executed).
+7. **Docs** - README/docs currency, env-var drift, and MCP/CLI/REST interface staleness.
+8. **UI/UX** - visual consistency, UX states, a11y, responsiveness (skipped for BE-only repos).
+9. **Features** - a reverse-engineered feature tree, graded on coherence.
 
+10. **Good / Bad / Ugly** - the closing verdict: an honest three-column read, written last from the other 9 lenses and the files none of them own. The only lens that records what is GOOD (report-only, never graded).
 Each finding is anchored at `path:line`, carries a severity/confidence/effort badge, and the top fixes
 across all lenses are ranked into a "Top Fixes First" action list.
 

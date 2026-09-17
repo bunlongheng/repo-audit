@@ -36,16 +36,31 @@ See [`golden/sample.html`](golden/sample.html) for a full example report.
 
 10. **Good / Bad / Ugly** - the closing verdict: an honest three-column read, written last from the other 9 lenses and the files none of them own. The only lens that records what is GOOD (report-only, never graded).
 Each finding is anchored at `path:line`, carries a severity/confidence/effort badge, and the top fixes
-across all lenses are ranked into a "Top Fixes First" action list.
+across all lenses are ranked into a "Top Fixes First" action list. Every critical/high finding is
+adversarially verified by a second agent whose only job is to refute it, and every citation is then
+checked mechanically by `verify.py` before the report is rendered - a claim that cannot be pinned to
+real code does not ship as fact.
 
 ## Quick start
 
 ```bash
 # 1. Produce a data JSON for the repo (see the contract at the top of render.py).
 #    Running as a Claude Code skill does this for you across the 10 lenses.
-# 2. Render it to a self-contained HTML report:
-python3 render.py path/to/data.json
+# 2. Run the evidence gate: every path:line is checked against the real tree and the
+#    quoted evidence is looked for within 20 lines of the cited line. Findings that cite
+#    a file that does not exist are dropped; findings whose evidence cannot be found are
+#    downgraded to Low confidence. Deterministic, zero tokens.
+python3 verify.py path/to/data.json --repo /path/to/repo --prune
+# -> writes path/to/data.verified.json and prints PASS / NEAR / WARN / FAIL per finding
+# 3. Render the verified data to a self-contained HTML report:
+python3 render.py path/to/data.verified.json
 # -> writes reports/repo-audit-<repo>-<date>.html
+```
+
+Run the contract tests (standard library only, same as CI):
+
+```bash
+python3 -m unittest discover -s tests -v
 ```
 
 **Requirements:** Python 3.8+ (standard library only). Node + Playwright are optional, and only

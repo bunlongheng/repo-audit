@@ -56,11 +56,13 @@ needed for the README-screenshot helper (`node render-readme-shot.mjs <repoPath>
 Install:
 
 ```bash
-cp -R repo-audit ~/.claude/skills/repo-audit
+git clone https://github.com/bunlongheng/repo-audit.git ~/.claude/skills/repo-audit
+# or, without git history:
+npx degit bunlongheng/repo-audit ~/.claude/skills/repo-audit
 ```
 
-`SKILL.md` is the full operating spec. Drop this repo into `~/.claude/skills/repo-audit` (a symlink
-works) and invoke it:
+`SKILL.md` is the full operating spec. The repo IS the skill folder - clone it straight into
+`~/.claude/skills/repo-audit` (a symlink works too) and invoke it:
 
 ```
 /repo-audit                     # audit the current directory

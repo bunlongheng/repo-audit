@@ -4,8 +4,8 @@
   "description": "Reverse-engineer any repo through 10 audit lenses into one clean, self-contained HTML report.",
   "license": "MIT",
   "author": "Bunlong Heng",
-  "homepage": "https://github.com/bunlongheng/audits/tree/main/repo-audit",
-  "repository": { "type": "git", "url": "https://github.com/bunlongheng/audits.git" },
+  "homepage": "https://github.com/bunlongheng/repo-audit",
+  "repository": { "type": "git", "url": "https://github.com/bunlongheng/repo-audit.git" },
   "keywords": ["code-audit", "static-analysis", "security", "architecture", "claude-code", "skill", "report"],
   "scripts": {
     "render": "python3 render.py",

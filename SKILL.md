@@ -24,7 +24,7 @@ Python, Go, anything.
 7. **Docs Audit** (label: "Docs") - judge the documentation AND the currency of any external-facing interface. Two halves: (a) **Docs** - is the README + other docs + diagrams actually helpful, honest, and matched to the code? Or is it thin, bloated with useless detail, or stale (describing files/commands/features that no longer exist)? (b) **Interfaces** - if the repo exposes an **MCP server, a CLI, or a REST/HTTP API**, how current is its documented surface? Stale or drifted interface docs are a real, high-priority issue because agents and consumers call the thing based on those docs. Grade A-F.
 8. **UI/UX Audit** - ONLY when the repo has a user-facing surface (web pages, mobile screens, desktop UI): visual consistency (spacing/typography/color discipline, design-system usage vs one-off styles), UX states (loading/empty/error states, form validation feedback), accessibility (semantic HTML, alt text, focus/keyboard nav, contrast), responsiveness (breakpoints, overflow). Judge from the components/styles/templates in the code. Grade A-F. **BE-only repos (APIs, workers, Lambdas, CLIs, libraries): grade is `N/A` - the lens is then OMITTED from the report and scoring completely** (no card, no donut, excluded from the overall %). Nice docs do not mean nice UI/UX and vice versa - this lens is deliberately separate from Docs.
 9. **Features Supported** - reverse-engineer WHAT the app actually does, rendered as a feature tree (the mindmap). Grade A-F = feature coherence: are the features complete, consistent, and scoped (A) - or a sprawl of half-built, overlapping, or abandoned features (D/F)? The tree stays the map; the grade judges its shape.
-10. **Good, Bad, Ugly** - the CLOSING verdict, written LAST and rendered LAST: what is genuinely good, what is mediocre/risky, what is painful/embarrassing. It is the only lens that records POSITIVES (the other 9 emit problems and nothing else) and the only one that reports the character of the codebase rather than discrete findings. NO grade - report-only (owner request 2026-07-02: a verdict letter dilutes the honesty of the three columns). It never appears in the scorecard donuts.
+10. **Good, Bad, Ugly** - the CLOSING verdict, rendered LAST (read in wave 1, de-duplicated at synthesis): what is genuinely good, what is mediocre/risky, what is painful/embarrassing. It is the only lens that records POSITIVES (the other 9 emit problems and nothing else) and the only one that reports the character of the codebase rather than discrete findings. NO grade - report-only (owner request 2026-07-02: a verdict letter dilutes the honesty of the three columns). It never appears in the scorecard donuts.
 
 ## Usage
 
@@ -116,17 +116,21 @@ Per lens, gather:
   - **FAIL CLOSED (archify's ownership profile).** If you cannot establish a piece's placement, ownership, DB scope, or boundary crossing, SAY SO in the `summary` ("could not confirm X") - never paper over an unknown with a clean-looking edge. An honest gap beats an invented connection.
   - The `table` (file/module layers) still renders below the canvas as the detailed view.
 - **gbu**: `good[]`, `bad[]`, `ugly[]` - specific, not generic. Name files/patterns. NO grade - report-only.
-  **Runs LAST, after the other 9 have joined, and is handed their full findings digest.** Its job is
-  what the lenses structurally cannot produce:
+  **Reads in WAVE 1 with the other lenses; its output is de-duplicated at SYNTHESIS, and it
+  RENDERS LAST as the closing verdict.** Its job is what the lenses structurally cannot
+  produce:
   - `good[]` is its own territory - 3-6 things the codebase genuinely does well, each pinned to
     `path:line`. No other lens reports a positive, so if GBU does not write it down the report never
     says anything good about working code.
-  - `bad[]` / `ugly[]`: **do NOT restate a finding another lens already made** - you have the digest,
-    so a duplicate is a choice, not an accident. Two things belong here instead: (a) defects in the
-    files no lens owns - sweep `scripts/`, `public/`, root config, service workers, one-off utilities,
-    anything that fell between the disciplines; (b) character observations that are not a discrete
-    finding - "the biggest component holds 25 hook slots", "no design tokens, 8 hand-rolled button
-    styles", "the same regex copy-pasted 3 times".
+  - `bad[]` / `ugly[]` cover two things and nothing else: (a) defects in the files no lens owns -
+    sweep `scripts/`, `public/`, root config, service workers, one-off utilities, anything that fell
+    between the disciplines; (b) character observations that are not a discrete finding - "the biggest
+    component holds 25 hook slots", "no design tokens, 8 hand-rolled button styles", "the same regex
+    copy-pasted 3 times". Because it reads in wave 1 it does NOT yet know what the other lenses found,
+    so **at synthesis, drop any gbu item that restates a finding already in another lens** - same
+    defect, same file, same claim. Keep it when it shares a file but makes a different claim (one lens
+    saying "no type checking" and gbu saying "the lint config leaves the server entry at 0 rules" are
+    two findings about one file, not a duplicate).
   Measured on a real run (2026-09-17): roughly half of GBU's bad/ugly restated findings from other
   lenses, while 5 real defects were caught by GBU ALONE because nothing else reads across territory -
   a `rejectUnauthorized: false` DB default, WHERE/ORDER BY built by string interpolation, a
@@ -197,21 +201,38 @@ Run the lenses in parallel by default, not just on big repos. The 10 lenses are
 read-only and independent, so they are a near-perfect parallel workload. Done right this
 is faster AND higher quality - it is not a trade.
 
-**The pipeline (what runs parallel vs sequential):**
+**The pipeline - 3 waves (measured on a real run, see the numbers below):**
 1. **Step 1 scoping runs ONCE, sequentially** (stack, vitality, churn, npm audit, git
    signals). It feeds every lens - gather it before the fan-out.
-2. **NINE lenses fan out in parallel** (a barrier: collect ALL before synthesizing). Group
-   related lenses per agent on a small repo (`infra+docs`, `perf+quality`, `features`,
-   plus dedicated `security` and `architect`) -> ~5-7 agents; on a big/monorepo do one
-   lens per agent, or one subtree per agent, +1 completeness critic. **`gbu` is NOT in
-   this wave.**
-3. **`gbu` runs AFTER the barrier, fed every other lens's findings**, so it can be told
-   what NOT to restate and can spend its read on the files no lens owns. Running it in
-   the parallel wave was the old shape and it cost a duplicate full read of the repo
-   while still colliding with half the findings.
-4. **Synthesis runs sequentially AFTER the barrier** on the strong/orchestrating model:
-   top_fixes ranking, the `delta` diff, and the overall grade all need every lens result
-   in hand. Never rank or grade before the join completes.
+2. **WAVE 1 - every lens READ at once, including gbu's sweep.** All 10 lenses plus the
+   gbu orphan-file sweep go out together. Two scheduling rules, both free:
+   - **Fit the wave to the slot count.** Concurrency is capped at `min(16, CPUs - 2)`
+     (an 8-slot machine is typical). Launching more agents than slots does not fail -
+     the excess QUEUES, and a lens that starts 173s late finishes 173s late.
+   - **Launch longest-first.** Start the heavy lenses (architect, security, quality,
+     features) before the cheap ones (docs, gbu sweep), so whatever queues is short.
+     Wave length is `max(longest single lens, total work / slots)` - list-scheduling
+     shortest-first can add 20-30% for nothing.
+   On a big/monorepo do one lens per agent, or one subtree per agent, +1 completeness
+   critic. Grouping lenses onto one agent does NOT beat the throughput floor - it only
+   moves the same seconds around - so group only to fit the slot count, never for speed.
+3. **WAVE 2 - verify, PIPELINED not barriered.** Verify a finding as soon as ITS lens
+   returns, in the slot that lens just freed. Waiting for all 10 lenses and then starting
+   a fresh verify wave adds its full duration to the critical path; pipelining hides most
+   of it inside wave 1.
+4. **WAVE 3 - synthesis, sequentially, AFTER the join** on the strong/orchestrating model:
+   top_fixes ranking, the `delta` diff, the overall grade - and **gbu's de-duplication**
+   (below). All of it needs every lens result in hand. Never rank or grade before the join.
+
+**Why gbu's READ is in wave 1 but its FILTER is in wave 3.** Good/Bad/Ugly must not
+restate findings other lenses already made - but only the FILTER needs their findings.
+The READ (sweeping `scripts/`, `public/`, root config, service workers, one-off utilities,
+and finding what the codebase does WELL) depends on nothing. Putting the whole lens after
+the barrier costs its full duration on the critical path for no quality gain; splitting it
+costs nothing and loses nothing. Measured: lens wave 337s, verify wave 120s, synthesis 40s
+= 497s. Same work as 3 waves with longest-first scheduling: ~370s, about 25% off, with
+every finding intact. Do not chase further - the agents averaged 9-19 tool calls each and
+the slowest used 10, so what remains is model reasoning, not orchestration.
 
 **The two rules that keep quality from dropping (the whole point):**
 - **Never downgrade the tier to go faster.** Every lens agent stays on the strong

@@ -1,7 +1,7 @@
 ---
 icon: fa-magnifying-glass-chart
 name: repo-audit
-description: Reverse-engineer ANY repo through 10 lenses (architect, good/bad/ugly, infra, security, performance, code quality, tests, docs, UI/UX, features) into one clean HTML report
+description: Reverse-engineer ANY repo through 10 lenses (architect, infra, security, performance, code quality, tests, docs, UI/UX, features, good/bad/ugly) into one clean HTML report
 argument-hint: "[github-url|owner/repo|path] [--branch=main] [--only=lens[,lens...]]"
 user-invocable: true
 ---
@@ -16,15 +16,15 @@ Python, Go, anything.
 ## The 10 lenses (the "Reverse Engineer" mindmap)
 
 1. **Architect Audit** - how it is built: layering, modules, data flow, key dependencies, design patterns, coupling/cohesion, where the seams are. Grade A-F.
-2. **Good, Bad, Ugly** - an honest three-column read: what is genuinely good, what is mediocre/risky, what is painful/embarrassing. NO grade - report-only (owner request 2026-07-02: a verdict letter dilutes the honesty of the three columns). It never appears in the scorecard donuts.
-3. **Infra Audit** - build, CI/CD, deploy, containers, env/config handling, hosting, scripts, IaC. Grade A-F.
-4. **Security Audit** - committed secrets, auth gaps, injection (SQL/command/XSS/SSRF), dependency CVEs, missing headers, OWASP-style issues, exposed service keys. Grade A-F.
-5. **Performance Audit** - N+1 queries, missing indexes, bundle size, render/hydration cost, sync I/O on hot paths, caching, chatty network. Grade A-F.
-6. **Code Quality Audit** (label: "Code") - type coverage, lint, dead code, duplication, naming, complexity, error handling. Grade A-F, plus a few metrics. (Tests moved to their own lens.)
-7. **Tests Audit** (label: "Tests") - what tests the repo HAS and what it SHOULD have. Inventory the existing suite: frameworks (jest/pytest/go test/junit), test types (unit/integration/e2e), file counts, coverage signals (coverage configs, committed reports, CI test steps). Then judge the gaps: untested critical paths (cross-reference the churn hotspots), missing error-path tests, no e2e on the core user flow, assertion-free or snapshot-only spam. Judged STATICALLY - never execute the suite (see Rules). Grade A-F: zero tests on a code repo = F, never N/A.
-8. **Docs Audit** (label: "Docs") - judge the documentation AND the currency of any external-facing interface. Two halves: (a) **Docs** - is the README + other docs + diagrams actually helpful, honest, and matched to the code? Or is it thin, bloated with useless detail, or stale (describing files/commands/features that no longer exist)? (b) **Interfaces** - if the repo exposes an **MCP server, a CLI, or a REST/HTTP API**, how current is its documented surface? Stale or drifted interface docs are a real, high-priority issue because agents and consumers call the thing based on those docs. Grade A-F.
-9. **UI/UX Audit** - ONLY when the repo has a user-facing surface (web pages, mobile screens, desktop UI): visual consistency (spacing/typography/color discipline, design-system usage vs one-off styles), UX states (loading/empty/error states, form validation feedback), accessibility (semantic HTML, alt text, focus/keyboard nav, contrast), responsiveness (breakpoints, overflow). Judge from the components/styles/templates in the code. Grade A-F. **BE-only repos (APIs, workers, Lambdas, CLIs, libraries): grade is `N/A` - the lens is then OMITTED from the report and scoring completely** (no card, no donut, excluded from the overall %). Nice docs do not mean nice UI/UX and vice versa - this lens is deliberately separate from Docs.
-10. **Features Supported** - reverse-engineer WHAT the app actually does, rendered as a feature tree (the mindmap). Grade A-F = feature coherence: are the features complete, consistent, and scoped (A) - or a sprawl of half-built, overlapping, or abandoned features (D/F)? The tree stays the map; the grade judges its shape.
+2. **Infra Audit** - build, CI/CD, deploy, containers, env/config handling, hosting, scripts, IaC. Grade A-F.
+3. **Security Audit** - committed secrets, auth gaps, injection (SQL/command/XSS/SSRF), dependency CVEs, missing headers, OWASP-style issues, exposed service keys. Grade A-F.
+4. **Performance Audit** - N+1 queries, missing indexes, bundle size, render/hydration cost, sync I/O on hot paths, caching, chatty network. Grade A-F.
+5. **Code Quality Audit** (label: "Code") - type coverage, lint, dead code, duplication, naming, complexity, error handling. Grade A-F, plus a few metrics. (Tests moved to their own lens.)
+6. **Tests Audit** (label: "Tests") - what tests the repo HAS and what it SHOULD have. Inventory the existing suite: frameworks (jest/pytest/go test/junit), test types (unit/integration/e2e), file counts, coverage signals (coverage configs, committed reports, CI test steps). Then judge the gaps: untested critical paths (cross-reference the churn hotspots), missing error-path tests, no e2e on the core user flow, assertion-free or snapshot-only spam. Judged STATICALLY - never execute the suite (see Rules). Grade A-F: zero tests on a code repo = F, never N/A.
+7. **Docs Audit** (label: "Docs") - judge the documentation AND the currency of any external-facing interface. Two halves: (a) **Docs** - is the README + other docs + diagrams actually helpful, honest, and matched to the code? Or is it thin, bloated with useless detail, or stale (describing files/commands/features that no longer exist)? (b) **Interfaces** - if the repo exposes an **MCP server, a CLI, or a REST/HTTP API**, how current is its documented surface? Stale or drifted interface docs are a real, high-priority issue because agents and consumers call the thing based on those docs. Grade A-F.
+8. **UI/UX Audit** - ONLY when the repo has a user-facing surface (web pages, mobile screens, desktop UI): visual consistency (spacing/typography/color discipline, design-system usage vs one-off styles), UX states (loading/empty/error states, form validation feedback), accessibility (semantic HTML, alt text, focus/keyboard nav, contrast), responsiveness (breakpoints, overflow). Judge from the components/styles/templates in the code. Grade A-F. **BE-only repos (APIs, workers, Lambdas, CLIs, libraries): grade is `N/A` - the lens is then OMITTED from the report and scoring completely** (no card, no donut, excluded from the overall %). Nice docs do not mean nice UI/UX and vice versa - this lens is deliberately separate from Docs.
+9. **Features Supported** - reverse-engineer WHAT the app actually does, rendered as a feature tree (the mindmap). Grade A-F = feature coherence: are the features complete, consistent, and scoped (A) - or a sprawl of half-built, overlapping, or abandoned features (D/F)? The tree stays the map; the grade judges its shape.
+10. **Good, Bad, Ugly** - the CLOSING verdict, written LAST and rendered LAST: what is genuinely good, what is mediocre/risky, what is painful/embarrassing. It is the only lens that records POSITIVES (the other 9 emit problems and nothing else) and the only one that reports the character of the codebase rather than discrete findings. NO grade - report-only (owner request 2026-07-02: a verdict letter dilutes the honesty of the three columns). It never appears in the scorecard donuts.
 
 ## Usage
 
@@ -49,7 +49,7 @@ Python, Go, anything.
 - **`--sequential`:** force one-lens-at-a-time. Rarely needed (tiny repos, debugging); the default parallel path is preferred.
 Never fork a `repo-audit-parallel` copy - "parallel" is this skill's default mode, and duplicating it only causes drift.
 
-**Valid lens keys for `--only`:** `architect`, `gbu`, `infra`, `security`, `performance`, `quality`, `tests`, `docs`, `uiux`, `features`
+**Valid lens keys for `--only`:** `architect`, `infra`, `security`, `performance`, `quality`, `tests`, `docs`, `uiux`, `features`, `gbu`
 
 When `--only` is set: run ONLY the listed lenses. Skip scoping signals irrelevant to those lenses (e.g. skip Lighthouse if `performance` is not in the list). The report renders only the requested lens cards - the scorecard shows only those lenses, and `top_fixes` ranks only findings from them. This is the same full-depth judgment, just scoped - never a shallow pass.
 
@@ -93,7 +93,7 @@ tickets. It only reads code and produces the report.
 
 **`--only` scoping (checked before Step 2):** if `--only=<lens>[,<lens>...]` was passed,
 run ONLY those lenses. Parse the comma-separated list against the 10 valid keys
-(`architect`, `gbu`, `infra`, `security`, `performance`, `quality`, `tests`, `docs`,
+(`architect`, `infra`, `security`, `performance`, `quality`, `tests`, `docs`,
 `uiux`, `features`). Error loudly on an unrecognized key. All other lenses are SKIPPED
 completely - no stub, no N/A, just absent from the JSON and the report. `top_fixes` ranks
 only findings from the requested lenses. The scorecard and overall % include only the
@@ -116,10 +116,31 @@ Per lens, gather:
   - **FAIL CLOSED (archify's ownership profile).** If you cannot establish a piece's placement, ownership, DB scope, or boundary crossing, SAY SO in the `summary` ("could not confirm X") - never paper over an unknown with a clean-looking edge. An honest gap beats an invented connection.
   - The `table` (file/module layers) still renders below the canvas as the detailed view.
 - **gbu**: `good[]`, `bad[]`, `ugly[]` - specific, not generic. Name files/patterns. NO grade - report-only.
+  **Runs LAST, after the other 9 have joined, and is handed their full findings digest.** Its job is
+  what the lenses structurally cannot produce:
+  - `good[]` is its own territory - 3-6 things the codebase genuinely does well, each pinned to
+    `path:line`. No other lens reports a positive, so if GBU does not write it down the report never
+    says anything good about working code.
+  - `bad[]` / `ugly[]`: **do NOT restate a finding another lens already made** - you have the digest,
+    so a duplicate is a choice, not an accident. Two things belong here instead: (a) defects in the
+    files no lens owns - sweep `scripts/`, `public/`, root config, service workers, one-off utilities,
+    anything that fell between the disciplines; (b) character observations that are not a discrete
+    finding - "the biggest component holds 25 hook slots", "no design tokens, 8 hand-rolled button
+    styles", "the same regex copy-pasted 3 times".
+  Measured on a real run (2026-09-17): roughly half of GBU's bad/ugly restated findings from other
+  lenses, while 5 real defects were caught by GBU ALONE because nothing else reads across territory -
+  a `rejectUnauthorized: false` DB default, WHERE/ORDER BY built by string interpolation, a
+  copy-pasted regex, an unreviewed service worker, and a script hardcoding a path into another repo's
+  `node_modules`. That gap is what this lens exists to close.
 - **uiux**: `summary`, `findings[]`, `grade`. Only judge repos WITH a user-facing UI - components, styles, templates, screens. Look for design-system discipline vs one-off styles, missing loading/empty/error states, a11y gaps (no alt text, no focus states, div-buttons), broken responsiveness. **BE-only repo: set `grade` to `"N/A"`** - the renderer then omits the lens from the report and scoring completely.
 - **features**: `summary`, `tree[]` (the mindmap), `grade` (feature coherence - complete/consistent/scoped vs sprawl of half-built or abandoned features).
 - **infra**: `summary`, `findings[]`, `grade`. Look at CI config, Dockerfiles, deploy scripts, env handling. If the repo has a GitHub remote AND `gh auth status` passes, add live GitHub health (all read-only, warn-only - skip silently if gh is absent/unauthed or the repo is not on GitHub): `gh pr list --state open --json number,updatedAt` (open PR count + how many are stale > 30 days), `gh run list --limit 5 --json conclusion` (is CI currently red?), `gh api repos/{owner}/{repo}/branches/<default>/protection` (404 = unprotected default branch - a finding for a multi-contributor repo). Config files say what SHOULD happen; these say what IS happening.
-- **security**: `summary`, `findings[]`, `grade`. Grep for secrets, check auth on routes, deps. If `gitleaks` is installed (`command -v gitleaks`), also run `gitleaks detect --source <path> --no-banner --report-format json --report-path /tmp/gitleaks.json --exit-code 0` and fold its hits into findings - entropy-based detection catches tokens manual grep misses. Warn-only: if gitleaks is absent, note "gitleaks not installed, grep-only secret scan" in the summary and move on (same pattern as the dep scanners). NEVER print a real secret value in the report - cite the file:line and say "hardcoded token" instead. For dependency CVEs, do not guess from version strings - run the stack's real scanner when available (warn-only, never fix): `npm audit --json`, `pip-audit`, `govulncheck ./...`, `cargo audit`, `bundle audit`. If none is available, say the dep check was skipped instead of inventing CVEs.
+- **security**: `summary`, `findings[]`, `grade`. Grep for secrets, check auth on routes, deps.
+  **Always open these by name, they are where the misses happen:** the DB/connection module (TLS
+  verification defaults - a `rejectUnauthorized: false` is a finding, not a config choice), EVERY
+  query-construction site (any WHERE/ORDER BY/LIMIT built by string concatenation or template
+  interpolation is a finding even when today's inputs happen to be safe), the session/cookie module,
+  and every handler that writes (is the row scoped to the owner, or addressed by id alone?). If `gitleaks` is installed (`command -v gitleaks`), also run `gitleaks detect --source <path> --no-banner --report-format json --report-path /tmp/gitleaks.json --exit-code 0` and fold its hits into findings - entropy-based detection catches tokens manual grep misses. Warn-only: if gitleaks is absent, note "gitleaks not installed, grep-only secret scan" in the summary and move on (same pattern as the dep scanners). NEVER print a real secret value in the report - cite the file:line and say "hardcoded token" instead. For dependency CVEs, do not guess from version strings - run the stack's real scanner when available (warn-only, never fix): `npm audit --json`, `pip-audit`, `govulncheck ./...`, `cargo audit`, `bundle audit`. If none is available, say the dep check was skipped instead of inventing CVEs.
 - **performance**: `summary`, `findings[]`, `grade`, optional `metrics[]`. **Run Lighthouse when a homepage/domain URL applies (owner request 2026-07-16).** If the project is web-facing AND you have a public homepage/deployed URL - `package.json` `homepage`, a README badge/link, a known prod domain, or one the user gives - run it headless, warn-only: `npx --yes lighthouse <url> --quiet --only-categories=performance,accessibility,best-practices,seo --chrome-flags="--headless=new" --output=json --output-path=/tmp/lh.json` then read the four category scores (0-100). Put them in the performance lens `metrics` (`["Lighthouse Perf","82"], ["A11y","91"], ["Best Practices","83"], ["SEO","95"]`) so they render, and turn any weak score (< 80) into a finding. ONLY for a real homepage/domain URL - skip for libraries, CLIs, BE-only repos, or any repo with no deployed site, and skip (noting it) if `lighthouse`/`npx` is unavailable or the URL 404s. Never guess scores - omit the metrics if Lighthouse did not actually run.
 - **quality**: `summary`, optional `metrics[]` (e.g. ["Types","strict"], ["Lint","eslint"]), `findings[]`, `grade`. Include **churn hotspot analysis** (git repos only): `git log --format= --name-only --since=6.months | sort | uniq -c | sort -rn | head -15` gives the most-changed files. Read the top 3-5 that are source files (skip lockfiles/docs) - a file that is BOTH high-churn AND complex/untested is where the next bug lives; flag those as findings ("hotspot: changed 41x in 6 months, 400 lines, zero tests"). A hot file that is clean is not a finding. Also check **dependency freshness** (separate from CVEs - a dep can be 3 majors behind with zero CVEs and still be a finding): `npm outdated --json` / `pip list --outdated` / `go list -u -m all` when the stack's tool is available (warn-only, skip if not). Report majors-behind counts as a metric (e.g. ["Deps outdated","6 major / 14 minor"]) and flag any core framework (React, Next, Django, the main runtime) more than one major behind as a finding with severity medium.
 - **tests**: `summary`, optional `metrics[]` (e.g. ["Test files","42"], ["Framework","jest"], ["E2E","none"]), `findings[]`, `grade`. Inventory what EXISTS (frameworks, unit/integration/e2e split, coverage config + committed reports, CI test steps, test-file to source-file ratio) and flag what SHOULD exist: churn hotspots with zero tests, uncovered error paths, missing e2e on the core flow, snapshot-only suites with no real assertions. Static judgment only - NEVER run the suite (never-execute rule). Zero tests on a code repo = F, never N/A.
@@ -179,11 +200,16 @@ is faster AND higher quality - it is not a trade.
 **The pipeline (what runs parallel vs sequential):**
 1. **Step 1 scoping runs ONCE, sequentially** (stack, vitality, churn, npm audit, git
    signals). It feeds every lens - gather it before the fan-out.
-2. **The lenses fan out in parallel** (a barrier: collect ALL before synthesizing). Group
-   related lenses per agent on a small repo (`gbu+features`, `infra+docs`,
-   `perf+quality`, plus dedicated `security` and `architect`) -> ~5-7 agents; on a big/
-   monorepo do one lens per agent, or one subtree per agent, +1 completeness critic.
-3. **Synthesis runs sequentially AFTER the barrier** on the strong/orchestrating model:
+2. **NINE lenses fan out in parallel** (a barrier: collect ALL before synthesizing). Group
+   related lenses per agent on a small repo (`infra+docs`, `perf+quality`, `features`,
+   plus dedicated `security` and `architect`) -> ~5-7 agents; on a big/monorepo do one
+   lens per agent, or one subtree per agent, +1 completeness critic. **`gbu` is NOT in
+   this wave.**
+3. **`gbu` runs AFTER the barrier, fed every other lens's findings**, so it can be told
+   what NOT to restate and can spend its read on the files no lens owns. Running it in
+   the parallel wave was the old shape and it cost a duplicate full read of the repo
+   while still colliding with half the findings.
+4. **Synthesis runs sequentially AFTER the barrier** on the strong/orchestrating model:
    top_fixes ranking, the `delta` diff, and the overall grade all need every lens result
    in hand. Never rank or grade before the join completes.
 
@@ -431,7 +457,7 @@ must preserve them, and `golden/sample.html` must reflect them:
   severity = `fa-bug` + level (High/Medium/...), confidence = `fa-bullseye` + value,
   effort = `fa-hourglass-half` + S/M/L. All badge variants (green/red/yellow/blue/grey)
   carry a matching `border-color` - no borderless badges.
-- **Every lens carries a grade EXCEPT Good/Bad/Ugly (owner request 2026-07-02).** GBU is report-only - never grade it, never show it in the scorecard. features = feature coherence; uiux = only when the repo has a user-facing UI; on a BE-only repo its grade is "N/A" and the renderer omits the lens from the report + scoring completely.
+- **Every lens carries a grade EXCEPT Good/Bad/Ugly (owner request 2026-07-02).** GBU is report-only - never grade it, never show it in the scorecard, and it renders LAST as the closing verdict. features = feature coherence; uiux = only when the repo has a user-facing UI; on a BE-only repo its grade is "N/A" and the renderer omits the lens from the report + scoring completely.
 - **Score donuts (owner request 2026-07-02).** The overview card is a flex row: repo info left, an animated Chart.js donut RIGHT (overall score % centered, "Overall Score" label under) filling the old whitespace. Below the pills sits the scorecard: one SOLID color-coded grade circle per graded lens (the letter grade filled in the lens's grade color, lens name below) - NOT a chart (owner request 2026-07-15: the donut chart is the overall score ONLY; per-lens mini rings were disliked). No % on the per-lens circles - the % lives solely on the overall ring. Overall % = mean of GRADE_SCORE-mapped grades (A+ 100 ... F 50); overall ring color by band (90+ green, 80+ blue, 70+ amber, 60+ orange, else red). The old grade-pill strip is replaced by the mini donuts - do not bring the table back. Ring thickness is VERY THIN (owner request 2026-07-15, 50% thinner than the old 79%): Chart.js `cutout: "89%"` - never chunkier. The scorecard is ONE non-wrapping row (`.scorecard` flex-wrap:nowrap, overflow-x:auto) with small 72px mini-donuts, never wrapping to a second line.
 - **Grade badges (A-F) are CIRCLES (owner request), color-coded and chunky.** Colors come
   from `GRADE_BADGE` (A green, B blue, C amber, D orange, F red), **graduated per letter so

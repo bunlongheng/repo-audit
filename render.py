@@ -123,9 +123,14 @@ SLUG_FIX = {
 
 
 # 10 lenses in fixed display order. (key, label, fa-icon, accent)
+# Good/Bad/Ugly renders LAST, deliberately (owner 2026-09-17). The report already
+# opens with the overall grade, the vitality strip and Top Fixes First; a third
+# summary at position 2 pushed the evidence down and repeated what the reader had
+# just seen. As the closing section it answers "what is this codebase like to live
+# with?" AFTER the proof - and it is the part that gets lifted into a portfolio
+# blurb or a handoff doc.
 LENS_ORDER = [
     ("architect",   "Architect Audit",       "fa-sitemap",            "#cf222e"),
-    ("gbu",         "Good, Bad, Ugly",        "fa-scale-balanced",     "#bc4c00"),
     ("infra",       "Infra Audit",            "fa-server",             "#9a6700"),
     ("security",    "Security Audit",         "fa-lock",      "#1a7f37"),
     ("performance", "Performance Audit",      "fa-gauge-high",         "#0969da"),
@@ -134,6 +139,7 @@ LENS_ORDER = [
     ("docs",        "Docs",                   "fa-book",               "#0891b2"),
     ("uiux",        "UI/UX Audit",            "fa-palette",            "#bf3989"),
     ("features",    "Features Supported",     "fa-diagram-project",    "#cf222e"),
+    ("gbu",         "Good, Bad, Ugly",        "fa-scale-balanced",     "#bc4c00"),
 ]
 
 # Graduated shades per letter so +/base/- read differently: minus = lighter,

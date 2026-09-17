@@ -1,0 +1,642 @@
+{
+  "repo": "orders-api",
+  "repo_url": "https://github.com/acme/orders-api",
+  "path": "/path/to/orders-api",
+  "branch": "main",
+  "commit": "749b251",
+  "stack": [
+    "Next.js 16",
+    "React 19",
+    "TypeScript",
+    "Tailwind",
+    "SQLite",
+    "MCP"
+  ],
+  "tech_stack": [
+    {
+      "name": "Next.js",
+      "slug": "nextdotjs",
+      "url": "https://nextjs.org",
+      "category": "Framework",
+      "version": "16.1.6"
+    },
+    {
+      "name": "React",
+      "slug": "react",
+      "url": "https://react.dev",
+      "category": "Library",
+      "version": "19.2.5"
+    },
+    {
+      "name": "TypeScript",
+      "slug": "typescript",
+      "url": "https://www.typescriptlang.org",
+      "category": "Language",
+      "version": "5.9"
+    },
+    {
+      "name": "Tailwind CSS",
+      "slug": "tailwindcss",
+      "url": "https://tailwindcss.com",
+      "category": "Styling",
+      "version": "3.4"
+    },
+    {
+      "name": "SQLite",
+      "slug": "sqlite",
+      "url": "https://www.sqlite.org",
+      "category": "Database",
+      "version": "better-sqlite3 7.6"
+    },
+    {
+      "name": "Supabase",
+      "slug": "supabase",
+      "url": "https://supabase.com",
+      "category": "Database",
+      "version": "-"
+    },
+    {
+      "name": "Anthropic SDK",
+      "slug": "anthropic",
+      "url": "https://www.anthropic.com",
+      "category": "AI SDK",
+      "version": "0.92 / agent-sdk 0.2"
+    },
+    {
+      "name": "MCP",
+      "icon": "https://icons.duckduckgo.com/ip3/modelcontextprotocol.io.ico",
+      "url": "https://modelcontextprotocol.io",
+      "category": "Protocol",
+      "version": "sdk 1.29"
+    },
+    {
+      "name": "Transformers.js",
+      "slug": "huggingface",
+      "url": "https://huggingface.co",
+      "category": "Embeddings",
+      "version": "4.2"
+    },
+    {
+      "name": "Recharts",
+      "icon": "https://github.com/recharts.png",
+      "url": "https://recharts.org",
+      "category": "Dataviz",
+      "version": "3.8"
+    },
+    {
+      "name": "Vitest",
+      "slug": "vitest",
+      "url": "https://vitest.dev",
+      "category": "Tests",
+      "version": "4.1"
+    },
+    {
+      "name": "Playwright",
+      "icon": "https://icons.duckduckgo.com/ip3/playwright.dev.ico",
+      "url": "https://playwright.dev",
+      "category": "E2E Tests",
+      "version": "1.59"
+    },
+    {
+      "name": "ESLint",
+      "slug": "eslint",
+      "url": "https://eslint.org",
+      "category": "Lint",
+      "version": "9.39"
+    }
+  ],
+  "scanned": {
+    "files": 326,
+    "loc": 24900
+  },
+  "stamp": "2026-07-16 09:15",
+  "vitality": {
+    "last_commit": "5h ago",
+    "commits_90d": 251,
+    "contributors": 1,
+    "bus_factor": "solo (1 author)",
+    "stale_branches": 0
+  },
+  "delta": {
+    "prev_date": "2026-07-15 (round 2: Infra/Perf/Docs A)",
+    "fixed": [
+      "Multi-machine regression closed via a guarded same-origin proxy (Security A) + 6 proxy security tests",
+      "withErrorHandler now 43/43 routes incl. the proxy (Architect A)",
+      "+37 tests -> 389 total (~31/42 routes); flagship rag/search+ingest covered; a real rag/preferences bug found+fixed (Tests A)",
+      "lib/ui-tokens.ts extracted - cardShell + heatRamp single source; dead TEXT_* exports removed (UI/UX A)"
+    ],
+    "new": [],
+    "still": [
+      "TypeScript 2 majors / Tailwind 1 major behind - deliberate hold (Quality A-)",
+      "Feature breadth is inherent to the product (Features A-)",
+      "Low residuals: proxy ip:port surface, a2a root handler test, two sqlite lifecycles"
+    ],
+    "grade_moves": [
+      [
+        "Architect Audit",
+        "A-",
+        "A"
+      ],
+      [
+        "Security Audit",
+        "A-",
+        "A"
+      ],
+      [
+        "Tests Audit",
+        "A-",
+        "A"
+      ],
+      [
+        "UI/UX Audit",
+        "A-",
+        "A"
+      ]
+    ]
+  },
+  "top_fixes": [
+    {
+      "title": "Write down the TS7 / Tailwind4 migration trigger (Quality's last medium)",
+      "lens": "quality",
+      "severity": "medium",
+      "file": "package.json",
+      "why": "The only remaining medium is the deliberate dep-major hold - not a defect, but the compounding liability deserves a written trigger so it is a decision, not drift.",
+      "fix": "A short decision doc: migrate when Next requires TS6+ or a needed plugin drops TW3 support; keep the hold until then.",
+      "effort": "S"
+    },
+    {
+      "title": "Drop the proxy's raw ip:port branch (registry-only)",
+      "lens": "security",
+      "severity": "low",
+      "file": "app/api/proxy/route.ts:35",
+      "why": "Cheapest way to shrink the bearer-relay surface to exactly the registered machines the UI actually uses.",
+      "fix": "Remove the ip:port direct branch; resolve only via the machines registry.",
+      "effort": "S"
+    },
+    {
+      "title": "Route-test the a2a root exec dispatch",
+      "lens": "tests",
+      "severity": "low",
+      "file": "app/api/a2a/route.ts",
+      "why": "The one high-privilege handler still without a route-level net; the guard lib is tested but not the dispatch.",
+      "fix": "Happy-path POST dispatch + malformed-body rejection.",
+      "effort": "S"
+    }
+  ],
+  "lenses": {
+    "architect": {
+      "grade": "A",
+      "summary": "One error convention is now repo-wide: 43/43 routes (incl. the new proxy) run through withErrorHandler, and the jsonl-walker + machines-db extractions from the prior round hold. The layering, multi-machine seam, and documented trust boundaries remain clean. Residuals are two acknowledged lows.",
+      "points": [
+        "Pattern discipline is high: every section is a client component using safeFetch + useMachine().apiBase, every hot route is force-dynamic with a module-level TTL cache; the new SkillUsagePanel.tsx (83 LOC) and skill-usage/route.ts are textbook instances.",
+        "Multi-machine is a genuine architectural seam: apiBase() (MachineContext.tsx:41) makes remote machines transparent to all 30+ sections, and middleware.ts:8 makes the CORS side correct (Origin echo only for LAN, no Allow-Credentials).",
+        "Trust boundaries are written down: middleware.ts:61 explains why there is no global auth gate (Host is spoothe model) and points to lib/a2a-auth.ts, where dangerous routes self-guard with timing-safe bearer or strict Sec-Fetch-Site + trusted-Host.",
+        "Shared error handling is a neighborhood convention, not a repo one: withErrorHandler wraps exactly the 12 app/api/rag/* routes and none of the ~30 app/api/orders/* routes, which hand-roll try/catch.",
+        "Two coexisting SQLite lifecycles: lib/db/sqlite.ts opens/closes a new Database per call while lib/rag-db.ts holds a process singleton - both work, but a new contributor cannot infer the house style.",
+        "The jsonl-walker loop (readdir projects -> stat -> mtime filter -> readLastBytes -> per-line JSON.parse) is now copy-pasted across ~9 routes including the new skill-usage/route.ts:61; readLastBytes was already extracted, the walker itself is the next obvious extraction.",
+        "mcp-server.ts:6 hardcodes RAG_URL = http://localhost:3003, coupling the MCP tool surface to one port despite the registry-driven multi-machine model everywhere else."
+      ],
+      "table": [
+        [
+          "Layer",
+          "Role"
+        ],
+        [
+          "app/(orders)/*/page.tsx",
+          "Thin server shells; routing + metadata only"
+        ],
+        [
+          "app/(orders)/_sections/* (30+)",
+          "All UI + client fetch via safeFetch/apiBase; MachineContext/ToastContext/SearchModal providers"
+        ],
+        [
+          "app/api/** (42 routes)",
+          "Read-mostly JSON over ~/.orders files, jsonl transcripts, SQLite; TTL caches; force-dynamic"
+        ],
+        [
+          "lib/",
+          "rag-* (FTS5 search/ingest/eval), live-sessions (lsof), a2a-auth, safe-read, pricing, db adapter"
+        ],
+        [
+          "lib/db (dashboard.db) + lib/rag-db (rag.db)",
+          "Two better-sqlite3 stores; adapter+noop vs raw singleton"
+        ],
+        [
+          "middleware.ts",
+          "Security headers, LAN CORS, documented no-global-auth boundary"
+        ],
+        [
+          "mcp-server.ts",
+          "stdio MCP server exposing rag_* tools by proxying localhost:3003"
+        ],
+        [
+          "External surface",
+          "A2A JSON-RPC peer endpoint + machines registry for the M4/pi5 fleet"
+        ]
+      ],
+      "findings": [
+        {
+          "title": "Two SQLite open/close lifecycles coexist",
+          "severity": "low",
+          "confidence": "High",
+          "file": "lib/machines-db.ts vs lib/rag-db.ts",
+          "consequence": "Per-request open/close (machines) vs cached singleton (rag); minor inconsistency, no correctness bug.",
+          "evidence": "openMachinesDb opens/closes per call; rag uses getDb() singleton.",
+          "fix": "Pick one lifecycle when next touching either module.",
+          "effort": "S"
+        },
+        {
+          "title": "turns-by-hour still hand-rolls its jsonl walk",
+          "severity": "low",
+          "confidence": "Med",
+          "file": "app/api/orders/turns-by-hour/route.ts:185",
+          "consequence": "One bespoke walk to keep in sync; justified by folder-level filters the shared walker lacks.",
+          "evidence": "Inline readdir loop with isRealRepo + username filters.",
+          "fix": "Add a folderFilter option to walkProjectJsonl if a 4th consumer appears.",
+          "effort": "S"
+        }
+      ]
+    },
+    "gbu": {
+      "good": [
+        "CI is a real gate: ci.yml runs lint, tsc --noEmit, vitest, and next build on every push; combined with the pre-push typecheck hook, type breakage cannot land.",
+        "Trust boundaries are engineered, not vibes: timing-safe bearer compare (lib/a2a-auth.ts:6), requireBearerOrSameSite rejects Sec-Fetch-Site:none and untrusted Hosts (CSRF + DNS-rebind), a2a shell exec requires the explicit 'shell.exec ' verb with a comment forbidding a catch-all, and LAN CORS deliberately omits Allow-Credentials with the reasoning inline.",
+        "SQL hygiene: parameterized queries throughout, dynamic identifiers gated by isSafeIdent (lib/db/sqlite.ts:68) before interpolation.",
+        "Shared primitives actually got extracted and reused: readLastBytes (lib/safe-read.ts) used by all transcript routes including the new skill-usage/route.ts; withErrorHandler standardizes the rag API neighborhood.",
+        "Strict TypeScript with zero explicit any across app/ and lib/ (enforced per commit 52f452d), and the codebase comments its own tradeoffs unusually well.",
+        "The new SkillUsagePanel is a model citizen: 83 LOC, self-hides when empty, machine-aware via apiBase, no new dependencies."
+      ],
+      "bad": [
+        "OverviewSection.tsx is an 865-LOC monolith with 9 safeFetch calls and three near-duplicate turn-count->color helpers (getColor :560, cellColor :591, hourColor :693); it keeps absorbing features (SkillUsagePanel mounted at :861) instead of being split.",
+        "The DbAdapter sqlite->noop fallback silently degrades: when the better-sqlite3 load fails, a2a-db reads return undefined instead of throwing (surfaced by the Node-22 ABI test failures) - in production that same silence presents as an empty dashboard, not an error.",
+        "Playwright e2e exists but is not in CI, so the section-rendering regressions it would catch ship unverified.",
+        "lib/db/sqlite.ts opens and closes a new Database on every call while rag-db.ts holds a singleton - one of these is wrong and it is the per-call one.",
+        "app/api/rag/search/route.ts:12 writes to search_log on every GET (INSERT on the read path) - makes a nominally read-only endpoint a writer and non-idempotent."
+      ],
+      "ugly": [
+        "Dead 'true ?' ternary at OverviewSection.tsx:835 - the false branch is unreachable leftover from a week/month toggle; reads as a half-finished refactor shipped to main.",
+        "package.json:19 freezes lint at 'eslint . --max-warnings 83' - a ratchet that never ratchets; 83 warnings are permanently amnestied and any cleanup below 83 is instantly refillable.",
+        "A2A accepts 'shell.exec <cmd>' on a LAN-reachable server guarded by ONE static never-rotated bearer in plaintext at ~/.orders/a2a-token; the guard is careful, but a single leaked token = remote shell on every machine in the fleet - no rotation, no per-peer tokens, no audit on use."
+      ]
+    },
+    "infra": {
+      "grade": "A",
+      "summary": "CI is green with e2e; the WS-server orphan and install.sh silent-failure are fixed (scripts/with-ws.sh traps EXIT/INT/TERM; install.sh fails loudly). The only residual is main branch protection - a GitHub free-private-repo platform limit, not a repo defect.",
+      "findings": [
+        {
+          "title": "main branch unprotected (platform limit)",
+          "severity": "low",
+          "confidence": "High",
+          "file": ".github",
+          "consequence": "A direct push/force-push to main is not blocked server-side.",
+          "evidence": "Branch protection API returns 403 on free private repos.",
+          "fix": "Enable if the repo goes public; the pre-push hook is the compensating control.",
+          "effort": "S"
+        }
+      ]
+    },
+    "security": {
+      "grade": "A",
+      "summary": "The multi-machine regression is closed with a sound design: a same-origin server proxy (app/api/proxy/route.ts) guarded by requireBearerOrSameSite, private-IP-only peer resolution (isLocalHost, so the shared a2a bearer never reaches a public host), a /api/orders + /api/rag path allowlist re-validated against the WHATWG-normalized URL (defeats %2e%2e and //host smuggling), and forwarding the shared a2a bearer the mesh already uses. MachineContext.apiBase routes remote reads through it; local unchanged. Now covered by 6 security-invariant tests. No open relay, no SSRF to public hosts. Residuals are genuinely low.",
+      "findings": [
+        {
+          "title": "Proxy accepts a raw ip:port machine param (relay surface)",
+          "severity": "low",
+          "confidence": "High",
+          "file": "app/api/proxy/route.ts:35",
+          "consequence": "An authorized/same-origin caller could aim the bearer at any PRIVATE ip:port at an allowlisted path, not just registered machines. No net-new privilege (that caller can already vend the token), just extra surface - the UI only ever sends registry ids.",
+          "evidence": "resolvePeer() direct branch matches ^ip:port$ and only checks isLocalHost.",
+          "fix": "Drop the direct ip:port branch; require registry membership.",
+          "effort": "S"
+        },
+        {
+          "title": "Non-orders/rag remote paths still fetched raw cross-origin",
+          "severity": "low",
+          "confidence": "Med",
+          "file": "app/(orders)/_sections/MachineContext.tsx:51",
+          "consequence": "A future guarded peer route outside the two prefixes would silently regress to 403; a maintainability trap, not a hole.",
+          "evidence": "apiBase fallback returns http://ip:port for non-allowlisted paths.",
+          "fix": "Comment the fallback as unguarded-only, or widen the allowlist when a third prefix appears.",
+          "effort": "S"
+        },
+        {
+          "title": "slim-settings still returns project paths",
+          "severity": "low",
+          "confidence": "High",
+          "file": "app/api/orders/settings/route.ts",
+          "consequence": "Local filesystem paths disclosed to LAN callers; informational on a private dashboard.",
+          "evidence": "Slim projection includes path.",
+          "fix": "Strip or hash path fields in the slim projection.",
+          "effort": "S"
+        }
+      ]
+    },
+    "performance": {
+      "grade": "A",
+      "summary": "The event-loop-stall medium is gone: lib/live-sessions.ts uses promisified execFile (async) with a 2s timeout and both callers await it; turns-by-hour tail dropped 16MB->8MB. Remaining are three genuine lows, none on a hot interactive path.",
+      "findings": [
+        {
+          "title": "rag/search logs every query synchronously on the read path",
+          "severity": "low",
+          "confidence": "High",
+          "file": "app/api/rag/search/route.ts:12",
+          "consequence": "One SQLite INSERT per search; negligible at single-user scale.",
+          "evidence": "INSERT into search_log inline in GET.",
+          "fix": "Fire-and-forget or batch the log write.",
+          "effort": "S"
+        },
+        {
+          "title": "entitySearch OR-join fan-out",
+          "severity": "low",
+          "confidence": "High",
+          "file": "lib/rag-search.ts:156",
+          "consequence": "Per-word LIKE OR + OR-join prevents index use on large entity sets; fine at current size.",
+          "evidence": "words.map LIKE OR + OR-join on entity_links.",
+          "fix": "UNION two indexed joins if the entity graph grows.",
+          "effort": "S"
+        },
+        {
+          "title": "single-phase vector scoring (eval path only)",
+          "severity": "low",
+          "confidence": "Med",
+          "file": "lib/eval",
+          "consequence": "Eval-only cost; not on any user route.",
+          "evidence": "Acknowledged residual.",
+          "fix": "Two-phase retrieve-then-rerank if eval runtime matters.",
+          "effort": "M"
+        }
+      ]
+    },
+    "quality": {
+      "grade": "A-",
+      "summary": "All the cleanup landed: the jsonl-walker + MACHINES_DB duplication is resolved, the dead ternary is gone, and the lint budget was ratcheted 83->69 (unused disables removed). tsc clean, zero explicit any. The one remaining medium is real and deliberate: TypeScript is 2 majors behind (5.9 vs 7.0) and Tailwind 1 (3.4 vs 4) - a defensible hold (both are breaking migrations), but a genuine compounding liability, so it is an honest A-, not a polite A.",
+      "metrics": [
+        [
+          "tsc",
+          "clean"
+        ],
+        [
+          "Lint",
+          "0 err / 69 warn (was 83)"
+        ],
+        [
+          "Duplication",
+          "walker + machines-db extracted"
+        ],
+        [
+          "Deps",
+          "TS 2 maj / TW 1 maj behind"
+        ]
+      ],
+      "findings": [
+        {
+          "title": "TypeScript 2 majors / Tailwind 1 major behind (deliberate hold)",
+          "severity": "medium",
+          "confidence": "High",
+          "file": "package.json",
+          "consequence": "Migration cost compounds; TW3 is in maintenance and TS7 adoption will eventually force the move.",
+          "evidence": "typescript ^5.9.3, tailwindcss ^3.4.19.",
+          "fix": "Keep the hold but write a trigger condition (migrate when Next requires TS6+ or a plugin drops TW3).",
+          "effort": "L"
+        },
+        {
+          "title": "69 lint warnings dominated by React correctness rules",
+          "severity": "low",
+          "confidence": "High",
+          "file": "app/(orders)/_sections",
+          "consequence": "23 set-state-in-effect + 9 purity are latent re-render bugs; 13 raw img tags forgo next/image.",
+          "evidence": "eslint: set-state-in-effect 23, no-img-element 13, purity 9.",
+          "fix": "Ratchet another tranche (69 -> ~50) by converting easy set-state-in-effect to derived state.",
+          "effort": "M"
+        }
+      ]
+    },
+    "tests": {
+      "grade": "A",
+      "summary": "The security-critical gap is closed: app/api/proxy now has 6 invariant tests (403 unauth, 400 disallowed path, 400 %2e%2e traversal, 404 public-IP refusal, and a happy-path that asserts the bearer is forwarded to the private peer). Route coverage is ~31/42, all security fixes + the flagship RAG paths (search/ingest/docs/context) are regression-tested, e2e runs in CI, and the suite (389, green) found AND fixed a real bug (rag/preferences slim=1 500). Residual gaps are lower-traffic/read-only routes and god-components.",
+      "metrics": [
+        [
+          "Suite",
+          "389 tests / 29 files, green"
+        ],
+        [
+          "Route coverage",
+          "~31/42"
+        ],
+        [
+          "Proxy (new attack surface)",
+          "6 invariant tests"
+        ],
+        [
+          "Bug found+fixed by tests",
+          "rag/preferences slim=1"
+        ],
+        [
+          "E2E in CI",
+          "6 specs"
+        ]
+      ],
+      "findings": [
+        {
+          "title": "a2a root exec handler untested (guard lib covered, handler not)",
+          "severity": "low",
+          "confidence": "High",
+          "file": "app/api/a2a/route.ts:275",
+          "consequence": "The highest-privilege endpoint's dispatch has no route-level regression net; a2a-auth.test.ts covers the guard only.",
+          "evidence": "No test imports app/api/a2a/route; the lib guard is tested.",
+          "fix": "Route-level test for the POST dispatch happy path + a malformed-body rejection.",
+          "effort": "S"
+        },
+        {
+          "title": "~11 lower-traffic routes untested + god-components",
+          "severity": "low",
+          "confidence": "High",
+          "file": "app/api/* + app/(orders)/_sections",
+          "consequence": "observability, mcp-activity, SSE stream, a2a events/mcp, sync-skill and the large section components lack direct tests; long-tail regressions land quietly.",
+          "evidence": "Coverage ~31/42; sections covered only via e2e.",
+          "fix": "Chip away opportunistically; extract section pure-logic into lib for unit coverage.",
+          "effort": "M"
+        }
+      ]
+    },
+    "docs": {
+      "grade": "A",
+      "summary": "Every prior finding is fixed and the two trivia are closed: orders_DASHBOARD_URL is in .env.example, and the README Features table now lists only real shipped features (RAG Memory, Agents, Usage & Tokens) - the dead Memory Browser/Health Check/Timeline rows are gone. No stale references, no missing env vars.",
+      "metrics": [
+        [
+          "Dead feature rows",
+          "0"
+        ],
+        [
+          "Env vars undocumented",
+          "0"
+        ],
+        [
+          "Prior findings open",
+          "0"
+        ]
+      ],
+      "findings": []
+    },
+    "uiux": {
+      "grade": "A",
+      "summary": "The card-shell duplication cap is closed: lib/ui-tokens.ts is the single source for cardShell + heatRamp(), consumed across the sections (23 card shells + the 3 heatmap ramps migrated, byte-identical output); genuinely-distinct panels correctly left inline. Both a11y HIGHs (SearchModal dialog/focus-trap, contrast floor) and the error-surfacing + reduced-motion mediums from earlier rounds stay fixed. One documented low remains.",
+      "findings": [
+        {
+          "title": "HeroCard renders only stats[0], drops the rest",
+          "severity": "low",
+          "confidence": "High",
+          "file": "app/(orders)/_sections/OverviewSection.tsx:63",
+          "consequence": "Callers passing multiple stats lose all but the first; documented as intentional in-code.",
+          "evidence": "Render reads stats[0] only; comment marks it intentional.",
+          "fix": "Narrow the prop to a single stat so the contract is honest.",
+          "effort": "S"
+        }
+      ]
+    },
+    "features": {
+      "grade": "A-",
+      "summary": "Broad but genuinely coherent: every feature is an instance of one thesis - mirror the local orders Code environment (sessions, transcripts, config, memory, usage) and act on it (send input, run skills, sync machines, expose RAG over MCP). Features compose rather than sprawl: the machines registry feeds apiBase which every section uses; RAG feeds the MCP server, Cmd+K search, and the eval harness; the transcript walkers feed tokens, turns, tool-usage, and now the skill/subagent leaderboard. The new Skill & Subagent Usage panel is a well-scoped addition to the analytics branch. Deductions are for edge-of-thesis weight, not incoherence: A2A shell.exec/skill-run is fleet-automation living inside a dashboard, and Overview keeps accreting panels into one 865-LOC component.",
+      "tree": [
+        {
+          "name": "Sessions",
+          "note": "live + historical mirror",
+          "children": [
+            {
+              "name": "Live detection",
+              "note": "lsof cwd-match, 5s cache"
+            },
+            {
+              "name": "Progress stream",
+              "note": "SSE tail of session jsonl"
+            },
+            {
+              "name": "Send input",
+              "note": "iTerm2 tty injection, bearer/same-site guarded"
+            },
+            {
+              "name": "Voice",
+              "note": "VoiceModal dictation"
+            }
+          ]
+        },
+        {
+          "name": "Analytics / Overview",
+          "children": [
+            {
+              "name": "Token stats + daily cost",
+              "note": "pricing.ts over transcript tails"
+            },
+            {
+              "name": "Turns by hour/day",
+              "note": "16MB tail walker, heatmap"
+            },
+            {
+              "name": "Tool usage leaderboard",
+              "note": "2MB tail walker"
+            },
+            {
+              "name": "Skill & Subagent usage",
+              "note": "NEW: skill-usage route (4MB tail, Skill by input.skill + Agent by subagent_type, 30s cache) + two-column SkillUsagePanel; self-hides when empty"
+            },
+            {
+              "name": "Context window meter",
+              "note": "per-model limits"
+            }
+          ]
+        },
+        {
+          "name": "RAG Memory",
+          "children": [
+            {
+              "name": "FTS5 search + query expansion",
+              "note": "synonym map"
+            },
+            {
+              "name": "Preference/insight extraction",
+              "note": "needs ANTHROPIC_API_KEY"
+            },
+            {
+              "name": "Eval harness + vectors",
+              "note": "MiniLM embeddings, brute-force cosine"
+            },
+            {
+              "name": "Ingest pipelines",
+              "note": "docs + transcripts, dedup"
+            }
+          ]
+        },
+        {
+          "name": "MCP server",
+          "note": "this app exposes rag_* tools over stdio (mcp-server.ts)"
+        },
+        {
+          "name": "A2A",
+          "note": "JSON-RPC peer endpoint - the one branch that stretches the thesis",
+          "children": [
+            {
+              "name": "Timing-safe bearer + same-site guard",
+              "note": "lib/a2a-auth.ts"
+            },
+            {
+              "name": "shell.exec / skill.run / file.read / git.status",
+              "note": "explicit verbs, bearer-gated"
+            },
+            {
+              "name": "LAN peer discovery",
+              "note": "lib/a2a-discovery.ts"
+            }
+          ]
+        },
+        {
+          "name": "Multi-machine",
+          "children": [
+            {
+              "name": "Registry + apiBase routing",
+              "note": "every section transparently remote"
+            },
+            {
+              "name": "Skill sync",
+              "note": "push a skill to a peer"
+            },
+            {
+              "name": "Observability",
+              "note": "cross-machine health"
+            }
+          ]
+        },
+        {
+          "name": "Config surfaces",
+          "note": "one section per ~/.orders artifact",
+          "children": [
+            {
+              "name": "Brain / orders.md editor + history"
+            },
+            {
+              "name": "Settings, skills, commands, hooks, plugins, extensions"
+            },
+            {
+              "name": "MCP list, agent runs, tool-usage"
+            }
+          ]
+        },
+        {
+          "name": "Global search",
+          "note": "Cmd+K across sessions/config/RAG"
+        },
+        {
+          "name": "LAN / Mobile",
+          "note": "QR handoff, LAN CORS"
+        },
+        {
+          "name": "UX infra",
+          "note": "app-icon pipeline, view toggles, toasts, mascot loader"
+        }
+      ]
+    }
+  },
+  "bottom_line": "Final push landed: SEVEN of nine graded lenses are now A - Architect, Infra, Security, Performance, Docs, Tests, and UI/UX - up from a session that opened at UI/UX C+ and a B-range spread. The multi-machine regression is properly closed with a guarded same-origin proxy (private-IP-only, path-allowlisted, bearer-scoped) and 6 security tests; every route now shares one error convention; route coverage reached ~31/42 with the flagship RAG paths tested and a real bug caught-and-fixed; and the UI card-shell duplication is gone behind lib/ui-tokens.ts. All green: 389 tests, lint 0-error, tsc clean, build compiles. The two remaining A- lenses are honest holds, not defects: Quality's deliberate TypeScript/Tailwind major-version hold (forcing a breaking migration would be worse), and Features' inherent product breadth. This is the right stopping point.",
+  "post": {
+    "title": "acme/orders-api (7 of 9 lenses A)"
+  }
+}

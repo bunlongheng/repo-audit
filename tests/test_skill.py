@@ -38,7 +38,7 @@ class RenderGolden(unittest.TestCase):
         with open(self.out, encoding="utf-8") as fh:
             html = fh.read()
         self.assertNotIn("None</", html)
-        self.assertNotIn("/Users/", html)
+        self.assertNotIn("/Users/", html)  # publish-scan: allow
         self.assertGreater(len(html), 50_000)
 
 

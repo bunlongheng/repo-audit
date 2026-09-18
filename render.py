@@ -15,8 +15,9 @@ the UI is identical every run.
 Usage:
   python3 render.py <data.json> [--no-open] [--out <file.html>]
 
-  --no-open   do not open the report in a browser when it is written
   --out       write here instead of ./reports/<prefix>-<repo>-<date>.html
+  --no-open   accepted and ignored: this renderer never opens a browser. Kept so
+              existing scripts and the docs' examples keep working.
 
 Input contract (the JSON the agent builds at <data.json>):
   {
@@ -299,18 +300,47 @@ def find_sort(f):
             (f.get("title") or ""))
 
 
+# The report's MAIN icon when it is posted through the optional hook: a plain
+# magnifying-glass glyph, not the skill's own app-icon PNG.
+_REPORT_ICON = "__repoaudit"
+
+
+ICON_MIME = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+             ".svg": "image/svg+xml", ".ico": "image/x-icon", ".webp": "image/webp",
+             ".gif": "image/gif"}
+
+
+def _is_image_bytes(b, mime):
+    """Do these bytes actually START like the image type the extension claims?
+
+    Load-bearing, not cosmetic: this function base64-embeds a local file into a
+    report that gets shared. Trusting the extension alone meant any readable file
+    under the size cap - .env, id_rsa, a credentials file - was embedded and
+    labelled image/png, so naming it in the data JSON exfiltrated it into a
+    document the user then sent to their team."""
+    if mime == "image/svg+xml":
+        head = b[:512].lstrip().lower()
+        return head.startswith(b"<?xml") or head.startswith(b"<svg") or head.startswith(b"<!doctype svg")
+    return (
+        (mime == "image/png" and b.startswith(b"\x89PNG\r\n\x1a\n"))
+        or (mime == "image/jpeg" and b.startswith(b"\xff\xd8\xff"))
+        or (mime == "image/gif" and b[:6] in (b"GIF87a", b"GIF89a"))
+        or (mime == "image/webp" and b[:4] == b"RIFF" and b[8:12] == b"WEBP")
+        or (mime == "image/x-icon" and b[:4] in (b"\x00\x00\x01\x00", b"\x00\x00\x02\x00"))
+    )
+
+
 def _icon_datauri(fp):
-    """Embed a local image file as a self-contained data-URI (reports must stay
-    offline-safe). Skips unreadable paths and anything over 1.5MB (raised from 512KB
-    so HD 512-1024px app icons embed instead of silently falling back to a blurry
-    favicon.ico)."""
-    ext = os.path.splitext(fp)[1].lower()
-    mime = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
-            ".svg": "image/svg+xml", ".ico": "image/x-icon", ".webp": "image/webp",
-            ".gif": "image/gif"}.get(ext, "image/png")
+    """Embed a local IMAGE as a self-contained data-URI (reports stay offline-safe).
+    Refuses anything whose extension is not a known image type, anything whose bytes
+    do not match that type, and anything over 1.5MB."""
+    mime = ICON_MIME.get(os.path.splitext(fp)[1].lower())
+    if not mime:
+        return ""
     try:
-        b = open(fp, "rb").read()
-        if len(b) > 1536 * 1024:
+        with open(fp, "rb") as fh:
+            b = fh.read(1536 * 1024 + 1)
+        if len(b) > 1536 * 1024 or not _is_image_bytes(b, mime):
             return ""
         return f"data:{mime};base64,{base64.b64encode(b).decode()}"
     except Exception:
@@ -361,8 +391,14 @@ def resolve_app_icon(explicit, repo_path, repo_short):
         e = explicit.strip()
         if e.startswith(("http://", "https://", "data:")):
             return e
-        ep = os.path.expanduser(e)
-        if os.path.exists(ep) and os.path.isfile(ep):
+        ep = os.path.realpath(os.path.expanduser(e))
+        # Only from inside the audited repo or a registry the USER configured. The
+        # value can come from an agent that just read an untrusted repo, so an
+        # arbitrary absolute path must not be readable through it.
+        roots = [os.path.realpath(r) for r in (repo_path, reg,
+                 os.path.expanduser(os.environ.get("REPO_AUDIT_FAVICON_REGISTRY", ""))) if r]
+        inside = any(ep == r or ep.startswith(r + os.sep) for r in roots)
+        if inside and os.path.isfile(ep):
             u = _icon_datauri(ep)
             if u:
                 return u
@@ -649,7 +685,7 @@ def render_arch_flow(flow):
                        '<svg width="20" height="22" viewBox="0 0 24 24" fill="none" stroke="#aab2bd" stroke-width="2.6" '
                        'stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="18"/><polyline points="6 12 12 18 18 12"/></svg>'
                        + (f'<span style="font-size:12px;font-weight:600;color:#57606a;background:#eef1f4;border:1px solid #e1e6eb;'
-                          f'border-radius:999px;padding:3px 12px;text-align:center;max-width:280px">{lbl}</span>' if lbl else "")
+                          f'border-radius:999px;padding:3px 12px;text-align:center;max-width:280px">{esc(lbl)}</span>' if lbl else "")
                        + '</div>')
     out.append('</div>')
     return "".join(out)
@@ -1169,7 +1205,7 @@ def main():
     # point they enter the render, rather than at each of their sinks - the data
     # JSON is written by an agent that has just read an untrusted repo, so a
     # prompt-injected payload must not be able to reach either.
-    lens_labels = {k: esc(str(v)) for k, v in (data.get("lens_labels") or {}).items()}
+    lens_labels = {k: str(v) for k, v in (data.get("lens_labels") or {}).items()}
     lens_icons = {k: v for k, v in (data.get("lens_icons") or {}).items()
                   if isinstance(v, str) and ICON_OK.match(v)}
     LENSES = [(k, lens_labels.get(k, lbl), lens_icons.get(k, ic), col)
@@ -1568,7 +1604,7 @@ a.tech-link { display:inline-flex; align-items:center; }
         if ((L.get("grade") or "").strip().upper() in ("N/A", "NA")):
             continue  # N/A lens (e.g. uiux on a BE-only repo) is omitted from the report entirely
         A('<div class="card">')
-        head = f'<h2><i class="fa-solid {icon}" style="color:{color}"></i> {lbl}'
+        head = f'<h2><i class="fa-solid {icon}" style="color:{color}"></i> {esc(lbl)}'
         if L.get("grade"):
             head += f'<span class="g">{grade_pill(L["grade"])}</span>'
         head += '</h2>'
@@ -1713,8 +1749,13 @@ a.tech-link { display:inline-flex; align-items:center; }
 
     os.makedirs("reports", exist_ok=True)
     out = out_override or f"reports/{out_prefix}-{re.sub(chr(92)+'W+','-',repo).strip('-').lower()}-{today}.html"
-    with open(out, "w") as fh:
-        fh.write("\n".join(P))
+    try:
+        with open(out, "w") as fh:
+            fh.write("\n".join(P))
+    except IsADirectoryError:
+        sys.exit(f"render: --out {out!r} is a directory, not a file")
+    except OSError as e:
+        sys.exit(f"render: cannot write {out!r}: {e}")
 
     # The report is always written to disk; opening it in a browser is left to the
     # caller. Posting it somewhere is an OPTIONAL, generic hook - off by default.

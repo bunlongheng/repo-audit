@@ -36,7 +36,9 @@ Usage:
 """
 import json, os, re, sys
 
-CITE = re.compile(r'(?P<path>[\w@.+-][\w@./+-]*\.[A-Za-z0-9]+):(?P<l1>\d+)(?:-(?P<l2>\d+))?')
+# A path, then :line. The path may be extensionless - Dockerfile, Makefile, Procfile
+# and LICENSE are cited constantly and are exactly the files an infra lens quotes.
+CITE = re.compile(r'(?P<path>[\w@.+-][\w@./+-]*):(?P<l1>\d+)(?:-(?P<l2>\d+))?')
 WINDOW = 20      # lines either side of the cited line a fragment may sit in
 MIN_FRAG = 8     # shorter snippets match by accident
 ORDER = ['FAIL', 'WARN', 'NEAR', 'PASS']
@@ -65,12 +67,25 @@ class Repo:
         self._cache = {}
 
     def resolve(self, path):
+        """-> absolute path inside the repo, or None. Never reads outside the root,
+        so the gate can never become an oracle for what is on the user's disk."""
         if not path or os.path.isabs(path) or path.startswith('~'):
             return None
         full = os.path.realpath(os.path.join(self.root, path))
         if full != self.root and not full.startswith(self.root + os.sep):
             return None
         return full if os.path.isfile(full) else None
+
+    def escapes_via_symlink(self, path):
+        """True when a repo-relative path resolves OUTSIDE the root - a symlinked
+        workspace package, typically. The citation is plausible but unverifiable
+        here, so it is reported UNVERIFIED rather than treated as fabricated."""
+        if not path or os.path.isabs(path) or '..' in path.split('/'):
+            return False
+        lexical = os.path.normpath(os.path.join(self.root, path))
+        if not lexical.startswith(self.root + os.sep):
+            return False
+        return os.path.exists(lexical) and self.resolve(path) is None
 
     def read(self, path):
         """-> (lines, one normalised string) for a path inside the repo, else None."""
@@ -115,6 +130,8 @@ def check(repo, cite, evidence):
         return 'FAIL', f'{path} points outside the repo'
     got = repo.read(path)
     if not got:
+        if repo.escapes_via_symlink(path):
+            return 'WARN', f'{path} resolves outside the repo (symlinked); not read, so not confirmed'
         return 'FAIL', f'{path} does not exist in the repo'
     lines, _ = got
     l1 = int(m.group('l1')) if m else 0

@@ -4,8 +4,11 @@
  * Renders README.md (GitHub markdown CSS + Mermaid diagrams) in headless
  * Chromium and captures a full-page 2x-retina PNG.
  *
- * Usage:  node render-readme-shot.mjs <repoPath> [outPath]
- *   out defaults to <repoPath>/docs/screenshots/readme.png
+ * Usage:  node render-readme-shot.mjs <repoPath> [--out <file.png> | <outPath>]
+ *   out defaults to ./reports/readme.png, NEXT TO the report - never inside the
+ *   audited repo. Writing into someone's tree would break the read-only promise,
+ *   and an untracked docs/screenshots/ appearing in their git status is exactly
+ *   the surprise a tool pointed at private code must not spring.
  *
  * Portable: hardcodes no repo or secret. Resolves Playwright from the target
  * repo first, then this skill's own node_modules, then a global. If none is
@@ -21,7 +24,11 @@ import path from "path";
 import { createRequire } from "module";
 
 const repo = path.resolve(process.argv[2] || ".");
-const out = process.argv[3] || path.join(repo, "docs/screenshots/readme.png");
+const args = process.argv.slice(3);
+const flagAt = args.indexOf("--out");
+const outArg = flagAt !== -1 ? args[flagAt + 1] : args.find((a) => !a.startsWith("--"));
+if (flagAt !== -1 && !outArg) { console.error("render-readme-shot: --out needs a file path"); process.exit(2); }
+const out = path.resolve(outArg || "reports/readme.png");
 
 // Find README.md (case-insensitive) in the repo root.
 const readme = fs.readdirSync(repo).find((f) => /^readme\.md$/i.test(f));

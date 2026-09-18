@@ -518,8 +518,10 @@ must preserve them, and `golden/sample.html` must reflect them:
   a true circle: `width:52px; height:52px; border-radius:50%` with a soft shadow - the SAME
   size as the scorecard grade circles (owner request 2026-07-15, header + scorecard match).
   Never a square, rounded-square, or thin tag.
-- **Finding body copy (`.kv`) is 12px (owner request 2026-09-17).** Keep detail lines
-  (Where/Impact/Evidence/Fix) at 12px on desktop, 11px in the mobile media query.
+- **12px is the FLOOR for every font in the report (owner request 2026-09-18).** No text
+  anywhere - body copy, `.kv` detail lines, table cells, table headers, badges, pills,
+  scorecard labels, the mobile media query - renders below 12px. When adding CSS, never
+  write a `font-size` under 12px; scale the box, not the type.
 - **Features mindmap colors per top-level branch, never monochrome.** Each top-level branch
   seeds its own family from `BRANCH_PAL`; descendants + connector lines inherit it. Row
   height (`ROWH`) must exceed the tallest node box (a node with a note is ~38px) so rows

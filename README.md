@@ -4,7 +4,7 @@
 
 # repo-audit
 
-**Reverse-engineer any repo through 10 audit lenses into one clean, self-contained HTML report.**
+**Reverse-engineer any repo through 10 audit lenses into one clean HTML report.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/python-3.8+-3776ab?logo=python&logoColor=white)
@@ -17,8 +17,10 @@ Point it at **any** repository - a local path, an `owner/repo`, or a GitHub URL 
 code across 10 audit lenses, grades each one A-F, and renders a single light-theme HTML report you can
 open, share, or archive. Stack-agnostic: Next.js, Node, Python, Go, Rust, Java, anything.
 
-It is strictly **read-only** - it never edits the target, never opens PRs, never runs the repo's own
-code. It reads, judges, and renders.
+It is **read-only** - it never edits the target, never commits, never opens PRs, and never runs the
+repo's own code. It reads, judges, and writes one report to `./reports/` in the directory you run it
+from. Two things are opt-in and off by default, because both leave a trace outside the report:
+`--issues` files the top fixes as GitHub issues, and `--shot` writes a README screenshot.
 
 See [`golden/sample.html`](golden/sample.html) for a full example report.
 
@@ -46,15 +48,16 @@ real code does not ship as fact.
 ```bash
 # 1. Produce a data JSON for the repo (see the contract at the top of render.py).
 #    Running as a Claude Code skill does this for you across the 10 lenses.
-# 2. Run the evidence gate: every path:line is checked against the real tree and the
-#    quoted evidence is looked for within 20 lines of the cited line. Findings that cite
-#    a file that does not exist are dropped; findings whose evidence cannot be found are
-#    downgraded to Low confidence. Deterministic, zero tokens.
+# 2. Run the evidence gate. Every path:line is checked against the real tree - inside it,
+#    absolute and ../ citations FAIL - and the quoted snippet is looked for within 20 lines
+#    of the cited line. FAIL is dropped; WARN (nothing could be confirmed, including
+#    evidence that quotes no code) is kept at Low confidence. Deterministic, zero tokens,
+#    exits 0 so it can sit inside a pipeline.
 python3 verify.py path/to/data.json --repo /path/to/repo --prune
 # -> writes path/to/data.verified.json and prints PASS / NEAR / WARN / FAIL per finding
-# 3. Render the verified data to a self-contained HTML report:
+# 3. Render the verified data to one HTML report:
 python3 render.py path/to/data.verified.json
-# -> writes reports/repo-audit-<repo>-<date>.html
+# -> writes reports/repo-audit-<repo>-<date>.html   (--out names it, --no-open keeps it closed)
 ```
 
 Run the contract tests (standard library only, same as CI):
@@ -63,8 +66,14 @@ Run the contract tests (standard library only, same as CI):
 python3 -m unittest discover -s tests -v
 ```
 
-**Requirements:** Python 3.8+ (standard library only). Node + Playwright are optional, and only
-needed for the README-screenshot helper (`node render-readme-shot.mjs <repoPath>`).
+**Requirements**
+
+| Need | Used for |
+|------|----------|
+| **Claude Code** | required - `SKILL.md` is the operating spec an agent follows across the 10 lenses. The Python here only renders and verifies what that agent produces; it makes no judgments of its own. |
+| **Python 3.8+** | `render.py` and `verify.py`, standard library only - nothing to install |
+| `gh` CLI, signed in | optional - live GitHub signals in the infra lens, and `--issues` |
+| Node + Playwright | optional - only for `--shot`, the README screenshot helper |
 
 ## As a Claude Code skill
 
@@ -93,7 +102,7 @@ top fixes and the overall grade.
 
 The renderer is the single source of truth for the HTML. You hand it a JSON object (the judgment);
 `render.py` maps grades to scores, draws the donuts and grade badges, lays out the findings and the
-architecture diagram, and writes one self-contained file (all CSS/JS/icons inlined). Nothing about
+architecture diagram, and writes one self-contained file (all CSS and report data inlined; Font Awesome, Chart.js and the brand logos load from public CDNs, so the layout and every word survive offline while the icons and donuts do not). Nothing about
 the look lives outside `render.py` - edit it there.
 
 ## Optional integrations

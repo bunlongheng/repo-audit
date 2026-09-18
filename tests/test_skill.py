@@ -24,15 +24,29 @@ class RenderGolden(unittest.TestCase):
 
     def test_renders_and_reports_one_line(self):
         self.assertEqual(self.proc.returncode, 0, self.proc.stderr)
-        self.assertIn("repo-audit: orders-api", self.proc.stdout)
+        self.assertIn("repo-audit: acme/orders-api", self.proc.stdout)
         self.assertTrue(self.out and os.path.isfile(self.out), self.proc.stdout)
 
-    def test_all_ten_lenses_in_report_order_with_gbu_last(self):
+    def test_lens_sections_render_in_order_with_gbu_last(self):
+        """Anchor on the SECTION heading, not the first occurrence of an icon - the
+        scorecard strip near the top mentions every icon, so a first-occurrence test
+        passes even when the sections themselves are reordered."""
         with open(self.out, encoding="utf-8") as fh:
             html = fh.read()
-        positions = [html.find(ICON[k]) for k in LENS_ORDER]
-        self.assertTrue(all(p > 0 for p in positions), positions)
-        self.assertEqual(positions, sorted(positions), "lens sections are out of order")
+        seen = [m.group(1) for m in re.finditer(r'<h2><i class="fa-solid (fa-[a-z-]+)"', html)]
+        by_icon = {v: k for k, v in ICON.items()}
+        rendered = [by_icon[i] for i in seen if i in by_icon]
+        # uiux is "N/A" in the golden sample (a backend-only repo), and the contract
+        # says an N/A lens is omitted entirely - so it must NOT appear.
+        expected = [k for k in LENS_ORDER if k != "uiux"]
+        self.assertEqual(rendered, expected)
+        self.assertEqual(rendered[-1], "gbu", "Good/Bad/Ugly must close the report")
+
+    def test_an_na_lens_is_omitted_from_the_report_and_the_score(self):
+        with open(self.out, encoding="utf-8") as fh:
+            html = fh.read()
+        self.assertNotIn(ICON["uiux"], html, "an N/A lens must not render at all")
+        self.assertNotIn("N/A", html)
 
     def test_report_is_self_contained(self):
         with open(self.out, encoding="utf-8") as fh:
@@ -40,6 +54,31 @@ class RenderGolden(unittest.TestCase):
         self.assertNotIn("None</", html)
         self.assertNotIn("/Users/", html)  # publish-scan: allow
         self.assertGreater(len(html), 50_000)
+
+
+class GoldenIsCurrent(unittest.TestCase):
+    """golden/sample.html is the example the README sends everyone to. It is only
+    worth anything if it is what the CURRENT renderer produces, so compare it."""
+
+    def test_committed_golden_matches_a_fresh_render(self):
+        out = os.path.join(tempfile.mkdtemp(), "fresh.html")
+        proc = run("render.py", "golden/sample-data.json", "--no-open", "--out", out)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        with open(out, encoding="utf-8") as fh:
+            fresh = fh.read()
+        with open(os.path.join(ROOT, "golden", "sample.html"), encoding="utf-8") as fh:
+            committed = fh.read()
+        # The run date is stamped into the page, so normalise it before comparing.
+        norm = lambda h: re.sub(r"\d{4}-\d{2}-\d{2}", "DATE", h)
+        self.assertEqual(norm(fresh), norm(committed),
+                         "golden/sample.html has drifted - re-render it: "
+                         "python3 render.py golden/sample-data.json --no-open --out golden/sample.html")
+
+    def test_the_example_carries_nothing_private(self):
+        with open(os.path.join(ROOT, "golden", "sample.html"), encoding="utf-8") as fh:
+            html = fh.read().lower()
+        for marker in ("/users/", "/home/", "localhost:", "127.0.0.1", "internal.", ".local/"):
+            self.assertNotIn(marker, html, f"{marker!r} in the published example")
 
 
 class HostileInput(unittest.TestCase):

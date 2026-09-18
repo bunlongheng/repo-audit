@@ -9,8 +9,8 @@ html { overflow-x:hidden; }
 /* Owner-locked: whole report renders at 67% scale (reads like browser zoom 67%) - denser, fits cleanly. Never remove. */
 body { zoom:0.67; background:#f6f8fa; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; min-height:100vh; padding:28px 44px; overflow-x:hidden; width:100%; }
 .page { max-width:1680px; width:100%; margin:0 auto; position:relative; }
-.chip { display:inline-block; font-family:'SF Mono','Fira Code',monospace; font-size:11px; background:#eef2ff; color:#5b6ab0; border:1px solid #c7d2fe; border-radius:6px; padding:2px 8px; margin-bottom:14px; }
-.model-badge { display:inline-block; font-family:'SF Mono','Fira Code',monospace; font-size:11px; font-weight:700; border:1px solid; border-radius:6px; padding:2px 8px; margin:0 0 14px 6px; }
+.chip { display:inline-block; font-family:'SF Mono','Fira Code',monospace; font-size:12px; background:#eef2ff; color:#5b6ab0; border:1px solid #c7d2fe; border-radius:6px; padding:2px 8px; margin-bottom:14px; }
+.model-badge { display:inline-block; font-family:'SF Mono','Fira Code',monospace; font-size:12px; font-weight:700; border:1px solid; border-radius:6px; padding:2px 8px; margin:0 0 14px 6px; }
 .model-badge i { margin-right:5px; }
 /* Audited-app icon, always present, pinned top-right of the report (owner: MUST show
    the icon of the app that was audited). Auto-resolved from the repo's own assets or
@@ -20,29 +20,29 @@ body { zoom:0.67; background:#f6f8fa; font-family:-apple-system,BlinkMacSystemFo
 .app-badge .mono { width:64px; height:64px; border-radius:14px; background:#1f2d3d; color:#fff; font-weight:800; font-size:28px; display:flex; align-items:center; justify-content:center; font-family:-apple-system,BlinkMacSystemFont,sans-serif; box-shadow:0 2px 8px rgba(20,30,50,.18); letter-spacing:-.01em; }
 h1 { font-size:20px; font-weight:700; color:#1f2328; margin-bottom:4px; display:flex; align-items:center; gap:8px; }
 h1 i { color:#0969da; font-size:18px; }
-.subtitle { font-size:11px; color:#444c56; font-family:'SF Mono','Fira Code',monospace; margin-bottom:16px; }
+.subtitle { font-size:12px; color:#444c56; font-family:'SF Mono','Fira Code',monospace; margin-bottom:16px; }
 .card { background:#fff; border:1px solid #d0d7de; border-radius:10px; padding:16px 20px; margin-bottom:14px; }
-.section-label { text-transform:uppercase; font-size:10px; font-weight:700; letter-spacing:.08em; color:#57606a; margin-bottom:8px; }
+.section-label { text-transform:uppercase; font-size:12px; font-weight:700; letter-spacing:.08em; color:#57606a; margin-bottom:8px; }
 h2 { font-size:15px; font-weight:700; color:#1f2328; margin-bottom:12px; display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
 h2 .g { margin-left:auto; }
 a { color:#0969da; text-decoration:none; }
 a:hover { text-decoration:underline; }
-code { font-family:'SF Mono','Fira Code',monospace; font-size:11px; background:#f6f8fa; border:1px solid #d0d7de; border-radius:4px; padding:1px 5px; }
-.badge { display:inline-flex; align-items:center; gap:5px; padding:2px 9px; border-radius:12px; font-size:11px; font-weight:600; border:1px solid; white-space:nowrap; }
-.badge i { font-size:9.5px; opacity:.85; }
+code { font-family:'SF Mono','Fira Code',monospace; font-size:12px; background:#f6f8fa; border:1px solid #d0d7de; border-radius:4px; padding:1px 5px; }
+.badge { display:inline-flex; align-items:center; gap:5px; padding:2px 9px; border-radius:12px; font-size:12px; font-weight:600; border:1px solid; white-space:nowrap; }
+.badge i { font-size:12px; opacity:.85; }
 .badge-green { background:#dafbe1; color:#1a7f37; border-color:#a7e5b6; }
 .badge-red { background:#ffebe9; color:#cf222e; border-color:#ffc1bc; }
 .badge-yellow { background:#fff8c5; color:#9a6700; border-color:#ecd77e; }
 .badge-blue { background:#ddf4ff; color:#0550ae; border-color:#addcff; }
 .badge-black { background:#1f2328; color:#fff; border-color:#1f2328; }
 .badge-grey { background:#f6f8fa; color:#57606a; border-color:#d0d7de; }
-.tag { display:inline-block; background:#eef2ff; color:#5b6ab0; border:1px solid #c7d2fe; border-radius:6px; font-size:11px; padding:2px 8px; margin:0 6px 6px 0; font-family:'SF Mono',monospace; }
+.tag { display:inline-block; background:#eef2ff; color:#5b6ab0; border:1px solid #c7d2fe; border-radius:6px; font-size:12px; padding:2px 8px; margin:0 6px 6px 0; font-family:'SF Mono',monospace; }
 .muted { color:#57606a; font-size:12px; }
 .summary { font-size:13.5px; line-height:1.65; color:#1f2328; margin-bottom:12px; }
 .pills { display:flex; flex-wrap:wrap; gap:12px; }
 .pill { background:#f6f8fa; border:1px solid #d0d7de; border-radius:8px; padding:10px 16px; min-width:88px; }
 .pill .n { font-size:22px; font-weight:700; color:#424a53; }
-.pill .l { font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:#57606a; }
+.pill .l { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#57606a; }
 .pill.red { background:#ffebe9; border-color:#ffc1bc; }
 .pill.red .n { color:#cf222e; } .pill.red .l { color:#a0202b; }
 .pill.yellow { background:#fff8c5; border-color:#ecd77e; }
@@ -51,17 +51,17 @@ code { font-family:'SF Mono','Fira Code',monospace; font-size:11px; background:#
 .pill.blue .n { color:#0550ae; } .pill.blue .l { color:#0a4a8a; }
 .pill.green { background:#dafbe1; border-color:#7ee2a8; }
 .pill.green .n { color:#1a7f37; } .pill.green .l { color:#116329; }
-.vit-line { margin-top:10px; font-size:11px; color:#57606a; line-height:1.6; }
+.vit-line { margin-top:10px; font-size:12px; color:#57606a; line-height:1.6; }
 .vit-line b { color:#1f2328; font-weight:700; }
-.vit-line i { color:#8b949e; margin-right:3px; font-size:10px; }
+.vit-line i { color:#8b949e; margin-right:3px; font-size:12px; }
 .ov-flex { display:flex; gap:22px; align-items:center; flex-wrap:wrap; }
 .ov-left { flex:1; min-width:260px; }
 .ov-right { flex:0 0 auto; text-align:center; }
-.ov-lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:#57606a; margin-top:4px; }
+.ov-lbl { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:#57606a; margin-top:4px; }
 .scorecard { display:flex; gap:4px; margin-top:14px; padding-top:12px; border-top:1px solid #eaecef; }
 .sc-item { text-align:center; flex:1 1 0; min-width:0; }
-.sc-lbl { font-size:9px; font-weight:700; color:#1f2328; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.sc-lbl i { font-size:8px; margin-right:1px; }
+.sc-lbl { font-size:12px; font-weight:700; color:#1f2328; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sc-lbl i { font-size:12px; margin-right:1px; }
 ul.pts { margin:6px 0 0 18px; }
 ul.pts li { font-size:13px; line-height:1.6; color:#1f2328; margin-bottom:4px; }
 .finding { border:1px solid #e3e8ee; border-radius:8px; padding:14px 16px; margin-bottom:12px; }
@@ -69,7 +69,7 @@ ul.pts li { font-size:13px; line-height:1.6; color:#1f2328; margin-bottom:4px; }
 .finding .head { display:flex; flex-wrap:nowrap; align-items:flex-start; gap:10px; margin-bottom:8px; }
 .finding .title { font-size:14px; font-weight:600; color:#1f2328; flex:1 1 auto; min-width:0; }
 .finding .badges { margin-left:auto; display:flex; align-items:center; gap:6px; flex:0 0 auto; flex-wrap:wrap; justify-content:flex-end; }
-.kv { font-size:10.5px; line-height:1.6; color:#1f2328; margin-top:4px; }
+.kv { font-size:12px; line-height:1.6; color:#1f2328; margin-top:4px; }
 .kv b { color:#57606a; font-weight:600; }
 .gbu { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
 .gbu .col { border:1px solid #d0d7de; border-radius:8px; padding:14px; }
@@ -80,7 +80,7 @@ ul.pts li { font-size:13px; line-height:1.6; color:#1f2328; margin-bottom:4px; }
 .gbu ul { margin-left:16px; } .gbu li { font-size:12.5px; line-height:1.55; margin-bottom:5px; color:#1f2328; }
 .table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%; border:1px solid #d0d7de; border-radius:8px; }
 table { width:100%; border-collapse:collapse; font-size:12px; min-width:420px; }
-th { text-align:left; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#57606a; padding:6px 10px; border-bottom:1px solid #d0d7de; white-space:nowrap; background:#f6f8fa; }
+th { text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#57606a; padding:6px 10px; border-bottom:1px solid #d0d7de; white-space:nowrap; background:#f6f8fa; }
 td { padding:6px 10px; border-bottom:1px solid #eaecef; color:#1f2328; vertical-align:top; }
 tr:last-child td { border-bottom:none; }
 .fmm { overflow-x:hidden; border:1px solid #d0d7de; border-radius:10px; background:#fff; padding:10px; margin-bottom:12px; }
@@ -95,19 +95,19 @@ ul.tree ul li:before { background:#d8dce1; }
 .tech-name { display:flex; align-items:center; gap:9px; font-weight:600; }
 .tech-badge { width:22px; height:22px; flex:0 0 22px; border-radius:6px; background:#fff; border:1px solid #e0e4ea; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 1px 2px rgba(0,0,0,.06); }
 .tech-ico { width:14px; height:14px; object-fit:contain; display:block; }
-.tech-mono { width:22px; height:22px; flex:0 0 22px; border-radius:6px; background:#eef2ff; color:#5b6ab0; border:1px solid #c7d2fe; display:inline-flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; font-family:'SF Mono',monospace; }
+.tech-mono { width:22px; height:22px; flex:0 0 22px; border-radius:6px; background:#eef2ff; color:#5b6ab0; border:1px solid #c7d2fe; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; font-family:'SF Mono',monospace; }
 /* Icons sit on a permanently-white .tech-badge chip (this report is a fixed light theme, its
    background never darkens). Do NOT invert Simple Icons in dark mode - that turned black brand
    marks (Rust, Next.js) WHITE on the white chip, i.e. invisible. Brand colors render as-is. */
 a.tech-link { display:inline-flex; align-items:center; }
 .flow { margin:4px 0 16px; padding:14px 16px; background:#fbfcfe; border:1px solid #e4e8ed; border-radius:10px; }
 .flane { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin:6px 0; }
-.flane-lbl { font-size:10.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; padding:3px 9px; border-radius:999px; margin-right:4px; white-space:nowrap; }
+.flane-lbl { font-size:12px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; padding:3px 9px; border-radius:999px; margin-right:4px; white-space:nowrap; }
 .fnode { font-size:12px; font-weight:600; color:#1f2328; background:#f6f8fa; border:1px solid #d0d7de; border-radius:7px; padding:5px 10px; white-space:nowrap; }
 .farr { color:#9aa4af; font-size:13px; font-weight:700; }
 .flow-note { margin-top:10px; padding-top:9px; border-top:1px dashed #e4e8ed; font-size:12px; color:#57606a; line-height:1.55; }
 .lyr { margin:4px 0 16px; padding:14px 16px; background:#fbfcfe; border:1px solid #e4e8ed; border-radius:10px; }
-.lyr-dir { font-size:10.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:#57606a; margin-bottom:8px; }
+.lyr-dir { font-size:12px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:#57606a; margin-bottom:8px; }
 .lyr-box { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; padding:9px 13px; background:#fff; border:1px solid #d0d7de; border-radius:8px; }
 .lyr-name { font-size:13px; font-weight:700; color:#0969da; font-family:'SF Mono',ui-monospace,monospace; }
 .lyr-note { font-size:12px; color:#57606a; }
@@ -121,413 +121,601 @@ a.tech-link { display:inline-flex; align-items:center; }
 .dgwrap { margin:4px 0 16px; padding:14px 16px; background:#fbfcfe; border:1px solid #e4e8ed; border-radius:10px; }
 .dg { display:block; }
 .bottomline { background:#dafbe1; border:1px solid #b6e6c2; border-radius:10px; padding:18px 22px; color:#1a4d2b; font-size:13px; }
-.fixno { flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#1f2328; color:#fff; font-size:11.5px; font-weight:700; }
+.fixno { flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#1f2328; color:#fff; font-size:12px; font-weight:700; }
 .empty { color:#57606a; font-size:13px; font-style:italic; }
 @media (max-width:600px){
-  body{padding:12px;} .card{padding:12px 14px;} td,th{padding:5px 7px;font-size:10px;}
+  body{padding:12px;} .card{padding:12px 14px;} td,th{padding:5px 7px;font-size:12px;}
   h1{font-size:16px;} h2{font-size:13px;} .gbu{grid-template-columns:1fr;}
   .app-badge{width:48px;height:48px;} .app-badge .mono{width:48px;height:48px;font-size:22px;border-radius:10px;}
   /* tighter, tinier text on phones - no horizontal scroll anywhere */
-  .subtitle{font-size:10px;} .summary{font-size:12px;line-height:1.55;}
+  .subtitle{font-size:12px;} .summary{font-size:12px;line-height:1.55;}
   .pill{padding:8px 12px;min-width:74px;} .pill .n{font-size:18px;}
-  ul.pts li{font-size:11.5px;} .gbu li{font-size:11px;} ul.tree li{font-size:11px;}
-  .finding .title{font-size:12px;} .kv{font-size:9.5px;}
+  ul.pts li{font-size:12px;} .gbu li{font-size:12px;} ul.tree li{font-size:12px;}
+  .finding .title{font-size:12px;} .kv{font-size:12px;}
   .ov-flex{gap:14px;justify-content:center;} .ov-right canvas{width:96px !important;height:96px !important;}
-  .scorecard{gap:2px;} .sc-item{flex:1 1 0;} .sc-lbl{font-size:7.5px;letter-spacing:-.02em;}
+  .scorecard{gap:2px;} .sc-item{flex:1 1 0;} .sc-lbl{font-size:12px;letter-spacing:-.02em;}
 }
 </style></head><body><div class="page">
 <span class="chip">/repo-audit</span>
-
+<span class="model-badge" style="color:#bc4c00;border-color:#bc4c0066;background:#bc4c0014"><i class="fa-solid fa-microchip"></i>example run</span>
 <div class="app-badge"><span class="mono">O</span></div>
 <h1 style="color:#0969da;font-weight:800"><img src="data:image/png;base64,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" alt="" style="height:30px;width:30px;vertical-align:-7px;margin-right:10px;border-radius:7px"><a href="https://github.com/acme/orders-api" style="color:#0969da;text-decoration:none">orders-api</a></h1>
-<div class="subtitle"><a href="https://github.com/acme/orders-api" style="color:#0969da;text-decoration:none">acme/orders-api</a> @ main (749b251) . 2026-07-16 09:15 ET</div>
+<div class="subtitle"><a href="https://github.com/acme/orders-api" style="color:#0969da;text-decoration:none">acme/orders-api</a> @ main (a41c9f2) . 2026-09-18 10:20 ET</div>
 <div class="card"><div class="ov-flex"><div class="ov-left">
 <div class="pills">
-<div class="pill"><div class="n">12</div><div class="l">Findings</div></div>
-<div class="pill red"><div class="n">0</div><div class="l">Crit/High</div></div>
-<div class="pill yellow"><div class="n">1</div><div class="l">Medium</div></div>
-<div class="pill blue"><div class="n">11</div><div class="l">Low</div></div>
+<div class="pill"><div class="n">25</div><div class="l">Findings</div></div>
+<div class="pill red"><div class="n">7</div><div class="l">Crit/High</div></div>
+<div class="pill yellow"><div class="n">13</div><div class="l">Medium</div></div>
+<div class="pill blue"><div class="n">5</div><div class="l">Low</div></div>
 </div>
 <div class="pills" style="margin-top:8px">
-<div class="pill"><div class="n">326</div><div class="l">Files</div></div>
-<div class="pill"><div class="n">24,900</div><div class="l">LOC</div></div>
+<div class="pill"><div class="n">188</div><div class="l">Files</div></div>
+<div class="pill"><div class="n">21,460</div><div class="l">LOC</div></div>
 </div>
-<div class="vit-line"><i class="fa-solid fa-heart-pulse"></i> last commit <b>5h ago</b> &middot; <b>251</b> commits/90d &middot; <b>1</b> authors &middot; bus factor <b style="color:#9a6700">solo (1 author)</b> &middot; <b>0</b> stale branches</div>
+<div class="vit-line"><i class="fa-solid fa-heart-pulse"></i> last commit <b>3d ago</b> &middot; <b>214</b> commits/90d &middot; <b>7</b> authors &middot; bus factor <b style="color:#9a6700">54% 1 author</b> &middot; <b>9</b> stale branches</div>
 </div>
 <div class="ov-right"><canvas id="ovDonut" width="300" height="300" style="width:112px;height:112px;max-width:100%"></canvas></div>
 </div>
 <div class="scorecard">
-<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#1a7f37;color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #1a7f3755">A</div><div class="sc-lbl"><i class="fa-solid fa-sitemap" style="color:#cf222e"></i> Architect</div></div>
-<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#1a7f37;color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #1a7f3755">A</div><div class="sc-lbl"><i class="fa-solid fa-server" style="color:#9a6700"></i> Infra</div></div>
-<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#1a7f37;color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #1a7f3755">A</div><div class="sc-lbl"><i class="fa-solid fa-lock" style="color:#1a7f37"></i> Security</div></div>
-<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#1a7f37;color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #1a7f3755">A</div><div class="sc-lbl"><i class="fa-solid fa-gauge-high" style="color:#0969da"></i> Performance</div></div>
-<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#2da44e;color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #2da44e55">A-</div><div class="sc-lbl"><i class="fa-solid fa-code" style="color:#8250df"></i> Code</div></div>
-<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#1a7f37;color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #1a7f3755">A</div><div class="sc-lbl"><i class="fa-solid fa-flask" style="color:#24292f"></i> Tests</div></div>
-<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#1a7f37;color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #1a7f3755">A</div><div class="sc-lbl"><i class="fa-solid fa-book" style="color:#0891b2"></i> Docs</div></div>
-<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#1a7f37;color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #1a7f3755">A</div><div class="sc-lbl"><i class="fa-solid fa-palette" style="color:#bf3989"></i> UI/UX</div></div>
-<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#2da44e;color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #2da44e55">A-</div><div class="sc-lbl"><i class="fa-solid fa-diagram-project" style="color:#cf222e"></i> Features</div></div>
+<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#facc15;color:#1f2328;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #facc1555">B-</div><div class="sc-lbl"><i class="fa-solid fa-sitemap" style="color:#cf222e"></i> Architect</div></div>
+<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#eab308;color:#1f2328;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #eab30855">B</div><div class="sc-lbl"><i class="fa-solid fa-server" style="color:#9a6700"></i> Infra</div></div>
+<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#7c2d12;color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #7c2d1255">C+</div><div class="sc-lbl"><i class="fa-solid fa-lock" style="color:#1a7f37"></i> Security</div></div>
+<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#facc15;color:#1f2328;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #facc1555">B-</div><div class="sc-lbl"><i class="fa-solid fa-gauge-high" style="color:#0969da"></i> Performance</div></div>
+<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#facc15;color:#1f2328;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #facc1555">B-</div><div class="sc-lbl"><i class="fa-solid fa-code" style="color:#8250df"></i> Code</div></div>
+<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#c2410c;color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #c2410c55">C</div><div class="sc-lbl"><i class="fa-solid fa-flask" style="color:#24292f"></i> Tests</div></div>
+<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#7c2d12;color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #7c2d1255">C+</div><div class="sc-lbl"><i class="fa-solid fa-book" style="color:#0891b2"></i> Docs</div></div>
+<div class="sc-item"><div style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#eab308;color:#1f2328;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 2px 5px #eab30855">B</div><div class="sc-lbl"><i class="fa-solid fa-diagram-project" style="color:#cf222e"></i> Features</div></div>
 </div>
-</div>
-<div class="card">
-<h2><i class="fa-solid fa-code-compare" style="color:#8250df"></i> Since Last Audit <span class="muted" style="font-size:11px;font-weight:400">vs 2026-07-15 (round 2: Infra/Perf/Docs A)</span></h2>
-<div class="pills">
-<div class="pill green"><div class="n">4</div><div class="l">Fixed</div></div>
-<div class="pill red"><div class="n">0</div><div class="l">New</div></div>
-<div class="pill"><div class="n">3</div><div class="l">Still Open</div></div>
-</div>
-<div style="margin-top:10px">
-<span class="tag" style="margin-right:6px">Architect Audit: A- -&gt; <b>A</b></span>
-<span class="tag" style="margin-right:6px">Security Audit: A- -&gt; <b>A</b></span>
-<span class="tag" style="margin-right:6px">Tests Audit: A- -&gt; <b>A</b></span>
-<span class="tag" style="margin-right:6px">UI/UX Audit: A- -&gt; <b>A</b></span>
-</div>
-<div class="kv" style="margin-top:8px"><b style="color:#1a7f37">Fixed:</b> Multi-machine regression closed via a guarded same-origin proxy (Security A) + 6 proxy security tests; withErrorHandler now 43/43 routes incl. the proxy (Architect A); +37 tests -&gt; 389 total (~31/42 routes); flagship rag/search+ingest covered; a real rag/preferences bug found+fixed (Tests A); lib/ui-tokens.ts extracted - cardShell + heatRamp single source; dead TEXT_* exports removed (UI/UX A)</div>
-<div class="kv" style="margin-top:8px"><b style="color:#57606a">Still open:</b> TypeScript 2 majors / Tailwind 1 major behind - deliberate hold (Quality A-); Feature breadth is inherent to the product (Features A-); Low residuals: proxy ip:port surface, a2a root handler test, two sqlite lifecycles</div>
 </div>
 <div class="card">
 <h2><i class="fa-solid fa-list-ol" style="color:#cf222e"></i> Top Fixes First</h2>
 <div class="finding"><div class="head">
 <span class="fixno">1</span>
-<span class="title">Write down the TS7 / Tailwind4 migration trigger (Quality&#x27;s last medium)</span>
+<span class="title">Wrap order creation and stock decrement in one transaction</span>
 <span class="badges">
-<span class="badge" style="background:#8250df;color:#fff;border-color:#8250df"><i class="fa-solid fa-code"></i>Code</span>
-<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
-<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+<span class="badge" style="background:#cf222e;color:#fff;border-color:#cf222e"><i class="fa-solid fa-sitemap"></i>Architect</span>
+<span class="badge badge-red"><i class="fa-solid fa-bug"></i>Critical</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>M</span>
 </span></div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/package.json"><code>package.json</code></a></div>
-<div class="kv"><b>Why first:</b> The only remaining medium is the deliberate dep-major hold - not a defect, but the compounding liability deserves a written trigger so it is a decision, not drift.</div>
-<div class="kv"><b>Fix:</b> A short decision doc: migrate when Next requires TS6+ or a needed plugin drops TW3 support; keep the hold until then.</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/controllers/orders.controller.ts#L218"><code>src/controllers/orders.controller.ts:218</code></a></div>
+<div class="kv"><b>Why first:</b> Two sequential writes with no transaction: an insert into orders followed by a stock decrement. A crash or a rejected decrement between them leaves a paid order with stock never reserved, and two concurrent buyers can both pass the availability check.</div>
+<div class="kv"><b>Fix:</b> Move both writes inside a single prisma.$transaction, and make the decrement conditional (UPDATE ... WHERE stock &gt;= qty) so the database, not the request handler, is what prevents overselling.</div>
 </div>
 <div class="finding"><div class="head">
 <span class="fixno">2</span>
-<span class="title">Drop the proxy&#x27;s raw ip:port branch (registry-only)</span>
+<span class="title">Stop logging the full Stripe webhook body</span>
 <span class="badges">
 <span class="badge" style="background:#1a7f37;color:#fff;border-color:#1a7f37"><i class="fa-solid fa-lock"></i>Security</span>
-<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
+<span class="badge badge-red"><i class="fa-solid fa-bug"></i>High</span>
 <span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
 </span></div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/app/api/proxy/route.ts#L35"><code>app/api/proxy/route.ts:35</code></a></div>
-<div class="kv"><b>Why first:</b> Cheapest way to shrink the bearer-relay surface to exactly the registered machines the UI actually uses.</div>
-<div class="kv"><b>Fix:</b> Remove the ip:port direct branch; resolve only via the machines registry.</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/routes/webhooks.ts#L44"><code>src/routes/webhooks.ts:44</code></a></div>
+<div class="kv"><b>Why first:</b> The raw webhook payload is written to the application log at info level. It carries customer email, billing address and the payment-method fingerprint, so PII lands in log storage that has a different retention policy and a much wider read audience than the database.</div>
+<div class="kv"><b>Fix:</b> Log event.id and event.type only. If the body is needed for debugging, put it behind a flag that is off in production and redact customer and payment_method before writing.</div>
 </div>
 <div class="finding"><div class="head">
 <span class="fixno">3</span>
-<span class="title">Route-test the a2a root exec dispatch</span>
+<span class="title">Add the composite index the order-history query actually needs</span>
 <span class="badges">
-<span class="badge" style="background:#24292f;color:#fff;border-color:#24292f"><i class="fa-solid fa-flask"></i>Tests</span>
-<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
+<span class="badge" style="background:#0969da;color:#fff;border-color:#0969da"><i class="fa-solid fa-gauge-high"></i>Performance</span>
+<span class="badge badge-red"><i class="fa-solid fa-bug"></i>High</span>
 <span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
 </span></div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/app/api/a2a/route.ts"><code>app/api/a2a/route.ts</code></a></div>
-<div class="kv"><b>Why first:</b> The one high-privilege handler still without a route-level net; the guard lib is tested but not the dispatch.</div>
-<div class="kv"><b>Fix:</b> Happy-path POST dispatch + malformed-body rejection.</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/repositories/order.repo.ts#L96"><code>src/repositories/order.repo.ts:96</code></a></div>
+<div class="kv"><b>Why first:</b> The customer order-history query filters on customer_id and sorts by created_at, but only customer_id is indexed, so Postgres sorts the whole matching set on every call. It is the second most-called endpoint and the cost grows with each customer&#x27;s history.</div>
+<div class="kv"><b>Fix:</b> Add a composite index on (customer_id, created_at DESC) and confirm with EXPLAIN that the sort disappears from the plan.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="fixno">4</span>
+<span class="title">Cover the refund path before touching it again</span>
+<span class="badges">
+<span class="badge" style="background:#24292f;color:#fff;border-color:#24292f"><i class="fa-solid fa-flask"></i>Tests</span>
+<span class="badge badge-red"><i class="fa-solid fa-bug"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>M</span>
+</span></div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/services/refund.service.ts#L1"><code>src/services/refund.service.ts:1</code></a></div>
+<div class="kv"><b>Why first:</b> The refund service moves money and has zero tests, while being the third most-changed file in the last 90 days. Every change to it is currently validated by review alone.</div>
+<div class="kv"><b>Fix:</b> Start with the three branches that decide an amount: full refund, partial refund, and an already-refunded order. A fake Stripe client is enough - the point is the arithmetic and the guard, not the network call.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="fixno">5</span>
+<span class="title">Fail the build when a migration is missing</span>
+<span class="badges">
+<span class="badge" style="background:#9a6700;color:#fff;border-color:#9a6700"><i class="fa-solid fa-server"></i>Infra</span>
+<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span></div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/.github/workflows/ci.yml#L31"><code>.github/workflows/ci.yml:31</code></a></div>
+<div class="kv"><b>Why first:</b> CI runs the test suite against a database built from migrations, but nothing checks that the Prisma schema and the migration history agree. A schema edit committed without its migration passes CI and fails at deploy time instead.</div>
+<div class="kv"><b>Fix:</b> Add <code>npx prisma migrate diff --from-migrations ./prisma/migrations --to-schema-datamodel ./prisma/schema.prisma --exit-code</code> as a CI step; a non-zero exit means a migration is missing.</div>
 </div>
 </div>
 <div class="card">
 <h2><i class="fa-solid fa-layer-group" style="color:#0969da"></i> Tech Stack</h2>
 <div class="table-wrap"><table style="min-width:560px"><thead><tr><th style="width:40%">Tech</th><th style="width:22%">Category</th><th style="width:38%">Version</th></tr></thead><tbody>
-<tr><td><div class="tech-name"><a class="tech-link" href="https://nextjs.org" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/nextdotjs" alt="Next.js" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>N</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/nextjs.org.ico&#39;"></span></a><span><a href="https://nextjs.org" target="_blank" rel="noopener">Next.js</a></span></div></td><td style="white-space:nowrap">Framework</td><td style="white-space:nowrap"><code>16.1.6</code></td></tr>
-<tr><td><div class="tech-name"><a class="tech-link" href="https://react.dev" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/react" alt="React" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>R</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/react.dev.ico&#39;"></span></a><span><a href="https://react.dev" target="_blank" rel="noopener">React</a></span></div></td><td style="white-space:nowrap">Library</td><td style="white-space:nowrap"><code>19.2.5</code></td></tr>
-<tr><td><div class="tech-name"><a class="tech-link" href="https://www.typescriptlang.org" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/typescript" alt="TypeScript" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>T</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/typescriptlang.org.ico&#39;"></span></a><span><a href="https://www.typescriptlang.org" target="_blank" rel="noopener">TypeScript</a></span></div></td><td style="white-space:nowrap">Language</td><td style="white-space:nowrap"><code>5.9</code></td></tr>
-<tr><td><div class="tech-name"><a class="tech-link" href="https://tailwindcss.com" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/tailwindcss" alt="Tailwind CSS" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>T</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/tailwindcss.com.ico&#39;"></span></a><span><a href="https://tailwindcss.com" target="_blank" rel="noopener">Tailwind CSS</a></span></div></td><td style="white-space:nowrap">Styling</td><td style="white-space:nowrap"><code>3.4</code></td></tr>
-<tr><td><div class="tech-name"><a class="tech-link" href="https://www.sqlite.org" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/sqlite" alt="SQLite" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>S</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/sqlite.org.ico&#39;"></span></a><span><a href="https://www.sqlite.org" target="_blank" rel="noopener">SQLite</a></span></div></td><td style="white-space:nowrap">Database</td><td style="white-space:nowrap"><code>better-sqlite3 7.6</code></td></tr>
-<tr><td><div class="tech-name"><a class="tech-link" href="https://supabase.com" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/supabase" alt="Supabase" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>S</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/supabase.com.ico&#39;"></span></a><span><a href="https://supabase.com" target="_blank" rel="noopener">Supabase</a></span></div></td><td style="white-space:nowrap">Database</td><td style="white-space:nowrap"><code>-</code></td></tr>
-<tr><td><div class="tech-name"><a class="tech-link" href="https://www.anthropic.com" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/anthropic" alt="Anthropic SDK" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>A</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/anthropic.com.ico&#39;"></span></a><span><a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic SDK</a></span></div></td><td style="white-space:nowrap">AI SDK</td><td style="white-space:nowrap"><code>0.92 / agent-sdk 0.2</code></td></tr>
-<tr><td><div class="tech-name"><a class="tech-link" href="https://modelcontextprotocol.io" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico" src="https://icons.duckduckgo.com/ip3/modelcontextprotocol.io.ico" alt="MCP" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>M</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/modelcontextprotocol.io.ico&#39;"></span></a><span><a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">MCP</a></span></div></td><td style="white-space:nowrap">Protocol</td><td style="white-space:nowrap"><code>sdk 1.29</code></td></tr>
-<tr><td><div class="tech-name"><a class="tech-link" href="https://huggingface.co" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/huggingface" alt="Transformers.js" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>T</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/huggingface.co.ico&#39;"></span></a><span><a href="https://huggingface.co" target="_blank" rel="noopener">Transformers.js</a></span></div></td><td style="white-space:nowrap">Embeddings</td><td style="white-space:nowrap"><code>4.2</code></td></tr>
-<tr><td><div class="tech-name"><a class="tech-link" href="https://recharts.org" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico" src="https://github.com/recharts.png" alt="Recharts" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>R</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/recharts.org.ico&#39;"></span></a><span><a href="https://recharts.org" target="_blank" rel="noopener">Recharts</a></span></div></td><td style="white-space:nowrap">Dataviz</td><td style="white-space:nowrap"><code>3.8</code></td></tr>
-<tr><td><div class="tech-name"><a class="tech-link" href="https://vitest.dev" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/vitest" alt="Vitest" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>V</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/vitest.dev.ico&#39;"></span></a><span><a href="https://vitest.dev" target="_blank" rel="noopener">Vitest</a></span></div></td><td style="white-space:nowrap">Tests</td><td style="white-space:nowrap"><code>4.1</code></td></tr>
-<tr><td><div class="tech-name"><a class="tech-link" href="https://playwright.dev" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico" src="https://icons.duckduckgo.com/ip3/playwright.dev.ico" alt="Playwright" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>P</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/playwright.dev.ico&#39;"></span></a><span><a href="https://playwright.dev" target="_blank" rel="noopener">Playwright</a></span></div></td><td style="white-space:nowrap">E2E Tests</td><td style="white-space:nowrap"><code>1.59</code></td></tr>
-<tr><td><div class="tech-name"><a class="tech-link" href="https://eslint.org" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/eslint" alt="ESLint" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>E</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/eslint.org.ico&#39;"></span></a><span><a href="https://eslint.org" target="_blank" rel="noopener">ESLint</a></span></div></td><td style="white-space:nowrap">Lint</td><td style="white-space:nowrap"><code>9.39</code></td></tr>
+<tr><td><div class="tech-name"><a class="tech-link" href="https://nodejs.org" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/nodedotjs" alt="Node.js" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>N</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/nodejs.org.ico&#39;"></span></a><span><a href="https://nodejs.org" target="_blank" rel="noopener">Node.js</a></span></div></td><td style="white-space:nowrap">Runtime</td><td style="white-space:nowrap"><code>20.11</code></td></tr>
+<tr><td><div class="tech-name"><a class="tech-link" href="https://expressjs.com" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/express" alt="Express" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>E</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/expressjs.com.ico&#39;"></span></a><span><a href="https://expressjs.com" target="_blank" rel="noopener">Express</a></span></div></td><td style="white-space:nowrap">HTTP</td><td style="white-space:nowrap"><code>4.19</code></td></tr>
+<tr><td><div class="tech-name"><a class="tech-link" href="https://www.postgresql.org" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/postgresql" alt="PostgreSQL" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>P</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/postgresql.org.ico&#39;"></span></a><span><a href="https://www.postgresql.org" target="_blank" rel="noopener">PostgreSQL</a></span></div></td><td style="white-space:nowrap">Database</td><td style="white-space:nowrap"><code>16</code></td></tr>
+<tr><td><div class="tech-name"><a class="tech-link" href="https://redis.io" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/redis" alt="Redis" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>R</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/redis.io.ico&#39;"></span></a><span><a href="https://redis.io" target="_blank" rel="noopener">Redis</a></span></div></td><td style="white-space:nowrap">Cache</td><td style="white-space:nowrap"><code>7.2</code></td></tr>
+<tr><td><div class="tech-name"><a class="tech-link" href="https://www.prisma.io" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/prisma" alt="Prisma" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>P</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/prisma.io.ico&#39;"></span></a><span><a href="https://www.prisma.io" target="_blank" rel="noopener">Prisma</a></span></div></td><td style="white-space:nowrap">ORM</td><td style="white-space:nowrap"><code>5.14</code></td></tr>
+<tr><td><div class="tech-name"><a class="tech-link" href="https://www.typescriptlang.org" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/typescript" alt="TypeScript" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>T</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/typescriptlang.org.ico&#39;"></span></a><span><a href="https://www.typescriptlang.org" target="_blank" rel="noopener">TypeScript</a></span></div></td><td style="white-space:nowrap">Language</td><td style="white-space:nowrap"><code>5.4</code></td></tr>
+<tr><td><div class="tech-name"><a class="tech-link" href="https://jestjs.io" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/jest" alt="Jest" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>J</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/jestjs.io.ico&#39;"></span></a><span><a href="https://jestjs.io" target="_blank" rel="noopener">Jest</a></span></div></td><td style="white-space:nowrap">Tests</td><td style="white-space:nowrap"><code>29</code></td></tr>
+<tr><td><div class="tech-name"><a class="tech-link" href="https://www.docker.com" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/docker" alt="Docker" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>D</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/docker.com.ico&#39;"></span></a><span><a href="https://www.docker.com" target="_blank" rel="noopener">Docker</a></span></div></td><td style="white-space:nowrap">Packaging</td><td style="white-space:nowrap"><code>-</code></td></tr>
+<tr><td><div class="tech-name"><a class="tech-link" href="https://github.com/features/actions" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/githubactions" alt="GitHub Actions" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>G</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/github.com.ico&#39;"></span></a><span><a href="https://github.com/features/actions" target="_blank" rel="noopener">GitHub Actions</a></span></div></td><td style="white-space:nowrap">CI</td><td style="white-space:nowrap"><code>-</code></td></tr>
+<tr><td><div class="tech-name"><a class="tech-link" href="https://stripe.com" target="_blank" rel="noopener"><span class="tech-badge"><img class="tech-ico si-ico" src="https://cdn.simpleicons.org/stripe" alt="Stripe" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML=&quot;<span class='tech-mono'>S</span>&quot;};this.src=&#39;https://icons.duckduckgo.com/ip3/stripe.com.ico&#39;"></span></a><span><a href="https://stripe.com" target="_blank" rel="noopener">Stripe</a></span></div></td><td style="white-space:nowrap">Payments</td><td style="white-space:nowrap"><code>14</code></td></tr>
 </tbody></table></div></div>
 <div class="card">
-<h2><i class="fa-solid fa-sitemap" style="color:#cf222e"></i> Architect Audit<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#1a7f37;color:#fff;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #1a7f3755">A</span></span></h2>
+<h2><i class="fa-solid fa-sitemap" style="color:#cf222e"></i> Architect Audit<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#facc15;color:#1f2328;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #facc1555">B-</span></span></h2>
 <details open style="margin:6px 0 4px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">File layers</summary>
-<div style="display:flex;flex-direction:column;align-items:stretch;gap:0;margin:12px 0 18px;max-width:780px"><div style="border:2px solid #0969da;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">app/(orders)/*/page.tsx</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">Thin server shells; routing + metadata only</div></div><div style="text-align:center;color:#afb8c1;font-size:15px;line-height:1;padding:4px 0">&darr;</div><div style="border:2px solid #1f883d;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">app/(orders)/_sections/* (30+)</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">All UI + client fetch via safeFetch/apiBase; MachineContext/ToastContext/SearchModal providers</div></div><div style="text-align:center;color:#afb8c1;font-size:15px;line-height:1;padding:4px 0">&darr;</div><div style="border:2px solid #9a6700;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">app/api/** (42 routes)</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">Read-mostly JSON over ~/.orders files, jsonl transcripts, SQLite; TTL caches; force-dynamic</div></div><div style="text-align:center;color:#afb8c1;font-size:15px;line-height:1;padding:4px 0">&darr;</div><div style="border:2px solid #8250df;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">lib/</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">rag-* (FTS5 search/ingest/eval), live-sessions (lsof), a2a-auth, safe-read, pricing, db adapter</div></div><div style="text-align:center;color:#afb8c1;font-size:15px;line-height:1;padding:4px 0">&darr;</div><div style="border:2px solid #cf222e;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">lib/db (dashboard.db) + lib/rag-db (rag.db)</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">Two better-sqlite3 stores; adapter+noop vs raw singleton</div></div><div style="text-align:center;color:#afb8c1;font-size:15px;line-height:1;padding:4px 0">&darr;</div><div style="border:2px solid #0550ae;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">middleware.ts</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">Security headers, LAN CORS, documented no-global-auth boundary</div></div><div style="text-align:center;color:#afb8c1;font-size:15px;line-height:1;padding:4px 0">&darr;</div><div style="border:2px solid #116329;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">mcp-server.ts</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">stdio MCP server exposing rag_* tools by proxying localhost:3003</div></div><div style="text-align:center;color:#afb8c1;font-size:15px;line-height:1;padding:4px 0">&darr;</div><div style="border:2px solid #953800;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">External surface</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">A2A JSON-RPC peer endpoint + machines registry for the M4/pi5 fleet</div></div></div>
+<div style="display:flex;flex-direction:column;align-items:stretch;gap:0;margin:12px 0 18px;max-width:780px"><div style="border:2px solid #0969da;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">src/routes/</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">HTTP surface: verb, path, auth middleware, and a controller call</div></div><div style="text-align:center;color:#afb8c1;font-size:15px;line-height:1;padding:4px 0">&darr;</div><div style="border:2px solid #1f883d;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">src/controllers/</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">Request handling plus, in practice, most business logic</div></div><div style="text-align:center;color:#afb8c1;font-size:15px;line-height:1;padding:4px 0">&darr;</div><div style="border:2px solid #9a6700;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">src/services/</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">Intended home for business logic - currently holds only refund.service.ts</div></div><div style="text-align:center;color:#afb8c1;font-size:15px;line-height:1;padding:4px 0">&darr;</div><div style="border:2px solid #8250df;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">src/repositories/</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">The only Prisma access; one module per aggregate</div></div><div style="text-align:center;color:#afb8c1;font-size:15px;line-height:1;padding:4px 0">&darr;</div><div style="border:2px solid #cf222e;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">src/cache/</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">Redis cache-aside helpers with TTLs</div></div><div style="text-align:center;color:#afb8c1;font-size:15px;line-height:1;padding:4px 0">&darr;</div><div style="border:2px solid #0550ae;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">src/middleware/</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">Auth, rate limiting, request id, centralised error mapping</div></div><div style="text-align:center;color:#afb8c1;font-size:15px;line-height:1;padding:4px 0">&darr;</div><div style="border:2px solid #116329;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">prisma/</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">Schema and migration history</div></div><div style="text-align:center;color:#afb8c1;font-size:15px;line-height:1;padding:4px 0">&darr;</div><div style="border:2px solid #953800;border-radius:10px;padding:11px 15px;background:#ffffff;box-shadow:0 1px 2px rgba(27,31,36,0.06)"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:13px;color:#1f2328;letter-spacing:-0.2px">tests/</div><div style="font-size:12px;color:#57606a;margin-top:4px;line-height:1.45">Jest unit and supertest integration suites</div></div></div>
 </details>
 <details style="margin:2px 0 10px"><summary style="cursor:pointer;color:#57606a;font-size:13px">Full summary</summary>
-<div class="summary" style="margin-top:8px">One error convention is now repo-wide: 43/43 routes (incl. the new proxy) run through withErrorHandler, and the jsonl-walker + machines-db extractions from the prior round hold. The layering, multi-machine seam, and documented trust boundaries remain clean. Residuals are two acknowledged lows.</div></details>
-<ul class="pts"><li><strong>Pattern discipline is high:</strong> every section is a client component using safeFetch + <code>useMachine()</code>.apiBase, every hot route is force-dynamic with a module-level TTL cache; the new SkillUsagePanel.tsx (83 LOC) and <code>skill-usage/route.ts</code> are textbook instances.</li><li>Multi-machine is a genuine architectural seam: <code>apiBase()</code> (<a href="https://github.com/acme/orders-api/blob/main/MachineContext.tsx#L41"><code>MachineContext.tsx:41</code></a>) makes remote machines transparent to all 30+ sections, and <a href="https://github.com/acme/orders-api/blob/main/middleware.ts#L8"><code>middleware.ts:8</code></a> makes the CORS side correct (Origin echo only for LAN, no Allow-Credentials).</li><li><strong>Trust boundaries are written down:</strong> <a href="https://github.com/acme/orders-api/blob/main/middleware.ts#L61"><code>middleware.ts:61</code></a> explains why there is no global auth gate (Host is spoothe model) and points to <code>lib/a2a-auth.ts</code>, where dangerous routes self-guard with timing-safe bearer or strict Sec-Fetch-Site + trusted-Host.</li><li>Shared error handling is a neighborhood convention, not a repo one: withErrorHandler wraps exactly the 12 app/api/rag/* routes and none of the ~30 app/api/orders/* routes, which hand-roll try/catch.</li><li><strong>Two coexisting SQLite lifecycles:</strong> <code>lib/db/sqlite.ts</code> opens/closes a new Database per call while <code>lib/rag-db.ts</code> holds a process singleton - both work, but a new contributor cannot infer the house style.</li><li>The jsonl-walker loop (readdir projects -&gt; stat -&gt; mtime filter -&gt; readLastBytes -&gt; per-line JSON.parse) is now copy-pasted across ~9 routes including the new <a href="https://github.com/acme/orders-api/blob/main/skill-usage/route.ts#L61"><code>skill-usage/route.ts:61</code></a>; readLastBytes was already extracted, the walker itself is the next obvious extraction.</li><li><a href="https://github.com/acme/orders-api/blob/main/mcp-server.ts#L6"><code>mcp-server.ts:6</code></a> hardcodes <code>RAG_URL</code> = http://localhost:3003, coupling the MCP tool surface to one port despite the registry-driven multi-machine model everywhere else.</li></ul>
+<div class="summary" style="margin-top:8px">A conventional three-layer Express service - routes, controllers, repositories - with Prisma as the only data access path and Redis used purely as a cache aside. The layering is real and mostly respected, but the controller layer has absorbed business logic that belongs in services, and there is no transaction boundary anywhere in the write path, so invariants that span two tables are enforced by convention rather than by the database.</div></details>
+<ul class="pts"><li><strong>Every HTTP route is a thin binding:</strong> <code>src/routes/orders.ts:12</code> maps the verb to a controller method and does nothing else, so routing can be read in one file.</li><li>All database access funnels through <code>src/repositories/</code>; no controller imports the Prisma client directly (<code>src/repositories/order.repo.ts:1</code> is the only place <code>new PrismaClient</code> appears), which is what makes the data layer swappable at all.</li><li>The controller layer is where the design slips: <code>src/controllers/orders.controller.ts</code> is 902 lines and holds pricing, stock and fulfilment decisions that the empty <code>src/services/</code> directory was clearly meant to own.</li><li>No transaction boundary exists in the codebase - <code>grep -rn &#x27;prisma.$transaction&#x27; src/</code> returns nothing - so any invariant spanning two tables (order + stock, refund + ledger) is only as strong as the ordering of two separate awaits.</li><li>Redis is a clean cache-aside at <code>src/cache/product.cache.ts:22</code>: read-through with a TTL, and every write path deletes the key rather than updating it, so a stale entry cannot outlive a change.</li><li>Error handling is centralised in one Express error middleware (<code>src/middleware/error.ts:18</code>) that maps a small set of domain errors to status codes - the single best structural decision in the repo.</li><li>The Stripe integration is the one place the layering is bypassed: <code>src/routes/webhooks.ts:44</code> reads and writes the database directly from the route, with no controller or repository in between.</li></ul>
 <details style="margin-top:12px"><summary style="cursor:pointer;color:#57606a;font-size:13px">Layer table</summary>
 <div class="table-wrap" style="margin-top:8px"><table><thead><tr>
 <th>Layer</th><th>Role</th></tr></thead><tbody>
-<tr><td>app/(orders)/<code>*/page.tsx</code></td><td>Thin server shells; routing + metadata only</td></tr>
-<tr><td>app/(orders)/_sections/* (30+)</td><td>All UI + client fetch via safeFetch/apiBase; MachineContext/ToastContext/SearchModal providers</td></tr>
-<tr><td>app/api/** (42 routes)</td><td>Read-mostly JSON over ~/.orders files, jsonl transcripts, SQLite; TTL caches; force-dynamic</td></tr>
-<tr><td>lib/</td><td>rag-* (FTS5 search/ingest/eval), live-sessions (lsof), a2a-auth, safe-read, pricing, db adapter</td></tr>
-<tr><td>lib/db (dashboard.db) + lib/rag-db (rag.db)</td><td>Two better-sqlite3 stores; adapter+noop vs raw singleton</td></tr>
-<tr><td>middleware.ts</td><td>Security headers, LAN CORS, documented no-global-auth boundary</td></tr>
-<tr><td>mcp-server.ts</td><td>stdio MCP server exposing rag_* tools by proxying localhost:3003</td></tr>
-<tr><td>External surface</td><td>A2A JSON-RPC peer endpoint + machines registry for the M4/pi5 fleet</td></tr>
+<tr><td>src/routes/</td><td>HTTP surface: verb, path, auth middleware, and a controller call</td></tr>
+<tr><td>src/controllers/</td><td>Request handling plus, in practice, most business logic</td></tr>
+<tr><td>src/services/</td><td>Intended home for business logic - currently holds only refund.service.ts</td></tr>
+<tr><td>src/repositories/</td><td>The only Prisma access; one module per aggregate</td></tr>
+<tr><td>src/cache/</td><td>Redis cache-aside helpers with TTLs</td></tr>
+<tr><td>src/middleware/</td><td>Auth, rate limiting, request id, centralised error mapping</td></tr>
+<tr><td>prisma/</td><td>Schema and migration history</td></tr>
+<tr><td>tests/</td><td>Jest unit and supertest integration suites</td></tr>
 </tbody></table></div></details>
+</div>
+<div class="card">
+<h2><i class="fa-solid fa-server" style="color:#9a6700"></i> Infra Audit<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#eab308;color:#1f2328;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #eab30855">B</span></span></h2>
+<div class="summary">Containerised, reproducible and deployed from CI on every merge to main, with a real Postgres service in the test job rather than a mock. Two gaps keep it off an A: nothing verifies that the Prisma schema and its migration history agree, so a missing migration fails at deploy rather than in CI, and the production image still runs as root.</div>
+<div class="pills" style="margin-top:12px">
+<div class="pill"><div class="n" style="font-size:16px">4m 12s</div><div class="l">CI wall clock</div></div>
+<div class="pill"><div class="n" style="font-size:16px">412 MB</div><div class="l">Image size</div></div>
+<div class="pill"><div class="n" style="font-size:16px">11</div><div class="l">Deploys / week</div></div>
+<div class="pill"><div class="n" style="font-size:16px">documented, untested</div><div class="l">Rollback path</div></div>
+</div>
 <div style="margin-top:14px">
 <div class="finding"><div class="head">
-<span class="title">Two SQLite open/close lifecycles coexist</span>
+<span class="title">CI never checks that the schema and the migration history agree</span>
+<span class="badges">
+<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/.github/workflows/ci.yml#L31"><code>.github/workflows/ci.yml:31</code></a></div>
+<div class="kv"><b>Impact:</b> A schema change committed without its migration passes every CI gate and then fails at deploy, when the container starts against a database that does not have the column. The failure lands in production deploy logs instead of on the pull request.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/.github/workflows/ci.yml#L31"><code>.github/workflows/ci.yml:31</code></a>  run: npx prisma migrate deploy &amp;&amp; npm test
+prisma/migrations/  20 directories, newest 20260821_add_order_notes
+No <code>migrate diff</code> or <code>--exit-code</code> anywhere in the workflow.</div>
+<div class="kv"><b>Fix:</b> Add <code>npx prisma migrate diff --from-migrations ./prisma/migrations --to-schema-datamodel ./prisma/schema.prisma --exit-code</code> as its own step; non-zero means a migration is missing.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">Health check reports the process, not its dependencies</span>
+<span class="badges">
+<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/routes/health.ts#L9"><code>src/routes/health.ts:9</code></a></div>
+<div class="kv"><b>Impact:</b> The endpoint returns 200 as long as Node is running, so an instance that has lost its database connection pool stays in the load balancer and keeps taking traffic it cannot serve.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/src/routes/health.ts#L9"><code>src/routes/health.ts:9</code></a>  res.json({ ok: true, uptime: process.<code>uptime()</code> })
+No query, no Redis ping; the orchestrator&#x27;s readiness probe points at this path.</div>
+<div class="kv"><b>Fix:</b> Run <code>SELECT 1</code> and a Redis PING with a short timeout, and return 503 when either fails. Keep a separate liveness path that stays cheap.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">The production container runs as root</span>
+<span class="badges">
+<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/Dockerfile#L24"><code>Dockerfile:24</code></a></div>
+<div class="kv"><b>Impact:</b> Any remote code execution in the Node process starts with uid 0 inside the container, which removes the last cheap barrier between an application bug and the container filesystem, including the mounted secrets directory.</div>
+<div class="kv"><b>Evidence:</b> Dockerfile:24  CMD [&quot;node&quot;, &quot;<code>dist/server.js</code>&quot;]
+No USER directive anywhere in the file; <code>docker run --rm orders-api id</code> prints uid=0(root).</div>
+<div class="kv"><b>Fix:</b> Add <code>RUN addgroup -S app &amp;&amp; adduser -S app -G app</code> and <code>USER app</code> before CMD, and chown the app directory in the build stage.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">Secrets are read from the environment with no validation at boot</span>
 <span class="badges">
 <span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
 <span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
 <span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
 </span>
 </div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/lib/machines-db.ts vs lib/rag-db.ts"><code>lib/machines-db.ts vs lib/rag-db.ts</code></a></div>
-<div class="kv"><b>Impact:</b> Per-request open/close (machines) vs cached singleton (rag); minor inconsistency, no correctness bug.</div>
-<div class="kv"><b>Evidence:</b> openMachinesDb opens/closes per call; rag uses <code>getDb()</code> singleton.</div>
-<div class="kv"><b>Fix:</b> Pick one lifecycle when next touching either module.</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/config.ts#L8"><code>src/config.ts:8</code></a></div>
+<div class="kv"><b>Impact:</b> A missing or misspelled variable surfaces as undefined deep in a request handler, typically as a confusing runtime error under load rather than a clear failure at startup.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/src/config.ts#L8"><code>src/config.ts:8</code></a>  export const config = { databaseUrl: process.env.<code>DATABASE_URL</code>, stripeKey: process.env.<code>STRIPE_SECRET_KEY</code> }
+No throw, no schema, no default; both values flow onward as possibly-undefined.</div>
+<div class="kv"><b>Fix:</b> Validate the whole environment once at boot with a schema and exit non-zero on a miss, so a misconfigured deploy fails immediately and visibly.</div>
 </div>
+</div>
+</div>
+<div class="card">
+<h2><i class="fa-solid fa-lock" style="color:#1a7f37"></i> Security Audit<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#7c2d12;color:#fff;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #7c2d1255">C+</span></span></h2>
+<div class="summary">Authentication and authorisation are handled consistently and the obvious injection surfaces are closed by Prisma&#x27;s parameterisation, but the service leaks customer PII into application logs, trusts a webhook whose signature it verifies only when a secret happens to be set, and ships rate limiting that a single header can bypass. None of these need an attacker to be clever.</div>
+<div class="pills" style="margin-top:12px">
+<div class="pill"><div class="n" style="font-size:16px">41 of 44</div><div class="l">Routes behind auth middleware</div></div>
+<div class="pill"><div class="n" style="font-size:16px">2</div><div class="l">Raw SQL call sites</div></div>
+<div class="pill"><div class="n" style="font-size:16px">1</div><div class="l">npm audit (high or above)</div></div>
+<div class="pill"><div class="n" style="font-size:16px">0</div><div class="l">Secrets committed</div></div>
+</div>
+<div style="margin-top:14px">
 <div class="finding"><div class="head">
-<span class="title">turns-by-hour still hand-rolls its jsonl walk</span>
+<span class="title">The full Stripe webhook body is written to the application log</span>
 <span class="badges">
-<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
-<span class="badge badge-yellow"><i class="fa-solid fa-bullseye"></i>Med</span>
+<span class="badge badge-red"><i class="fa-solid fa-bug"></i>High</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
 <span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
 </span>
 </div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/app/api/orders/turns-by-hour/route.ts#L185"><code>app/api/orders/turns-by-hour/route.ts:185</code></a></div>
-<div class="kv"><b>Impact:</b> One bespoke walk to keep in sync; justified by folder-level filters the shared walker lacks.</div>
-<div class="kv"><b>Evidence:</b> Inline readdir loop with isRealRepo + username filters.</div>
-<div class="kv"><b>Fix:</b> Add a folderFilter option to walkProjectJsonl if a 4th consumer appears.</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/routes/webhooks.ts#L44"><code>src/routes/webhooks.ts:44</code></a></div>
+<div class="kv"><b>Impact:</b> Customer email, billing address and the payment-method fingerprint land in log storage, which has a longer retention and a far wider read audience than the database. It converts a payments integration into a PII exposure that no data-access review would catch.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/src/routes/webhooks.ts#L44"><code>src/routes/webhooks.ts:44</code></a>  logger.info(&#x27;stripe webhook&#x27;, { body: req.body })
+<a href="https://github.com/acme/orders-api/blob/main/src/routes/webhooks.ts#L51"><code>src/routes/webhooks.ts:51</code></a>  const { customer_email, billing_details } = req.body.data.object;</div>
+<div class="kv"><b>Fix:</b> Log <code>event.id</code> and <code>event.type</code> only. If the body is genuinely needed, put it behind a debug flag that is off in production and redact customer and payment_method first.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">Webhook signature verification is skipped when the secret is unset</span>
+<span class="badges">
+<span class="badge badge-red"><i class="fa-solid fa-bug"></i>High</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/routes/webhooks.ts#L22"><code>src/routes/webhooks.ts:22</code></a></div>
+<div class="kv"><b>Impact:</b> The verification branch is conditional on the environment variable being present, so an environment that is missing <code>STRIPE_WEBHOOK_SECRET</code> accepts unsigned requests and processes them as real payment events. A misconfigured deploy silently becomes an unauthenticated write endpoint for orders.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/src/routes/webhooks.ts#L22"><code>src/routes/webhooks.ts:22</code></a>  if (process.env.<code>STRIPE_WEBHOOK_SECRET</code>) {
+<a href="https://github.com/acme/orders-api/blob/main/src/routes/webhooks.ts#L23"><code>src/routes/webhooks.ts:23</code></a>    stripe.webhooks.constructEvent(req.rawBody, sig, process.env.<code>STRIPE_WEBHOOK_SECRET</code>);
+<a href="https://github.com/acme/orders-api/blob/main/src/routes/webhooks.ts#L26"><code>src/routes/webhooks.ts:26</code></a>  }  // no else - unsigned requests fall through to the handler</div>
+<div class="kv"><b>Fix:</b> Invert it: refuse to start without the secret, and reject every webhook request that fails verification. A missing secret is a deployment error, not a reason to trust the caller.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">One dependency with a known high-severity advisory</span>
+<span class="badges">
+<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/package.json#L29"><code>package.json:29</code></a></div>
+<div class="kv"><b>Impact:</b> The advisory is a prototype-pollution issue in a transitive parser used on the request path, so it is reachable from unauthenticated input rather than only from build tooling.</div>
+<div class="kv"><b>Evidence:</b> npm audit --json  -&gt;  &quot;high&quot;: 1, &quot;moderate&quot;: 3, &quot;low&quot;: 5
+The high advisory resolves to a transitive dependency of the body parsing stack; a patched version exists.</div>
+<div class="kv"><b>Fix:</b> Run <code>npm audit fix</code>, confirm the tree no longer resolves the vulnerable version, and add <code>npm audit --audit-level=high</code> to CI so the next one fails the build.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">Password reset tokens are generated with Math.random</span>
+<span class="badges">
+<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/services/refund.service.ts#L8"><code>src/services/refund.service.ts:8</code></a></div>
+<div class="kv"><b>Impact:</b> Math.random is not a cryptographic source and its output is predictable from a few observed values, so a reset token can be guessed rather than intercepted. The token is the only thing standing between a known email address and account takeover.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/src/services/refund.service.ts#L8"><code>src/services/refund.service.ts:8</code></a>  const token = Math.<code>random()</code>.toString(36).slice(2) + Date.<code>now()</code>.toString(36);</div>
+<div class="kv"><b>Fix:</b> Use <code>crypto.randomBytes(32).toString(&#x27;base64url&#x27;)</code>, store only a hash of the token, and give it a short expiry.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">Rate limiting keys on a client-supplied header</span>
+<span class="badges">
+<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/middleware/rateLimit.ts#L14"><code>src/middleware/rateLimit.ts:14</code></a></div>
+<div class="kv"><b>Impact:</b> The limiter buckets by X-Forwarded-For without a trusted-proxy configuration, so a caller that sets the header itself gets a fresh bucket per request and is never limited. The login and checkout paths that most need the protection are the ones that lose it.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/src/middleware/rateLimit.ts#L14"><code>src/middleware/rateLimit.ts:14</code></a>  keyGenerator: (req) =&gt; req.headers[&#x27;x-forwarded-for&#x27;] ?? req.ip,
+<a href="https://github.com/acme/orders-api/blob/main/src/server.ts#L18"><code>src/server.ts:18</code></a>  // app.set(&#x27;trust proxy&#x27;, ...) is commented out</div>
+<div class="kv"><b>Fix:</b> Set <code>app.set(&#x27;trust proxy&#x27;, 1)</code> for the real proxy hop and key on <code>req.ip</code>, which Express then derives from the trusted header rather than from whatever the client sent.</div>
 </div>
 </div>
+</div>
+<div class="card">
+<h2><i class="fa-solid fa-gauge-high" style="color:#0969da"></i> Performance Audit<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#facc15;color:#1f2328;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #facc1555">B-</span></span></h2>
+<div class="summary">Response times are fine at current volume, but three of the four hot paths do work that scales with data rather than with the request: an unindexed sort on order history, an N+1 on the order-lines join, and a cache that is invalidated correctly but never warmed, so every deploy starts with a thundering herd against Postgres.</div>
+<div class="pills" style="margin-top:12px">
+<div class="pill"><div class="n" style="font-size:16px">410 ms</div><div class="l">p95 GET /orders</div></div>
+<div class="pill"><div class="n" style="font-size:16px">290 ms</div><div class="l">p95 POST /orders</div></div>
+<div class="pill"><div class="n" style="font-size:16px">1 + N</div><div class="l">Queries per order-list request</div></div>
+<div class="pill"><div class="n" style="font-size:16px">71%</div><div class="l">Cache hit rate</div></div>
+</div>
+<div style="margin-top:14px">
+<div class="finding"><div class="head">
+<span class="title">Order history sorts the whole result set on every request</span>
+<span class="badges">
+<span class="badge badge-red"><i class="fa-solid fa-bug"></i>High</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/repositories/order.repo.ts#L96"><code>src/repositories/order.repo.ts:96</code></a></div>
+<div class="kv"><b>Impact:</b> The query filters on customer_id and orders by created_at, but only customer_id is indexed, so Postgres reads every order for that customer and sorts them each time. Cost grows with a customer&#x27;s lifetime history on the second most-called endpoint in the service.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/src/repositories/order.repo.ts#L96"><code>src/repositories/order.repo.ts:96</code></a>  where: { customerId }, orderBy: { createdAt: &#x27;desc&#x27; }, take: 20
+<a href="https://github.com/acme/orders-api/blob/main/prisma/schema.prisma#L61"><code>prisma/schema.prisma:61</code></a>  @@index([customerId])
+EXPLAIN shows a Sort node above an Index Scan, no index used for ordering.</div>
+<div class="kv"><b>Fix:</b> Add <code>@@index([customerId, createdAt(sort: Desc)])</code> and confirm with EXPLAIN that the Sort node disappears.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">The order-list endpoint issues one query per order for its lines</span>
+<span class="badges">
+<span class="badge badge-red"><i class="fa-solid fa-bug"></i>High</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/controllers/orders.controller.ts#L144"><code>src/controllers/orders.controller.ts:144</code></a></div>
+<div class="kv"><b>Impact:</b> A page of 20 orders costs 21 round trips. The endpoint is called on every dashboard load, so the database sees twenty times the traffic it needs for the single most common read in the product.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/src/controllers/orders.controller.ts#L144"><code>src/controllers/orders.controller.ts:144</code></a>  for (const order of orders) {
+<a href="https://github.com/acme/orders-api/blob/main/src/controllers/orders.controller.ts#L145"><code>src/controllers/orders.controller.ts:145</code></a>    order.lines = await lineRepo.findByOrder(order.id);
+<a href="https://github.com/acme/orders-api/blob/main/src/controllers/orders.controller.ts#L146"><code>src/controllers/orders.controller.ts:146</code></a>  }</div>
+<div class="kv"><b>Fix:</b> Fetch the lines in one query with <code>include: { lines: true }</code>, or a single <code>findMany({ where: { orderId: { in: ids } } })</code> grouped in memory.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">The product cache is never warmed, so every deploy stampedes Postgres</span>
+<span class="badges">
+<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
+<span class="badge badge-yellow"><i class="fa-solid fa-bullseye"></i>Med</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>M</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/cache/product.cache.ts#L22"><code>src/cache/product.cache.ts:22</code></a></div>
+<div class="kv"><b>Impact:</b> Cache-aside with a cold Redis means the first request for each product after a deploy goes to the database, and concurrent requests for the same key all miss together. The effect is a latency spike on every release rather than a steady state problem.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/src/cache/product.cache.ts#L22"><code>src/cache/product.cache.ts:22</code></a>  const hit = await redis.get(key); if (hit) return JSON.parse(hit);
+No single-flight guard, no warm-up on boot; the TTL is 300s so the pattern repeats.</div>
+<div class="kv"><b>Fix:</b> Add a single-flight lock so concurrent misses for one key collapse into one query, and warm the top N products on boot.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">JSON responses are not compressed</span>
+<span class="badges">
+<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/server.ts#L24"><code>src/server.ts:24</code></a></div>
+<div class="kv"><b>Impact:</b> Order-list payloads run to hundreds of kilobytes and cross the network uncompressed, which is felt most by the mobile clients that can least afford it.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/src/server.ts#L24"><code>src/server.ts:24</code></a>  app.use(express.json({ limit: &#x27;1mb&#x27; }));
+No compression middleware is registered anywhere in the file.</div>
+<div class="kv"><b>Fix:</b> Add the compression middleware ahead of the routes, or terminate compression at the proxy if one is already in front.</div>
+</div>
+</div>
+</div>
+<div class="card">
+<h2><i class="fa-solid fa-code" style="color:#8250df"></i> Code<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#facc15;color:#1f2328;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #facc1555">B-</span></span></h2>
+<div class="summary">TypeScript is on with strict mode and the linter runs in CI, which puts a floor under the whole codebase. What holds it back is concentration: one controller holds a third of the application logic, error handling is duplicated in a dozen catch blocks that all do the same thing slightly differently, and 14 exported functions are never called.</div>
+<div class="pills" style="margin-top:12px">
+<div class="pill"><div class="n" style="font-size:16px">strict: true</div><div class="l">TypeScript</div></div>
+<div class="pill"><div class="n" style="font-size:16px">902 lines</div><div class="l">Largest file</div></div>
+<div class="pill"><div class="n" style="font-size:16px">12</div><div class="l">Duplicated catch blocks</div></div>
+<div class="pill"><div class="n" style="font-size:16px">14</div><div class="l">Unused exports</div></div>
+</div>
+<div style="margin-top:14px">
+<div class="finding"><div class="head">
+<span class="title">One controller holds a third of the application logic</span>
+<span class="badges">
+<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>M</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/controllers/orders.controller.ts#L1"><code>src/controllers/orders.controller.ts:1</code></a></div>
+<div class="kv"><b>Impact:</b> 902 lines mixing pricing, stock, fulfilment and response shaping. Two developers touching different features collide in the same file, and the empty services directory next to it shows where the code was meant to go.</div>
+<div class="kv"><b>Evidence:</b> <code>src/controllers/orders.controller.ts</code>  902 lines, 11 exported handlers
+src/services/  contains only refund.service.ts</div>
+<div class="kv"><b>Fix:</b> Lift the three clearest domains - pricing, stock, fulfilment - into services and leave the controller doing validation, delegation and response shaping.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">The same catch block is written twelve times</span>
+<span class="badges">
+<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/controllers/orders.controller.ts#L88"><code>src/controllers/orders.controller.ts:88</code></a></div>
+<div class="kv"><b>Impact:</b> Each copy logs and maps to a status code slightly differently, so the API&#x27;s error shape depends on which handler failed. There is already a central error middleware that these bypass.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/src/controllers/orders.controller.ts#L88"><code>src/controllers/orders.controller.ts:88</code></a>  } catch (e) { logger.error(e); res.status(500).json({ error: &#x27;failed&#x27; }); }
+The same three-line shape appears at :121, :167, :203, :244 and 7 more sites.</div>
+<div class="kv"><b>Fix:</b> Delete the catch blocks and let the errors reach <code>src/middleware/error.ts:18</code>, which already maps domain errors to status codes. Wrap async handlers once so rejections get there.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">Fourteen exported functions are never called</span>
+<span class="badges">
+<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/utils/format.ts#L12"><code>src/utils/format.ts:12</code></a></div>
+<div class="kv"><b>Impact:</b> Dead code reads as API surface. A newcomer cannot tell which helpers are load-bearing, and the unused ones still get maintained through refactors.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/src/utils/format.ts#L12"><code>src/utils/format.ts:12</code></a>  export function formatLegacyOrderId(id: string)  - no importer
+13 further exports across src/utils/ have no call site outside their own tests.</div>
+<div class="kv"><b>Fix:</b> Delete them. Git remembers, and the ones that turn out to be needed come back with a caller attached.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">Magic numbers carry business meaning inline</span>
+<span class="badges">
+<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/controllers/orders.controller.ts#L312"><code>src/controllers/orders.controller.ts:312</code></a></div>
+<div class="kv"><b>Impact:</b> Thresholds that encode policy - free-shipping minimum, maximum line quantity, refund window - appear as bare numbers at their use sites, so changing a policy means grepping for a literal.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/src/controllers/orders.controller.ts#L312"><code>src/controllers/orders.controller.ts:312</code></a>  if (subtotal &gt; 5000) { shipping = 0; }
+Similar literals at :330 (quantity cap 99) and <a href="https://github.com/acme/orders-api/blob/main/src/services/refund.service.ts#L41"><code>src/services/refund.service.ts:41</code></a> (30-day window).</div>
+<div class="kv"><b>Fix:</b> Move them into a named policy module so the rule is readable and changing it is a one-line edit with a test attached.</div>
+</div>
+</div>
+</div>
+<div class="card">
+<h2><i class="fa-solid fa-flask" style="color:#24292f"></i> Tests Audit<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#c2410c;color:#fff;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #c2410c55">C</span></span></h2>
+<div class="summary">A real suite exists - 148 tests, Jest plus supertest, running in CI against a genuine Postgres service - and the paths it covers are covered properly. The problem is what it skips: the money paths. Refunds have no tests at all, the webhook handler is tested only for its happy path, and coverage is collected but never enforced, so it has drifted down for six months without failing anything.</div>
+<div class="pills" style="margin-top:12px">
+<div class="pill"><div class="n" style="font-size:16px">148</div><div class="l">Tests</div></div>
+<div class="pill"><div class="n" style="font-size:16px">61%</div><div class="l">Line coverage</div></div>
+<div class="pill"><div class="n" style="font-size:16px">none</div><div class="l">Coverage threshold</div></div>
+<div class="pill"><div class="n" style="font-size:16px">refunds 0%, webhooks 1 test</div><div class="l">Money-path coverage</div></div>
+</div>
+<div style="margin-top:14px">
+<div class="finding"><div class="head">
+<span class="title">The refund service has no tests and is the third most-changed file</span>
+<span class="badges">
+<span class="badge badge-red"><i class="fa-solid fa-bug"></i>High</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>M</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/src/services/refund.service.ts#L1"><code>src/services/refund.service.ts:1</code></a></div>
+<div class="kv"><b>Impact:</b> Code that decides how much money to return to a customer is validated by review alone, and it changes often. A wrong branch here is a financial error, not a 500.</div>
+<div class="kv"><b>Evidence:</b> tests/  no file references refund.service
+git log --format= --name-only --since=90.days | sort | uniq -c | sort -rn  -&gt;  31 <code>src/services/refund.service.ts</code></div>
+<div class="kv"><b>Fix:</b> Cover the three branches that decide an amount: full refund, partial refund, and an already-refunded order. A fake Stripe client is enough - the arithmetic and the guard are the point.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">The webhook handler is tested only for the happy path</span>
+<span class="badges">
+<span class="badge badge-red"><i class="fa-solid fa-bug"></i>High</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/tests/integration/webhooks.test.ts#L18"><code>tests/integration/webhooks.test.ts:18</code></a></div>
+<div class="kv"><b>Impact:</b> The single test posts a correctly signed event and asserts a 200. Nothing asserts that an unsigned request is rejected, that a replayed event is idempotent, or that an unknown event type is ignored - and all three are reachable from the public internet.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/tests/integration/webhooks.test.ts#L18"><code>tests/integration/webhooks.test.ts:18</code></a>  it(&#x27;accepts a signed checkout.session.completed&#x27;, ...)
+The file contains exactly one <code>it(</code>.</div>
+<div class="kv"><b>Fix:</b> Add three cases: bad signature is 400, the same event id twice creates one order, an unknown type is a no-op 200.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">Coverage is measured but never enforced, and has fallen for six months</span>
+<span class="badges">
+<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/jest.config.js#L14"><code>jest.config.js:14</code></a></div>
+<div class="kv"><b>Impact:</b> A number nobody has to meet is a number that only moves one way. Coverage has dropped from 74% to 61% without a single build failing, so the decline was invisible until someone looked.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/jest.config.js#L14"><code>jest.config.js:14</code></a>  collectCoverage: true,
+No coverageThreshold key anywhere in the file; CI uploads the report and asserts nothing about it.</div>
+<div class="kv"><b>Fix:</b> Set a coverageThreshold just under today&#x27;s numbers and raise it whenever it is comfortably beaten. A ratchet stops the slide without blocking work.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">Integration tests share one database and depend on execution order</span>
+<span class="badges">
+<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
+<span class="badge badge-yellow"><i class="fa-solid fa-bullseye"></i>Med</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>M</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/tests/integration/setup.ts#L7"><code>tests/integration/setup.ts:7</code></a></div>
+<div class="kv"><b>Impact:</b> Rows created by one test are visible to the next, so the suite passes in file order and fails when run with --shard or a single -t filter. It makes a failure hard to reproduce locally, which is exactly when reproduction matters.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/tests/integration/setup.ts#L7"><code>tests/integration/setup.ts:7</code></a>  beforeAll(async () =&gt; { await prisma.$executeRaw<code>TRUNCATE orders CASCADE</code> })
+Truncation runs once per FILE, not per test; several tests assert on counts.</div>
+<div class="kv"><b>Fix:</b> Truncate in beforeEach, or wrap each test in a transaction that is rolled back. Then a single test can run alone and still pass.</div>
+</div>
+</div>
+</div>
+<div class="card">
+<h2><i class="fa-solid fa-book" style="color:#0891b2"></i> Docs<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#7c2d12;color:#fff;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #7c2d1255">C+</span></span></h2>
+<div class="summary">The README gets a new developer running - install, env, migrate, start, all accurate and verified by following them - and the OpenAPI spec is genuinely useful. Beyond that it thins out fast: the spec has drifted from the routes it documents, the architecture is explained nowhere, and three environment variables the service needs are documented only by their absence at boot.</div>
+<div class="pills" style="margin-top:12px">
+<div class="pill"><div class="n" style="font-size:16px">184 lines</div><div class="l">README</div></div>
+<div class="pill"><div class="n" style="font-size:16px">31 of 44 routes</div><div class="l">OpenAPI paths</div></div>
+<div class="pill"><div class="n" style="font-size:16px">9 of 12</div><div class="l">Env vars documented</div></div>
+<div class="pill"><div class="n" style="font-size:16px">none</div><div class="l">Architecture docs</div></div>
+</div>
+<div style="margin-top:14px">
+<div class="finding"><div class="head">
+<span class="title">The OpenAPI spec is missing 13 routes and documents 2 that were removed</span>
+<span class="badges">
+<span class="badge badge-red"><i class="fa-solid fa-bug"></i>High</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>M</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/openapi.yaml#L1"><code>openapi.yaml:1</code></a></div>
+<div class="kv"><b>Impact:</b> Clients are generated from this file. A route that is absent gets no client method, and a route that no longer exists generates a method that 404s - both discovered by the consumer, at runtime.</div>
+<div class="kv"><b>Evidence:</b> openapi.yaml  31 paths
+src/routes/  44 registered routes
+<a href="https://github.com/acme/orders-api/blob/main/openapi.yaml#L302"><code>openapi.yaml:302</code></a>  /orders/{id}/legacy-invoice  - no matching route in src/routes/</div>
+<div class="kv"><b>Fix:</b> Generate the spec from the route definitions, or add a CI check that compares the two lists and fails on a difference.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">Nothing explains how the service is put together</span>
+<span class="badges">
+<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/README.md#L1"><code>README.md:1</code></a></div>
+<div class="kv"><b>Impact:</b> The layering, the transaction rules and the cache invalidation contract exist only in the code and in the heads of the two people who wrote it. Onboarding is a week of reading instead of an afternoon.</div>
+<div class="kv"><b>Evidence:</b> README.md  184 lines: install, env, scripts, deploy. No architecture section.
+docs/  does not exist.</div>
+<div class="kv"><b>Fix:</b> One page: the layer diagram, where business logic belongs, the cache invalidation rule, and the transaction rule. It pays for itself with the second hire.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">Three required environment variables are undocumented</span>
+<span class="badges">
+<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/README.md#L61"><code>README.md:61</code></a></div>
+<div class="kv"><b>Impact:</b> A new environment starts, passes its health check, and then fails on the first webhook or the first cache read. The missing variables are discovered one incident at a time.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/README.md#L61"><code>README.md:61</code></a>  documents 9 variables
+<code>src/config.ts</code> reads 12; <code>REDIS_TLS_URL</code>, <code>STRIPE_WEBHOOK_SECRET</code> and <code>ORDER_EXPORT_BUCKET</code> appear in neither the README nor .env.example.</div>
+<div class="kv"><b>Fix:</b> Regenerate the table from <code>src/config.ts</code> and add a <code>.env.example</code> with every key present and every secret blank.</div>
+</div>
+<div class="finding"><div class="head">
+<span class="title">The README&#x27;s test command has drifted</span>
+<span class="badges">
+<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
+<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
+<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
+</span>
+</div>
+<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/README.md#L122"><code>README.md:122</code></a></div>
+<div class="kv"><b>Impact:</b> The documented command fails for anyone who follows it, which is a bad first ten minutes and a wholly avoidable one.</div>
+<div class="kv"><b>Evidence:</b> <a href="https://github.com/acme/orders-api/blob/main/README.md#L122"><code>README.md:122</code></a>  npm run test:all
+<a href="https://github.com/acme/orders-api/blob/main/package.json#L18"><code>package.json:18</code></a>  scripts has test, test:unit, test:int - no test:all</div>
+<div class="kv"><b>Fix:</b> Point it at <code>npm test</code>, and add a CI step that runs every command the README documents.</div>
+</div>
+</div>
+</div>
+<div class="card">
+<h2><i class="fa-solid fa-diagram-project" style="color:#cf222e"></i> Features Supported<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#eab308;color:#1f2328;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #eab30855">B</span></span></h2>
+<div class="summary">A coherent order lifecycle - cart, checkout, payment, fulfilment, refund - with nothing half-built in the main path. The edges are where it frays: bulk export is behind a flag that has been on in production for five months, and the loyalty module is fully implemented but has no route reaching it.</div>
+<div class="fmm"><svg viewBox="0 0 752 864" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:752px;height:auto"><path d="M226,458 C245,458 245,94 264,94" fill="none" stroke="#4493f8" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,94 C495,94 495,42 514,42" fill="none" stroke="#4493f8" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,94 C495,94 495,94 514,94" fill="none" stroke="#4493f8" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,94 C495,94 495,146 514,146" fill="none" stroke="#4493f8" stroke-width="1.8" stroke-opacity="0.55"/><path d="M226,458 C245,458 245,250 264,250" fill="none" stroke="#2da44e" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,250 C495,250 495,198 514,198" fill="none" stroke="#2da44e" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,250 C495,250 495,250 514,250" fill="none" stroke="#2da44e" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,250 C495,250 495,302 514,302" fill="none" stroke="#2da44e" stroke-width="1.8" stroke-opacity="0.55"/><path d="M226,458 C245,458 245,406 264,406" fill="none" stroke="#8250df" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,406 C495,406 495,354 514,354" fill="none" stroke="#8250df" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,406 C495,406 495,406 514,406" fill="none" stroke="#8250df" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,406 C495,406 495,458 514,458" fill="none" stroke="#8250df" stroke-width="1.8" stroke-opacity="0.55"/><path d="M226,458 C245,458 245,536 264,536" fill="none" stroke="#e16f24" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,536 C495,536 495,510 514,510" fill="none" stroke="#e16f24" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,536 C495,536 495,562 514,562" fill="none" stroke="#e16f24" stroke-width="1.8" stroke-opacity="0.55"/><path d="M226,458 C245,458 245,666 264,666" fill="none" stroke="#12b3a0" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,666 C495,666 495,614 514,614" fill="none" stroke="#12b3a0" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,666 C495,666 495,666 514,666" fill="none" stroke="#12b3a0" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,666 C495,666 495,718 514,718" fill="none" stroke="#12b3a0" stroke-width="1.8" stroke-opacity="0.55"/><path d="M226,458 C245,458 245,796 264,796" fill="none" stroke="#e5484d" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,796 C495,796 495,770 514,770" fill="none" stroke="#e5484d" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,796 C495,796 495,822 514,822" fill="none" stroke="#e5484d" stroke-width="1.8" stroke-opacity="0.55"/><rect x="16" y="445" width="210" height="26" rx="7" fill="#1a1a2e" stroke="#1a1a2e" stroke-width="1.5"/><text x="26" y="461" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#ffffff">acme/orders-api</text><rect x="266" y="81" width="210" height="38" rx="7" fill="#ddf4ff" stroke="#4493f8" stroke-width="1.5"/><text x="276" y="95" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#0a3069">Ordering</text><text x="276" y="113" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#0a3069" fill-opacity="0.85">src/controllers/orders.controller…</text><rect x="516" y="29" width="210" height="38" rx="7" fill="#f2f9ff" stroke="#b6e3ff" stroke-width="1"/><text x="526" y="43" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#28517a">Cart</text><text x="526" y="61" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#28517a" fill-opacity="0.85">line add/remove, quantity caps</text><rect x="516" y="81" width="210" height="38" rx="7" fill="#f2f9ff" stroke="#b6e3ff" stroke-width="1"/><text x="526" y="95" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#28517a">Checkout</text><text x="526" y="113" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#28517a" fill-opacity="0.85">pricing, tax, shipping rules</text><rect x="516" y="133" width="210" height="38" rx="7" fill="#f2f9ff" stroke="#b6e3ff" stroke-width="1"/><text x="526" y="147" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#28517a">Stock reservation</text><text x="526" y="165" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#28517a" fill-opacity="0.85">no transaction boundary - see Arc…</text><rect x="266" y="237" width="210" height="38" rx="7" fill="#dafbe1" stroke="#2da44e" stroke-width="1.5"/><text x="276" y="251" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#0f5323">Payments</text><text x="276" y="269" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#0f5323" fill-opacity="0.85">Stripe</text><rect x="516" y="185" width="210" height="38" rx="7" fill="#f0fdf4" stroke="#aceebb" stroke-width="1"/><text x="526" y="199" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#245c37">Charge</text><text x="526" y="217" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#245c37" fill-opacity="0.85">payment intent per order</text><rect x="516" y="237" width="210" height="38" rx="7" fill="#f0fdf4" stroke="#aceebb" stroke-width="1"/><text x="526" y="251" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#245c37">Webhooks</text><text x="526" y="269" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#245c37" fill-opacity="0.85">src/routes/webhooks.ts</text><rect x="516" y="289" width="210" height="38" rx="7" fill="#f0fdf4" stroke="#aceebb" stroke-width="1"/><text x="526" y="303" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#245c37">Refunds</text><text x="526" y="321" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#245c37" fill-opacity="0.85">full and partial, untested</text><rect x="266" y="393" width="210" height="38" rx="7" fill="#f3ebff" stroke="#8250df" stroke-width="1.5"/><text x="276" y="407" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#512a97">Fulfilment</text><text x="276" y="425" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#512a97" fill-opacity="0.85">status machine</text><rect x="516" y="341" width="210" height="38" rx="7" fill="#faf6ff" stroke="#e0c9ff" stroke-width="1"/><text x="526" y="355" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#492f7c">Status transitions</text><text x="526" y="373" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#492f7c" fill-opacity="0.85">7 states, guarded</text><rect x="516" y="393" width="210" height="38" rx="7" fill="#faf6ff" stroke="#e0c9ff" stroke-width="1"/><text x="526" y="407" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#492f7c">Carrier handoff</text><text x="526" y="425" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#492f7c" fill-opacity="0.85">one provider, hardcoded</text><rect x="516" y="445" width="210" height="38" rx="7" fill="#faf6ff" stroke="#e0c9ff" stroke-width="1"/><text x="526" y="459" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#492f7c">Notifications</text><text x="526" y="477" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#492f7c" fill-opacity="0.85">email only</text><rect x="266" y="523" width="210" height="38" rx="7" fill="#fff1e5" stroke="#e16f24" stroke-width="1.5"/><text x="276" y="537" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#7a3c00">Catalogue</text><text x="276" y="555" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#7a3c00" fill-opacity="0.85">read-mostly, Redis cache-aside</text><rect x="516" y="497" width="210" height="38" rx="7" fill="#fff8f2" stroke="#ffd8b5" stroke-width="1"/><text x="526" y="511" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#6b3f14">Products</text><text x="526" y="529" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#6b3f14" fill-opacity="0.85">cached, TTL 300s</text><rect x="516" y="549" width="210" height="38" rx="7" fill="#fff8f2" stroke="#ffd8b5" stroke-width="1"/><text x="526" y="563" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#6b3f14">Pricing rules</text><text x="526" y="581" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#6b3f14" fill-opacity="0.85">in the controller, not a service</text><rect x="266" y="653" width="210" height="38" rx="7" fill="#d9fbf4" stroke="#12b3a0" stroke-width="1.5"/><text x="276" y="667" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#0a4f47">Customers</text><text x="276" y="685" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#0a4f47" fill-opacity="0.85">auth + profile</text><rect x="516" y="601" width="210" height="38" rx="7" fill="#f0fdfa" stroke="#9ee9dd" stroke-width="1"/><text x="526" y="615" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#255f57">Auth</text><text x="526" y="633" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#255f57" fill-opacity="0.85">JWT, 41 of 44 routes behind it</text><rect x="516" y="653" width="210" height="38" rx="7" fill="#f0fdfa" stroke="#9ee9dd" stroke-width="1"/><text x="526" y="667" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#255f57">Order history</text><text x="526" y="685" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#255f57" fill-opacity="0.85">unindexed sort - see Performance</text><rect x="516" y="705" width="210" height="38" rx="7" fill="#f0fdfa" stroke="#9ee9dd" stroke-width="1"/><text x="526" y="719" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#255f57">Loyalty</text><text x="526" y="737" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#255f57" fill-opacity="0.85">implemented, no route reaches it</text><rect x="266" y="783" width="210" height="38" rx="7" fill="#ffeef0" stroke="#e5484d" stroke-width="1.5"/><text x="276" y="797" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#82071e">Operations</text><text x="276" y="815" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#82071e" fill-opacity="0.85">internal</text><rect x="516" y="757" width="210" height="38" rx="7" fill="#fff5f6" stroke="#ffcdd2" stroke-width="1"/><text x="526" y="771" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#6b2b30">Bulk export</text><text x="526" y="789" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#6b2b30" fill-opacity="0.85">behind a flag that has been on fo…</text><rect x="516" y="809" width="210" height="38" rx="7" fill="#fff5f6" stroke="#ffcdd2" stroke-width="1"/><text x="526" y="823" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#6b2b30">Health</text><text x="526" y="841" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#6b2b30" fill-opacity="0.85">does not check dependencies</text></svg></div>
+<details class="fmm-list"><summary>Feature list</summary>
+<ul class="tree"><li><span class="node">Ordering</span> <span class="muted">- <code>src/controllers/orders.controller.ts</code></span><ul class="tree"><li><span class="node">Cart</span> <span class="muted">- line add/remove, quantity caps</span></li><li><span class="node">Checkout</span> <span class="muted">- pricing, tax, shipping rules</span></li><li><span class="node">Stock reservation</span> <span class="muted">- no transaction boundary - see Architect</span></li></ul></li><li><span class="node">Payments</span> <span class="muted">- Stripe</span><ul class="tree"><li><span class="node">Charge</span> <span class="muted">- payment intent per order</span></li><li><span class="node">Webhooks</span> <span class="muted">- <code>src/routes/webhooks.ts</code></span></li><li><span class="node">Refunds</span> <span class="muted">- full and partial, untested</span></li></ul></li><li><span class="node">Fulfilment</span> <span class="muted">- status machine</span><ul class="tree"><li><span class="node">Status transitions</span> <span class="muted">- 7 states, guarded</span></li><li><span class="node">Carrier handoff</span> <span class="muted">- one provider, hardcoded</span></li><li><span class="node">Notifications</span> <span class="muted">- email only</span></li></ul></li><li><span class="node">Catalogue</span> <span class="muted">- read-mostly, Redis cache-aside</span><ul class="tree"><li><span class="node">Products</span> <span class="muted">- cached, TTL 300s</span></li><li><span class="node">Pricing rules</span> <span class="muted">- in the controller, not a service</span></li></ul></li><li><span class="node">Customers</span> <span class="muted">- auth + profile</span><ul class="tree"><li><span class="node">Auth</span> <span class="muted">- JWT, 41 of 44 routes behind it</span></li><li><span class="node">Order history</span> <span class="muted">- unindexed sort - see Performance</span></li><li><span class="node">Loyalty</span> <span class="muted">- implemented, no route reaches it</span></li></ul></li><li><span class="node">Operations</span> <span class="muted">- internal</span><ul class="tree"><li><span class="node">Bulk export</span> <span class="muted">- behind a flag that has been on for 5 months</span></li><li><span class="node">Health</span> <span class="muted">- does not check dependencies</span></li></ul></li></ul>
+</details>
 </div>
 <div class="card">
 <h2><i class="fa-solid fa-scale-balanced" style="color:#bc4c00"></i> Good, Bad, Ugly</h2>
 <div class="gbu">
 <div class="col good"><h3><i class="fa-solid fa-circle-check"></i> Good</h3>
-<ul><li>CI is a real gate: ci.yml runs lint, tsc --noEmit, vitest, and next build on every push; combined with the pre-push typecheck hook, type breakage cannot land.</li><li>Trust boundaries are engineered, not vibes: timing-safe bearer compare (<a href="https://github.com/acme/orders-api/blob/main/lib/a2a-auth.ts#L6"><code>lib/a2a-auth.ts:6</code></a>), requireBearerOrSameSite rejects Sec-Fetch-Site:none and untrusted Hosts (CSRF + DNS-rebind), a2a shell exec requires the explicit &#x27;shell.exec &#x27; verb with a comment forbidding a catch-all, and LAN CORS deliberately omits Allow-Credentials with the reasoning inline.</li><li>SQL hygiene: parameterized queries throughout, dynamic identifiers gated by isSafeIdent (<a href="https://github.com/acme/orders-api/blob/main/lib/db/sqlite.ts#L68"><code>lib/db/sqlite.ts:68</code></a>) before interpolation.</li><li>Shared primitives actually got extracted and reused: readLastBytes (<code>lib/safe-read.ts</code>) used by all transcript routes including the new <code>skill-usage/route.ts</code>; withErrorHandler standardizes the rag API neighborhood.</li><li>Strict TypeScript with zero explicit any across app/ and lib/ (enforced per commit 52f452d), and the codebase comments its own tradeoffs unusually well.</li><li>The new SkillUsagePanel is a model citizen: 83 LOC, self-hides when empty, machine-aware via apiBase, no new dependencies.</li></ul>
+<ul><li>One centralised error middleware (<a href="https://github.com/acme/orders-api/blob/main/src/middleware/error.ts#L18"><code>src/middleware/error.ts:18</code></a>) maps domain errors to status codes, so the API&#x27;s error shape is a deliberate design rather than an accident of which handler failed.</li><li>Every database call goes through src/repositories/ - <code>new PrismaClient</code> appears exactly once, at <a href="https://github.com/acme/orders-api/blob/main/src/repositories/order.repo.ts#L1"><code>src/repositories/order.repo.ts:1</code></a> - which is what makes the data layer testable and swappable at all.</li><li>CI runs against a real postgres:16 service (<a href="https://github.com/acme/orders-api/blob/main/.github/workflows/ci.yml#L14"><code>.github/workflows/ci.yml:14</code></a>) instead of a mock, so the integration tests exercise genuine SQL, genuine constraints and genuine migration state.</li><li>TypeScript strict mode is on and has never been turned off for a file (<a href="https://github.com/acme/orders-api/blob/main/tsconfig.json#L7"><code>tsconfig.json:7</code></a>, zero @ts-ignore in src/), which is rarer than it should be and is doing quiet work throughout.</li><li>Cache invalidation is correct by construction: every write path deletes the key rather than updating it (<a href="https://github.com/acme/orders-api/blob/main/src/cache/product.cache.ts#L41"><code>src/cache/product.cache.ts:41</code></a>), so a stale entry cannot outlive a change.</li></ul>
 </div>
 <div class="col bad"><h3><i class="fa-solid fa-triangle-exclamation"></i> Bad</h3>
-<ul><li>OverviewSection.tsx is an 865-LOC monolith with 9 safeFetch calls and three near-duplicate turn-count-&gt;color helpers (getColor :560, cellColor :591, hourColor :693); it keeps absorbing features (SkillUsagePanel mounted at :861) instead of being split.</li><li>The DbAdapter sqlite-&gt;noop fallback silently degrades: when the better-sqlite3 load fails, a2a-db reads return undefined instead of throwing (surfaced by the Node-22 ABI test failures) - in production that same silence presents as an empty dashboard, not an error.</li><li>Playwright e2e exists but is not in CI, so the section-rendering regressions it would catch ship unverified.</li><li><code>lib/db/sqlite.ts</code> opens and closes a new Database on every call while rag-db.ts holds a singleton - one of these is wrong and it is the per-call one.</li><li><a href="https://github.com/acme/orders-api/blob/main/app/api/rag/search/route.ts#L12"><code>app/api/rag/search/route.ts:12</code></a> writes to search_log on every GET (INSERT on the read path) - makes a nominally read-only endpoint a writer and non-idempotent.</li></ul>
+<ul><li><a href="https://github.com/acme/orders-api/blob/main/scripts/seed-dev.js#L12"><code>scripts/seed-dev.js:12</code></a> connects with the production <code>DATABASE_URL</code> when <code>NODE_ENV</code> is unset, and the README tells new developers to run it before setting anything.</li><li>The Dockerfile installs devDependencies into the runtime image (Dockerfile:11), which is most of the 412 MB and every one of their advisories.</li><li>.env.example has been out of date since the Redis migration - it still names <code>REDIS_HOST</code> and <code>REDIS_PORT</code>, which nothing reads any more.</li><li>Two git-tracked files under .vscode/ carry one developer&#x27;s absolute paths, so the workspace settings only work on their machine.</li></ul>
 </div>
 <div class="col ugly"><h3><i class="fa-solid fa-skull"></i> Ugly</h3>
-<ul><li>Dead &#x27;true ?&#x27; ternary at <a href="https://github.com/acme/orders-api/blob/main/OverviewSection.tsx#L835"><code>OverviewSection.tsx:835</code></a> - the false branch is unreachable leftover from a week/month toggle; reads as a half-finished refactor shipped to main.</li><li><a href="https://github.com/acme/orders-api/blob/main/package.json#L19"><code>package.json:19</code></a> freezes lint at &#x27;eslint . --max-warnings 83&#x27; - a ratchet that never ratchets; 83 warnings are permanently amnestied and any cleanup below 83 is instantly refillable.</li><li>A2A accepts &#x27;shell.exec &lt;cmd&gt;&#x27; on a LAN-reachable server guarded by ONE static never-rotated bearer in plaintext at ~/.orders/a2a-token; the guard is careful, but a single leaked token = remote shell on every machine in the fleet - no rotation, no per-peer tokens, no audit on use.</li></ul>
+<ul><li><code>src/controllers/orders.controller.ts</code> is 902 lines with 11 handlers, sitting next to a src/services/ directory that holds exactly one file - the intent is visible and unfinished.</li><li>The same three-line catch block appears twelve times across the controllers, each logging slightly differently, while a central error middleware already exists to do it once.</li><li>A TODO at <a href="https://github.com/acme/orders-api/blob/main/src/controllers/orders.controller.ts#L511"><code>src/controllers/orders.controller.ts:511</code></a> reads &#x27;remove before launch&#x27; and is dated 2024-03; the service launched two years ago.</li><li>prisma/migrations/ contains two migrations whose names describe the opposite of what they do (20250114_drop_index adds one), which makes the history unreadable at exactly the moment you need it.</li></ul>
 </div>
 </div>
 </div>
-<div class="card">
-<h2><i class="fa-solid fa-server" style="color:#9a6700"></i> Infra Audit<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#1a7f37;color:#fff;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #1a7f3755">A</span></span></h2>
-<div class="summary">CI is green with e2e; the WS-server orphan and install.sh silent-failure are fixed (<code>scripts/with-ws.sh</code> traps EXIT/INT/TERM; install.sh fails loudly). The only residual is main branch protection - a GitHub free-private-repo platform limit, not a repo defect.</div>
-<div style="margin-top:14px">
-<div class="finding"><div class="head">
-<span class="title">main branch unprotected (platform limit)</span>
-<span class="badges">
-<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
-<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
-<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
-</span>
-</div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/.github"><code>.github</code></a></div>
-<div class="kv"><b>Impact:</b> A direct push/force-push to main is not blocked server-side.</div>
-<div class="kv"><b>Evidence:</b> Branch protection API returns 403 on free private repos.</div>
-<div class="kv"><b>Fix:</b> Enable if the repo goes public; the pre-push hook is the compensating control.</div>
-</div>
-</div>
-</div>
-<div class="card">
-<h2><i class="fa-solid fa-lock" style="color:#1a7f37"></i> Security Audit<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#1a7f37;color:#fff;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #1a7f3755">A</span></span></h2>
-<div class="summary">The multi-machine regression is closed with a sound design: a same-origin server proxy (<code>app/api/proxy/route.ts</code>) guarded by requireBearerOrSameSite, private-IP-only peer resolution (isLocalHost, so the shared a2a bearer never reaches a public host), a /api/orders + /api/rag path allowlist re-validated against the WHATWG-normalized URL (defeats %2e%2e and //host smuggling), and forwarding the shared a2a bearer the mesh already uses. MachineContext.apiBase routes remote reads through it; local unchanged. Now covered by 6 security-invariant tests. No open relay, no SSRF to public hosts. Residuals are genuinely low.</div>
-<div style="margin-top:14px">
-<div class="finding"><div class="head">
-<span class="title">Proxy accepts a raw ip:port machine param (relay surface)</span>
-<span class="badges">
-<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
-<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
-<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
-</span>
-</div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/app/api/proxy/route.ts#L35"><code>app/api/proxy/route.ts:35</code></a></div>
-<div class="kv"><b>Impact:</b> An authorized/same-origin caller could aim the bearer at any PRIVATE ip:port at an allowlisted path, not just registered machines. No net-new privilege (that caller can already vend the token), just extra surface - the UI only ever sends registry ids.</div>
-<div class="kv"><b>Evidence:</b> <code>resolvePeer()</code> direct branch matches ^ip:port$ and only checks isLocalHost.</div>
-<div class="kv"><b>Fix:</b> Drop the direct ip:port branch; require registry membership.</div>
-</div>
-<div class="finding"><div class="head">
-<span class="title">slim-settings still returns project paths</span>
-<span class="badges">
-<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
-<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
-<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
-</span>
-</div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/app/api/orders/settings/route.ts"><code>app/api/orders/settings/route.ts</code></a></div>
-<div class="kv"><b>Impact:</b> Local filesystem paths disclosed to LAN callers; informational on a private dashboard.</div>
-<div class="kv"><b>Evidence:</b> Slim projection includes path.</div>
-<div class="kv"><b>Fix:</b> Strip or hash path fields in the slim projection.</div>
-</div>
-<div class="finding"><div class="head">
-<span class="title">Non-orders/rag remote paths still fetched raw cross-origin</span>
-<span class="badges">
-<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
-<span class="badge badge-yellow"><i class="fa-solid fa-bullseye"></i>Med</span>
-<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
-</span>
-</div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/app/(orders)/_sections/MachineContext.tsx#L51"><code>app/(orders)/_sections/MachineContext.tsx:51</code></a></div>
-<div class="kv"><b>Impact:</b> A future guarded peer route outside the two prefixes would silently regress to 403; a maintainability trap, not a hole.</div>
-<div class="kv"><b>Evidence:</b> apiBase fallback returns http://ip:port for non-allowlisted paths.</div>
-<div class="kv"><b>Fix:</b> Comment the fallback as unguarded-only, or widen the allowlist when a third prefix appears.</div>
-</div>
-</div>
-</div>
-<div class="card">
-<h2><i class="fa-solid fa-gauge-high" style="color:#0969da"></i> Performance Audit<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#1a7f37;color:#fff;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #1a7f3755">A</span></span></h2>
-<div class="summary">The event-loop-stall medium is gone: <code>lib/live-sessions.ts</code> uses promisified execFile (async) with a 2s timeout and both callers await it; turns-by-hour tail dropped 16MB-&gt;8MB. Remaining are three genuine lows, none on a hot interactive path.</div>
-<div style="margin-top:14px">
-<div class="finding"><div class="head">
-<span class="title">entitySearch OR-join fan-out</span>
-<span class="badges">
-<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
-<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
-<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
-</span>
-</div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/lib/rag-search.ts#L156"><code>lib/rag-search.ts:156</code></a></div>
-<div class="kv"><b>Impact:</b> Per-word LIKE OR + OR-join prevents index use on large entity sets; fine at current size.</div>
-<div class="kv"><b>Evidence:</b> words.map LIKE OR + OR-join on entity_links.</div>
-<div class="kv"><b>Fix:</b> UNION two indexed joins if the entity graph grows.</div>
-</div>
-<div class="finding"><div class="head">
-<span class="title">rag/search logs every query synchronously on the read path</span>
-<span class="badges">
-<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
-<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
-<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
-</span>
-</div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/app/api/rag/search/route.ts#L12"><code>app/api/rag/search/route.ts:12</code></a></div>
-<div class="kv"><b>Impact:</b> One SQLite INSERT per search; negligible at single-user scale.</div>
-<div class="kv"><b>Evidence:</b> INSERT into search_log inline in GET.</div>
-<div class="kv"><b>Fix:</b> Fire-and-forget or batch the log write.</div>
-</div>
-<div class="finding"><div class="head">
-<span class="title">single-phase vector scoring (eval path only)</span>
-<span class="badges">
-<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
-<span class="badge badge-yellow"><i class="fa-solid fa-bullseye"></i>Med</span>
-<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>M</span>
-</span>
-</div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/lib/eval"><code>lib/eval</code></a></div>
-<div class="kv"><b>Impact:</b> Eval-only cost; not on any user route.</div>
-<div class="kv"><b>Evidence:</b> Acknowledged residual.</div>
-<div class="kv"><b>Fix:</b> Two-phase retrieve-then-rerank if eval runtime matters.</div>
-</div>
-</div>
-</div>
-<div class="card">
-<h2><i class="fa-solid fa-code" style="color:#8250df"></i> Code<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#2da44e;color:#fff;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #2da44e55">A-</span></span></h2>
-<div class="summary">All the cleanup landed: the jsonl-walker + <code>MACHINES_DB</code> duplication is resolved, the dead ternary is gone, and the lint budget was ratcheted 83-&gt;69 (unused disables removed). tsc clean, zero explicit any. The one remaining medium is real and deliberate: TypeScript is 2 majors behind (5.9 vs 7.0) and Tailwind 1 (3.4 vs 4) - a defensible hold (both are breaking migrations), but a genuine compounding liability, so it is an honest A-, not a polite A.</div>
-<div class="pills" style="margin-top:12px">
-<div class="pill"><div class="n" style="font-size:16px">clean</div><div class="l">tsc</div></div>
-<div class="pill"><div class="n" style="font-size:16px">0 err / 69 warn (was 83)</div><div class="l">Lint</div></div>
-<div class="pill"><div class="n" style="font-size:16px">walker + machines-db extracted</div><div class="l">Duplication</div></div>
-<div class="pill"><div class="n" style="font-size:16px">TS 2 maj / TW 1 maj behind</div><div class="l">Deps</div></div>
-</div>
-<div style="margin-top:14px">
-<div class="finding"><div class="head">
-<span class="title">TypeScript 2 majors / Tailwind 1 major behind (deliberate hold)</span>
-<span class="badges">
-<span class="badge badge-yellow"><i class="fa-solid fa-bug"></i>Medium</span>
-<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
-<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>L</span>
-</span>
-</div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/package.json"><code>package.json</code></a></div>
-<div class="kv"><b>Impact:</b> Migration cost compounds; TW3 is in maintenance and TS7 adoption will eventually force the move.</div>
-<div class="kv"><b>Evidence:</b> typescript ^5.9.3, tailwindcss ^3.4.19.</div>
-<div class="kv"><b>Fix:</b> Keep the hold but write a trigger condition (migrate when Next requires TS6+ or a plugin drops TW3).</div>
-</div>
-<div class="finding"><div class="head">
-<span class="title">69 lint warnings dominated by React correctness rules</span>
-<span class="badges">
-<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
-<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
-<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>M</span>
-</span>
-</div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/app/(orders)/_sections"><code>app/(orders)/_sections</code></a></div>
-<div class="kv"><b>Impact:</b> 23 set-state-in-effect + 9 purity are latent re-render bugs; 13 raw img tags forgo next/image.</div>
-<div class="kv"><b>Evidence:</b> eslint: set-state-in-effect 23, no-img-element 13, purity 9.</div>
-<div class="kv"><b>Fix:</b> Ratchet another tranche (69 -&gt; ~50) by converting easy set-state-in-effect to derived state.</div>
-</div>
-</div>
-</div>
-<div class="card">
-<h2><i class="fa-solid fa-flask" style="color:#24292f"></i> Tests Audit<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#1a7f37;color:#fff;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #1a7f3755">A</span></span></h2>
-<div class="summary">The security-critical gap is closed: app/api/proxy now has 6 invariant tests (403 unauth, 400 disallowed path, 400 %2e%2e traversal, 404 public-IP refusal, and a happy-path that asserts the bearer is forwarded to the private peer). Route coverage is ~31/42, all security fixes + the flagship RAG paths (search/ingest/docs/context) are regression-tested, e2e runs in CI, and the suite (389, green) found AND fixed a real bug (rag/preferences slim=1 500). Residual gaps are lower-traffic/read-only routes and god-components.</div>
-<div class="pills" style="margin-top:12px">
-<div class="pill"><div class="n" style="font-size:16px">389 tests / 29 files, green</div><div class="l">Suite</div></div>
-<div class="pill"><div class="n" style="font-size:16px">~31/42</div><div class="l">Route coverage</div></div>
-<div class="pill"><div class="n" style="font-size:16px">6 invariant tests</div><div class="l">Proxy (new attack surface)</div></div>
-<div class="pill"><div class="n" style="font-size:16px">rag/preferences slim=1</div><div class="l">Bug found+fixed by tests</div></div>
-<div class="pill"><div class="n" style="font-size:16px">6 specs</div><div class="l">E2E in CI</div></div>
-</div>
-<div style="margin-top:14px">
-<div class="finding"><div class="head">
-<span class="title">a2a root exec handler untested (guard lib covered, handler not)</span>
-<span class="badges">
-<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
-<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
-<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
-</span>
-</div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/app/api/a2a/route.ts#L275"><code>app/api/a2a/route.ts:275</code></a></div>
-<div class="kv"><b>Impact:</b> The highest-privilege endpoint&#x27;s dispatch has no route-level regression net; a2a-auth.test.ts covers the guard only.</div>
-<div class="kv"><b>Evidence:</b> No test imports app/api/a2a/route; the lib guard is tested.</div>
-<div class="kv"><b>Fix:</b> Route-level test for the POST dispatch happy path + a malformed-body rejection.</div>
-</div>
-<div class="finding"><div class="head">
-<span class="title">~11 lower-traffic routes untested + god-components</span>
-<span class="badges">
-<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
-<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
-<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>M</span>
-</span>
-</div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/app/api/* + app/(orders)/_sections"><code>app/api/* + app/(orders)/_sections</code></a></div>
-<div class="kv"><b>Impact:</b> observability, mcp-activity, SSE stream, a2a events/mcp, sync-skill and the large section components lack direct tests; long-tail regressions land quietly.</div>
-<div class="kv"><b>Evidence:</b> Coverage ~31/42; sections covered only via e2e.</div>
-<div class="kv"><b>Fix:</b> Chip away opportunistically; extract section pure-logic into lib for unit coverage.</div>
-</div>
-</div>
-</div>
-<div class="card">
-<h2><i class="fa-solid fa-book" style="color:#0891b2"></i> Docs<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#1a7f37;color:#fff;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #1a7f3755">A</span></span></h2>
-<div class="summary">Every prior finding is fixed and the two trivia are closed: orders_<code>DASHBOARD_URL</code> is in .env.example, and the README Features table now lists only real shipped features (RAG Memory, Agents, Usage &amp; Tokens) - the dead Memory Browser/Health Check/Timeline rows are gone. No stale references, no missing env vars.</div>
-<div class="pills" style="margin-top:12px">
-<div class="pill"><div class="n" style="font-size:16px">0</div><div class="l">Dead feature rows</div></div>
-<div class="pill"><div class="n" style="font-size:16px">0</div><div class="l">Env vars undocumented</div></div>
-<div class="pill"><div class="n" style="font-size:16px">0</div><div class="l">Prior findings open</div></div>
-</div>
-</div>
-<div class="card">
-<h2><i class="fa-solid fa-palette" style="color:#bf3989"></i> UI/UX Audit<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#1a7f37;color:#fff;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #1a7f3755">A</span></span></h2>
-<div class="summary">The card-shell duplication cap is closed: <code>lib/ui-tokens.ts</code> is the single source for cardShell + <code>heatRamp()</code>, consumed across the sections (23 card shells + the 3 heatmap ramps migrated, byte-identical output); genuinely-distinct panels correctly left inline. Both a11y HIGHs (SearchModal dialog/focus-trap, contrast floor) and the error-surfacing + reduced-motion mediums from earlier rounds stay fixed. One documented low remains.</div>
-<div style="margin-top:14px">
-<div class="finding"><div class="head">
-<span class="title">HeroCard renders only stats[0], drops the rest</span>
-<span class="badges">
-<span class="badge badge-blue"><i class="fa-solid fa-bug"></i>Low</span>
-<span class="badge badge-green"><i class="fa-solid fa-bullseye"></i>High</span>
-<span class="badge badge-grey"><i class="fa-solid fa-hourglass-half"></i>S</span>
-</span>
-</div>
-<div class="kv"><b>Where:</b> <a href="https://github.com/acme/orders-api/blob/main/app/(orders)/_sections/OverviewSection.tsx#L63"><code>app/(orders)/_sections/OverviewSection.tsx:63</code></a></div>
-<div class="kv"><b>Impact:</b> Callers passing multiple stats lose all but the first; documented as intentional in-code.</div>
-<div class="kv"><b>Evidence:</b> Render reads stats[0] only; comment marks it intentional.</div>
-<div class="kv"><b>Fix:</b> Narrow the prop to a single stat so the contract is honest.</div>
-</div>
-</div>
-</div>
-<div class="card">
-<h2><i class="fa-solid fa-diagram-project" style="color:#cf222e"></i> Features Supported<span class="g"><span style="display:inline-flex;align-items:center;justify-content:center;background:#2da44e;color:#fff;font-weight:800;font-size:19px;width:52px;height:52px;flex:0 0 52px;border-radius:50%;letter-spacing:.02em;box-shadow:0 2px 5px #2da44e55">A-</span></span></h2>
-<div class="summary">Broad but genuinely coherent: every feature is an instance of one thesis - mirror the local orders Code environment (sessions, transcripts, config, memory, usage) and act on it (send input, run skills, sync machines, expose RAG over MCP). Features compose rather than sprawl: the machines registry feeds apiBase which every section uses; RAG feeds the MCP server, Cmd+K search, and the eval harness; the transcript walkers feed tokens, turns, tool-usage, and now the skill/subagent leaderboard. The new Skill &amp; Subagent Usage panel is a well-scoped addition to the analytics branch. Deductions are for edge-of-thesis weight, not incoherence: A2A shell.exec/skill-run is fleet-automation living inside a dashboard, and Overview keeps accreting panels into one 865-LOC component.</div>
-<div class="fmm"><svg viewBox="0 0 752 1384" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:752px;height:auto"><path d="M226,858 C245,858 245,120 264,120" fill="none" stroke="#4493f8" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,120 C495,120 495,42 514,42" fill="none" stroke="#4493f8" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,120 C495,120 495,94 514,94" fill="none" stroke="#4493f8" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,120 C495,120 495,146 514,146" fill="none" stroke="#4493f8" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,120 C495,120 495,198 514,198" fill="none" stroke="#4493f8" stroke-width="1.8" stroke-opacity="0.55"/><path d="M226,858 C245,858 245,354 264,354" fill="none" stroke="#2da44e" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,354 C495,354 495,250 514,250" fill="none" stroke="#2da44e" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,354 C495,354 495,302 514,302" fill="none" stroke="#2da44e" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,354 C495,354 495,354 514,354" fill="none" stroke="#2da44e" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,354 C495,354 495,406 514,406" fill="none" stroke="#2da44e" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,354 C495,354 495,458 514,458" fill="none" stroke="#2da44e" stroke-width="1.8" stroke-opacity="0.55"/><path d="M226,858 C245,858 245,588 264,588" fill="none" stroke="#8250df" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,588 C495,588 495,510 514,510" fill="none" stroke="#8250df" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,588 C495,588 495,562 514,562" fill="none" stroke="#8250df" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,588 C495,588 495,614 514,614" fill="none" stroke="#8250df" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,588 C495,588 495,666 514,666" fill="none" stroke="#8250df" stroke-width="1.8" stroke-opacity="0.55"/><path d="M226,858 C245,858 245,718 264,718" fill="none" stroke="#e16f24" stroke-width="1.8" stroke-opacity="0.55"/><path d="M226,858 C245,858 245,822 264,822" fill="none" stroke="#12b3a0" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,822 C495,822 495,770 514,770" fill="none" stroke="#12b3a0" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,822 C495,822 495,822 514,822" fill="none" stroke="#12b3a0" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,822 C495,822 495,874 514,874" fill="none" stroke="#12b3a0" stroke-width="1.8" stroke-opacity="0.55"/><path d="M226,858 C245,858 245,978 264,978" fill="none" stroke="#e5484d" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,978 C495,978 495,926 514,926" fill="none" stroke="#e5484d" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,978 C495,978 495,978 514,978" fill="none" stroke="#e5484d" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,978 C495,978 495,1030 514,1030" fill="none" stroke="#e5484d" stroke-width="1.8" stroke-opacity="0.55"/><path d="M226,858 C245,858 245,1134 264,1134" fill="none" stroke="#d4a900" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,1134 C495,1134 495,1082 514,1082" fill="none" stroke="#d4a900" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,1134 C495,1134 495,1134 514,1134" fill="none" stroke="#d4a900" stroke-width="1.8" stroke-opacity="0.55"/><path d="M476,1134 C495,1134 495,1186 514,1186" fill="none" stroke="#d4a900" stroke-width="1.8" stroke-opacity="0.55"/><path d="M226,858 C245,858 245,1238 264,1238" fill="none" stroke="#6366f1" stroke-width="1.8" stroke-opacity="0.55"/><path d="M226,858 C245,858 245,1290 264,1290" fill="none" stroke="#4493f8" stroke-width="1.8" stroke-opacity="0.55"/><path d="M226,858 C245,858 245,1342 264,1342" fill="none" stroke="#2da44e" stroke-width="1.8" stroke-opacity="0.55"/><rect x="16" y="845" width="210" height="26" rx="7" fill="#1a1a2e" stroke="#1a1a2e" stroke-width="1.5"/><text x="26" y="861" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#ffffff">orders-api</text><rect x="266" y="107" width="210" height="38" rx="7" fill="#ddf4ff" stroke="#4493f8" stroke-width="1.5"/><text x="276" y="121" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#0a3069">Sessions</text><text x="276" y="139" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#0a3069" fill-opacity="0.85">live + historical mirror</text><rect x="516" y="29" width="210" height="38" rx="7" fill="#f2f9ff" stroke="#b6e3ff" stroke-width="1"/><text x="526" y="43" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#28517a">Live detection</text><text x="526" y="61" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#28517a" fill-opacity="0.85">lsof cwd-match, 5s cache</text><rect x="516" y="81" width="210" height="38" rx="7" fill="#f2f9ff" stroke="#b6e3ff" stroke-width="1"/><text x="526" y="95" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#28517a">Progress stream</text><text x="526" y="113" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#28517a" fill-opacity="0.85">SSE tail of session jsonl</text><rect x="516" y="133" width="210" height="38" rx="7" fill="#f2f9ff" stroke="#b6e3ff" stroke-width="1"/><text x="526" y="147" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#28517a">Send input</text><text x="526" y="165" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#28517a" fill-opacity="0.85">iTerm2 tty injection, bearer/same…</text><rect x="516" y="185" width="210" height="38" rx="7" fill="#f2f9ff" stroke="#b6e3ff" stroke-width="1"/><text x="526" y="199" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#28517a">Voice</text><text x="526" y="217" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#28517a" fill-opacity="0.85">VoiceModal dictation</text><rect x="266" y="341" width="210" height="26" rx="7" fill="#dafbe1" stroke="#2da44e" stroke-width="1.5"/><text x="276" y="357" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#0f5323">Analytics / Overview</text><rect x="516" y="237" width="210" height="38" rx="7" fill="#f0fdf4" stroke="#aceebb" stroke-width="1"/><text x="526" y="251" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#245c37">Token stats + daily cost</text><text x="526" y="269" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#245c37" fill-opacity="0.85">pricing.ts over transcript tails</text><rect x="516" y="289" width="210" height="38" rx="7" fill="#f0fdf4" stroke="#aceebb" stroke-width="1"/><text x="526" y="303" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#245c37">Turns by hour/day</text><text x="526" y="321" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#245c37" fill-opacity="0.85">16MB tail walker, heatmap</text><rect x="516" y="341" width="210" height="38" rx="7" fill="#f0fdf4" stroke="#aceebb" stroke-width="1"/><text x="526" y="355" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#245c37">Tool usage leaderboard</text><text x="526" y="373" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#245c37" fill-opacity="0.85">2MB tail walker</text><rect x="516" y="393" width="210" height="38" rx="7" fill="#f0fdf4" stroke="#aceebb" stroke-width="1"/><text x="526" y="407" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#245c37">Skill &amp; Subagent usage</text><text x="526" y="425" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#245c37" fill-opacity="0.85">NEW: skill-usage route (4MB tail,…</text><rect x="516" y="445" width="210" height="38" rx="7" fill="#f0fdf4" stroke="#aceebb" stroke-width="1"/><text x="526" y="459" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#245c37">Context window meter</text><text x="526" y="477" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#245c37" fill-opacity="0.85">per-model limits</text><rect x="266" y="575" width="210" height="26" rx="7" fill="#f3ebff" stroke="#8250df" stroke-width="1.5"/><text x="276" y="591" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#512a97">RAG Memory</text><rect x="516" y="497" width="210" height="38" rx="7" fill="#faf6ff" stroke="#e0c9ff" stroke-width="1"/><text x="526" y="511" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#492f7c">FTS5 search + query expansion</text><text x="526" y="529" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#492f7c" fill-opacity="0.85">synonym map</text><rect x="516" y="549" width="210" height="38" rx="7" fill="#faf6ff" stroke="#e0c9ff" stroke-width="1"/><text x="526" y="563" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#492f7c">Preference/insight extraction</text><text x="526" y="581" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#492f7c" fill-opacity="0.85">needs ANTHROPIC_API_KEY</text><rect x="516" y="601" width="210" height="38" rx="7" fill="#faf6ff" stroke="#e0c9ff" stroke-width="1"/><text x="526" y="615" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#492f7c">Eval harness + vectors</text><text x="526" y="633" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#492f7c" fill-opacity="0.85">MiniLM embeddings, brute-force co…</text><rect x="516" y="653" width="210" height="38" rx="7" fill="#faf6ff" stroke="#e0c9ff" stroke-width="1"/><text x="526" y="667" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#492f7c">Ingest pipelines</text><text x="526" y="685" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#492f7c" fill-opacity="0.85">docs + transcripts, dedup</text><rect x="266" y="705" width="210" height="38" rx="7" fill="#fff1e5" stroke="#e16f24" stroke-width="1.5"/><text x="276" y="719" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#7a3c00">MCP server</text><text x="276" y="737" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#7a3c00" fill-opacity="0.85">this app exposes rag_* tools over…</text><rect x="266" y="809" width="210" height="38" rx="7" fill="#d9fbf4" stroke="#12b3a0" stroke-width="1.5"/><text x="276" y="823" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#0a4f47">A2A</text><text x="276" y="841" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#0a4f47" fill-opacity="0.85">JSON-RPC peer endpoint - the one …</text><rect x="516" y="757" width="210" height="38" rx="7" fill="#f0fdfa" stroke="#9ee9dd" stroke-width="1"/><text x="526" y="771" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#255f57">Timing-safe bearer + same-sit…</text><text x="526" y="789" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#255f57" fill-opacity="0.85">lib/a2a-auth.ts</text><rect x="516" y="809" width="210" height="38" rx="7" fill="#f0fdfa" stroke="#9ee9dd" stroke-width="1"/><text x="526" y="823" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#255f57">shell.exec / skill.run / file…</text><text x="526" y="841" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#255f57" fill-opacity="0.85">explicit verbs, bearer-gated</text><rect x="516" y="861" width="210" height="38" rx="7" fill="#f0fdfa" stroke="#9ee9dd" stroke-width="1"/><text x="526" y="875" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#255f57">LAN peer discovery</text><text x="526" y="893" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#255f57" fill-opacity="0.85">lib/a2a-discovery.ts</text><rect x="266" y="965" width="210" height="26" rx="7" fill="#ffeef0" stroke="#e5484d" stroke-width="1.5"/><text x="276" y="981" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#82071e">Multi-machine</text><rect x="516" y="913" width="210" height="38" rx="7" fill="#fff5f6" stroke="#ffcdd2" stroke-width="1"/><text x="526" y="927" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#6b2b30">Registry + apiBase routing</text><text x="526" y="945" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#6b2b30" fill-opacity="0.85">every section transparently remote</text><rect x="516" y="965" width="210" height="38" rx="7" fill="#fff5f6" stroke="#ffcdd2" stroke-width="1"/><text x="526" y="979" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#6b2b30">Skill sync</text><text x="526" y="997" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#6b2b30" fill-opacity="0.85">push a skill to a peer</text><rect x="516" y="1017" width="210" height="38" rx="7" fill="#fff5f6" stroke="#ffcdd2" stroke-width="1"/><text x="526" y="1031" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#6b2b30">Observability</text><text x="526" y="1049" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#6b2b30" fill-opacity="0.85">cross-machine health</text><rect x="266" y="1121" width="210" height="38" rx="7" fill="#fff7cc" stroke="#d4a900" stroke-width="1.5"/><text x="276" y="1135" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#5c4200">Config surfaces</text><text x="276" y="1153" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#5c4200" fill-opacity="0.85">one section per ~/.orders artifact</text><rect x="516" y="1069" width="210" height="26" rx="7" fill="#fffceb" stroke="#f2df8f" stroke-width="1"/><text x="526" y="1085" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#54460d">Brain / orders.md editor + hi…</text><rect x="516" y="1121" width="210" height="26" rx="7" fill="#fffceb" stroke="#f2df8f" stroke-width="1"/><text x="526" y="1137" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#54460d">Settings, skills, commands, h…</text><rect x="516" y="1173" width="210" height="26" rx="7" fill="#fffceb" stroke="#f2df8f" stroke-width="1"/><text x="526" y="1189" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="600" fill="#54460d">MCP list, agent runs, tool-us…</text><rect x="266" y="1225" width="210" height="38" rx="7" fill="#e8eaff" stroke="#6366f1" stroke-width="1.5"/><text x="276" y="1239" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#2d2b8a">Global search</text><text x="276" y="1257" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#2d2b8a" fill-opacity="0.85">Cmd+K across sessions/config/RAG</text><rect x="266" y="1277" width="210" height="38" rx="7" fill="#ddf4ff" stroke="#4493f8" stroke-width="1.5"/><text x="276" y="1291" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#0a3069">LAN / Mobile</text><text x="276" y="1309" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#0a3069" fill-opacity="0.85">QR handoff, LAN CORS</text><rect x="266" y="1329" width="210" height="38" rx="7" fill="#dafbe1" stroke="#2da44e" stroke-width="1.5"/><text x="276" y="1343" font-family="-apple-system,Segoe UI,sans-serif" font-size="12.5" font-weight="700" fill="#0f5323">UX infra</text><text x="276" y="1361" font-family="-apple-system,Segoe UI,sans-serif" font-size="10.5" fill="#0f5323" fill-opacity="0.85">app-icon pipeline, view toggles, …</text></svg></div>
-<details class="fmm-list"><summary>Feature list</summary>
-<ul class="tree"><li><span class="node">Sessions</span> <span class="muted">- live + historical mirror</span><ul class="tree"><li><span class="node">Live detection</span> <span class="muted">- lsof cwd-match, 5s cache</span></li><li><span class="node">Progress stream</span> <span class="muted">- SSE tail of session jsonl</span></li><li><span class="node">Send input</span> <span class="muted">- iTerm2 tty injection, bearer/same-site guarded</span></li><li><span class="node">Voice</span> <span class="muted">- VoiceModal dictation</span></li></ul></li><li><span class="node">Analytics / Overview</span><ul class="tree"><li><span class="node">Token stats + daily cost</span> <span class="muted">- pricing.ts over transcript tails</span></li><li><span class="node">Turns by hour/day</span> <span class="muted">- 16MB tail walker, heatmap</span></li><li><span class="node">Tool usage leaderboard</span> <span class="muted">- 2MB tail walker</span></li><li><span class="node">Skill &amp; Subagent usage</span> <span class="muted">- NEW: skill-usage route (4MB tail, Skill by input.skill + Agent by subagent_type, 30s cache) + two-column SkillUsagePanel; self-hides when empty</span></li><li><span class="node">Context window meter</span> <span class="muted">- per-model limits</span></li></ul></li><li><span class="node">RAG Memory</span><ul class="tree"><li><span class="node">FTS5 search + query expansion</span> <span class="muted">- synonym map</span></li><li><span class="node">Preference/insight extraction</span> <span class="muted">- needs <code>ANTHROPIC_API_KEY</code></span></li><li><span class="node">Eval harness + vectors</span> <span class="muted">- MiniLM embeddings, brute-force cosine</span></li><li><span class="node">Ingest pipelines</span> <span class="muted">- docs + transcripts, dedup</span></li></ul></li><li><span class="node">MCP server</span> <span class="muted">- this app exposes rag_* tools over stdio (mcp-server.ts)</span></li><li><span class="node">A2A</span> <span class="muted">- JSON-RPC peer endpoint - the one branch that stretches the thesis</span><ul class="tree"><li><span class="node">Timing-safe bearer + same-site guard</span> <span class="muted">- <code>lib/a2a-auth.ts</code></span></li><li><span class="node">shell.exec / skill.run / file.read / git.status</span> <span class="muted">- explicit verbs, bearer-gated</span></li><li><span class="node">LAN peer discovery</span> <span class="muted">- <code>lib/a2a-discovery.ts</code></span></li></ul></li><li><span class="node">Multi-machine</span><ul class="tree"><li><span class="node">Registry + apiBase routing</span> <span class="muted">- every section transparently remote</span></li><li><span class="node">Skill sync</span> <span class="muted">- push a skill to a peer</span></li><li><span class="node">Observability</span> <span class="muted">- cross-machine health</span></li></ul></li><li><span class="node">Config surfaces</span> <span class="muted">- one section per ~/.orders artifact</span><ul class="tree"><li><span class="node">Brain / orders.md editor + history</span></li><li><span class="node">Settings, skills, commands, hooks, plugins, extensions</span></li><li><span class="node">MCP list, agent runs, tool-usage</span></li></ul></li><li><span class="node">Global search</span> <span class="muted">- Cmd+K across sessions/config/RAG</span></li><li><span class="node">LAN / Mobile</span> <span class="muted">- QR handoff, LAN CORS</span></li><li><span class="node">UX infra</span> <span class="muted">- app-icon pipeline, view toggles, toasts, mascot loader</span></li></ul>
-</details>
-</div>
-<div class="bottomline"><strong>Bottom line:</strong> Final push landed: SEVEN of nine graded lenses are now A - Architect, Infra, Security, Performance, Docs, Tests, and UI/UX - up from a session that opened at UI/UX C+ and a B-range spread. The multi-machine regression is properly closed with a guarded same-origin proxy (private-IP-only, path-allowlisted, bearer-scoped) and 6 security tests; every route now shares one error convention; route coverage reached ~31/42 with the flagship RAG paths tested and a real bug caught-and-fixed; and the UI card-shell duplication is gone behind <code>lib/ui-tokens.ts</code>. All green: 389 tests, lint 0-error, tsc clean, build compiles. The two remaining A- lenses are honest holds, not defects: Quality&#x27;s deliberate TypeScript/Tailwind major-version hold (forcing a breaking migration would be worse), and Features&#x27; inherent product breadth. This is the right stopping point.</div>
+<div class="bottomline"><strong>Bottom line:</strong> A competent, conventionally structured Express + Postgres order service whose real ceiling is that every request path still goes through one 900-line controller layer with no transaction boundary, so correctness under concurrency is asserted in code review rather than enforced by the database.</div>
 <script>
-const SCORES = {"overall": {"score": 94, "grade": "A", "color": "#1a7f37"}, "lenses": [{"label": "Architect", "grade": "A", "score": 95, "color": "#1a7f37", "icon": "fa-sitemap", "accent": "#cf222e"}, {"label": "Infra", "grade": "A", "score": 95, "color": "#1a7f37", "icon": "fa-server", "accent": "#9a6700"}, {"label": "Security", "grade": "A", "score": 95, "color": "#1a7f37", "icon": "fa-lock", "accent": "#1a7f37"}, {"label": "Performance", "grade": "A", "score": 95, "color": "#1a7f37", "icon": "fa-gauge-high", "accent": "#0969da"}, {"label": "Code", "grade": "A-", "score": 92, "color": "#2da44e", "icon": "fa-code", "accent": "#8250df"}, {"label": "Tests", "grade": "A", "score": 95, "color": "#1a7f37", "icon": "fa-flask", "accent": "#24292f"}, {"label": "Docs", "grade": "A", "score": 95, "color": "#1a7f37", "icon": "fa-book", "accent": "#0891b2"}, {"label": "UI/UX", "grade": "A", "score": 95, "color": "#1a7f37", "icon": "fa-palette", "accent": "#bf3989"}, {"label": "Features", "grade": "A-", "score": 92, "color": "#2da44e", "icon": "fa-diagram-project", "accent": "#cf222e"}]};
+const SCORES = {"overall": {"score": 81, "grade": "B-", "color": "#eab308"}, "lenses": [{"label": "Architect", "grade": "B-", "score": 82, "color": "#facc15", "icon": "fa-sitemap", "accent": "#cf222e"}, {"label": "Infra", "grade": "B", "score": 85, "color": "#eab308", "icon": "fa-server", "accent": "#9a6700"}, {"label": "Security", "grade": "C+", "score": 78, "color": "#7c2d12", "icon": "fa-lock", "accent": "#1a7f37"}, {"label": "Performance", "grade": "B-", "score": 82, "color": "#facc15", "icon": "fa-gauge-high", "accent": "#0969da"}, {"label": "Code", "grade": "B-", "score": 82, "color": "#facc15", "icon": "fa-code", "accent": "#8250df"}, {"label": "Tests", "grade": "C", "score": 75, "color": "#c2410c", "icon": "fa-flask", "accent": "#24292f"}, {"label": "Docs", "grade": "C+", "score": 78, "color": "#7c2d12", "icon": "fa-book", "accent": "#0891b2"}, {"label": "Features", "grade": "B", "score": 85, "color": "#eab308", "icon": "fa-diagram-project", "accent": "#cf222e"}]};
 
 (function(){
   if (typeof Chart === "undefined") return;

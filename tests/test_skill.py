@@ -12,7 +12,11 @@ ICON = {"architect": "fa-sitemap", "infra": "fa-server", "security": "fa-lock",
 
 
 def run(*args, cwd=ROOT):
-    return subprocess.run([sys.executable, *args], cwd=cwd, capture_output=True, text=True)
+    # The icon registries are opt-in env vars that change what the renderer embeds,
+    # so a contributor with either set would otherwise get a red golden-compare.
+    env = {k: v for k, v in os.environ.items()
+           if k not in ("REPO_AUDIT_ICON_REGISTRY", "REPO_AUDIT_FAVICON_REGISTRY")}
+    return subprocess.run([sys.executable, *args], cwd=cwd, capture_output=True, text=True, env=env)
 
 
 class RenderGolden(unittest.TestCase):
@@ -81,6 +85,60 @@ class GoldenIsCurrent(unittest.TestCase):
             self.assertNotIn(marker, html, f"{marker!r} in the published example")
 
 
+class NoArbitraryFileRead(unittest.TestCase):
+    """The report base64-embeds an app icon. It must embed IMAGES, and only from
+    inside the audited repo - the data JSON is written by an agent that has just
+    read an untrusted repo, so naming a path in it must not exfiltrate that file
+    into a document the user then shares."""
+
+    def setUp(self):
+        self.dir = tempfile.mkdtemp()
+        self.secret = os.path.join(self.dir, "secrets.png")   # image extension, not an image
+        with open(self.secret, "w") as fh:
+            fh.write("AWS_SECRET_ACCESS_KEY=AKIA_TEST_ONLY_NOT_REAL\n")
+
+    def render_with_icon(self, icon):
+        data = {"repo": "fixture", "path": ROOT, "scanned": {"files": 1, "loc": 1},
+                "app_icon": icon,
+                "lenses": {"security": {"grade": "B", "summary": "s", "findings": []}}}
+        src = os.path.join(self.dir, "d.json")
+        with open(src, "w") as fh:
+            json.dump(data, fh)
+        out = os.path.join(self.dir, "r.html")
+        proc = run("render.py", src, "--no-open", "--out", out)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        with open(out, encoding="utf-8") as fh:
+            return fh.read()
+
+    def assert_not_embedded(self, html, needle):
+        import base64
+        for m in re.finditer(r"base64,([A-Za-z0-9+/=]{16,})", html):
+            try:
+                blob = base64.b64decode(m.group(1) + "==").decode("utf-8", "ignore")
+            except Exception:
+                continue
+            self.assertNotIn(needle, blob, "a non-image local file was embedded in the report")
+
+    def test_a_non_image_with_an_image_extension_is_not_embedded(self):
+        self.assert_not_embedded(self.render_with_icon(self.secret), "AWS_SECRET_ACCESS_KEY")
+
+    def test_a_file_without_an_image_extension_is_not_embedded(self):
+        env = os.path.join(self.dir, ".env")
+        with open(env, "w") as fh:
+            fh.write("AWS_SECRET_ACCESS_KEY=AKIA_TEST_ONLY_NOT_REAL\n")
+        self.assert_not_embedded(self.render_with_icon(env), "AWS_SECRET_ACCESS_KEY")
+
+    def test_a_real_image_outside_the_repo_is_refused(self):
+        import base64
+        png = base64.b64decode(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==")
+        p = os.path.join(self.dir, "real.png")
+        with open(p, "wb") as fh:
+            fh.write(png)
+        html = self.render_with_icon(p)
+        self.assertNotIn(base64.b64encode(png).decode(), html)
+
+
 class HostileInput(unittest.TestCase):
     """The data JSON is written by an agent that has just read an untrusted repo.
     Nothing from it may reach the report as markup."""
@@ -103,12 +161,19 @@ class HostileInput(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stderr)
         with open(out, encoding="utf-8") as fh:
             html = fh.read()
-        self.assertNotIn('href="javascript:', html)
-        self.assertNotIn("</script><img", html)
-        self.assertNotIn("<img src=x onerror", html)
-        self.assertNotIn("<script>alert(", html)
-        self.assertIsNone(re.search(r'<[^>]+\son(?:mouseover|error|load)=', html),
+        # What matters is what reaches MARKUP. A payload that survives as a string
+        # inside the JSON blob is inert: script_json escapes `</` so the block cannot
+        # be terminated, and the chart draws its labels on a canvas, not innerHTML.
+        markup = re.sub(r"<script\b.*?</script>", "", html, flags=re.S)
+        self.assertNotIn('href="javascript:', markup)
+        self.assertNotIn("<img src=x onerror", markup)
+        self.assertNotIn("<script>alert(", markup)
+        self.assertIsNone(re.search(r'<[^>]+\son(?:mouseover|error|load)=', markup),
                           "an event handler reached the rendered page")
+        # and the script block itself must stay unterminatable
+        self.assertNotIn("</script><img", html)
+        self.assertEqual(html.count("</script>"), len(re.findall(r"<script\b", html)),
+                         "a payload closed a script block early")
 
 
 class CliContract(unittest.TestCase):

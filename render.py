@@ -1381,7 +1381,7 @@ a.tech-link { display:inline-flex; align-items:center; }
     lens_scores = []
     for k, lbl, ic, accent in LENSES:
         g = ((lenses.get(k) or {}).get("grade") or "").strip()
-        if g and g not in GRADE_SCORE:
+        if g and g.upper() != "N/A" and g not in GRADE_SCORE:
             print(f"render: warning - lens {k!r} has grade {g!r}, which is not one of "
                   f"{', '.join(GRADE_SCORE)}; it is shown but excluded from the overall score",
                   file=sys.stderr)

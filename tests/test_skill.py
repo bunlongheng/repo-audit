@@ -77,7 +77,7 @@ class GoldenIsCurrent(unittest.TestCase):
     def test_the_example_carries_nothing_private(self):
         with open(os.path.join(ROOT, "golden", "sample.html"), encoding="utf-8") as fh:
             html = fh.read().lower()
-        for marker in ("/users/", "/home/", "localhost:", "127.0.0.1", "internal.", ".local/"):
+        for marker in ("/users/", "/home/", "localhost:", "127.0.0.1", "internal.", ".local/"):  # publish-scan: allow
             self.assertNotIn(marker, html, f"{marker!r} in the published example")
 
 

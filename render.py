@@ -812,7 +812,7 @@ def render_critical_path(cp):
     {title, steps:[{n, label, src, note?}]}. Fully inline-styled to survive any viewer."""
     if not cp or not cp.get("steps"):
         return ""
-    out = ['<div style="margin:6px auto 20px;max-width:640px;border:1px solid #e6e9ee;border-radius:13px;'
+    out = ['<div style="margin:6px 0 20px;max-width:100%;border:1px solid #e6e9ee;border-radius:13px;'
            'background:#fff;padding:15px 18px;box-shadow:0 2px 8px rgba(20,30,50,.07)">']
     title = esc(cp.get("title", "Critical request path"))
     out.append('<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">'
@@ -1236,7 +1236,7 @@ def main():
     A('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>')
     A('''<style>
 * { box-sizing:border-box; margin:0; padding:0; }
-html { overflow-x:hidden; }
+html { overflow-x:hidden; } svg { max-width:100%; }
 /* Owner-locked: whole report renders at 67% scale (reads like browser zoom 67%) - denser, fits cleanly. Never remove. */
 body { zoom:0.67; background:#f6f8fa; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; min-height:100vh; padding:28px 44px; overflow-x:hidden; width:100%; }
 .page { max-width:1680px; width:100%; margin:0 auto; position:relative; }
@@ -1676,7 +1676,12 @@ a.tech-link { display:inline-flex; align-items:center; }
             if gp:
                 A('<details style="margin:6px 0 10px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">Gemini diagram prompt (copy-paste)</summary>')
                 A(f'<pre style="font-size:10.5px;white-space:pre-wrap;line-height:1.5;background:#f6f8fa;border:1px solid #d0d7de;border-radius:8px;padding:10px;margin-top:8px">{esc(gp)}</pre></details>')
-            if L.get("table"):
+            mmap = data.get("file_layers_mindmap")
+            if mmap and mmap.get("svg"):
+                A('<details open style="margin:6px 0 4px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">File layers</summary>'
+                  f'<a href="{esc(mmap.get("url") or "")}" target="_blank" rel="noopener" style="display:block;margin-top:8px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;overflow:hidden">{_fit_svg(mmap["svg"])}</a>'
+                  f'<div class="muted" style="margin-top:6px">Click to open in Mindmaps &middot; <a href="{esc(mmap.get("svg_url") or "")}" target="_blank" rel="noopener">SVG</a></div></details>')
+            elif L.get("table"):
                 A('<details open style="margin:6px 0 4px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">File layers</summary>')
                 A(render_arch_diagram(L["table"]))
                 A('</details>')

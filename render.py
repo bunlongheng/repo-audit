@@ -691,6 +691,12 @@ def render_arch_flow(flow):
     return "".join(out)
 
 
+def _fit_svg(svg):
+    """Fit-view: scale an inline SVG to the container width, no horizontal scroll (owner 2026-09-28)."""
+    import re as _re
+    return _re.sub(r"<svg\b([^>]*)>", lambda m: "<svg" + _re.sub(r'\s(width|height)="[^"]*"', "", m.group(1)) + ' style="width:100%;height:auto;display:block" preserveAspectRatio="xMidYMid meet">', svg, count=1)
+
+
 def render_arch_canvas(canvas):
     """Free-form node-graph architecture diagram with real service icons, arrows, and labels.
     canvas = {width, height, nodes:[{id,x,y,name,role,icon,color}], edges:[{from,to,label,dashed?}]}
@@ -1649,12 +1655,27 @@ a.tech-link { display:inline-flex; align-items:center; }
             # tiers + protocol arrows), then the file-layer diagram (auto-built from the
             # table). The verbose prose summary and the raw table go into collapsibles -
             # diagrams + bullet points carry the section.
-            if L.get("arch_canvas"):
+            sd = data.get("system_design")
+            if sd and sd.get("svg"):
+                A('<div class="flow" style="margin:4px 0 12px;padding:10px"><div class="section-label" style="margin-bottom:6px">Architecture (Flows)</div>'
+                  f'<a href="{esc(sd.get("url") or "")}" target="_blank" rel="noopener" style="display:block;border:1px solid #e5e7eb;border-radius:12px;background:#fff;overflow:hidden">'
+                  + _fit_svg(sd["svg"]) + '</a>'
+                  f'<div class="muted" style="margin-top:6px">Click to open in Flows &middot; <a href="{esc(sd.get("svg_url") or "")}" target="_blank" rel="noopener">SVG</a></div></div>')
+            elif L.get("arch_canvas"):
                 A(render_arch_canvas(L["arch_canvas"]))
             elif L.get("stack_flow"):
                 A(render_arch_flow(L["stack_flow"]))
             if L.get("critical_path"):
                 A(render_critical_path(L["critical_path"]))
+            sq = data.get("sequence")
+            if sq and sq.get("svg"):
+                A('<div class="flow" style="margin:4px 0 12px;padding:10px"><div class="section-label" style="margin-bottom:6px">Critical path (Sequences)</div>'
+                  f'<a href="{esc(sq.get("url") or "")}" target="_blank" rel="noopener" style="display:block;border:1px solid #e5e7eb;border-radius:12px;background:#fff;overflow:hidden">{_fit_svg(sq["svg"])}</a>'
+                  f'<div class="muted" style="margin-top:6px">Click to open in Sequences &middot; <a href="{esc(sq.get("svg_url") or "")}" target="_blank" rel="noopener">SVG</a></div></div>')
+            gp = data.get("gemini_prompt")
+            if gp:
+                A('<details style="margin:6px 0 10px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">Gemini diagram prompt (copy-paste)</summary>')
+                A(f'<pre style="font-size:10.5px;white-space:pre-wrap;line-height:1.5;background:#f6f8fa;border:1px solid #d0d7de;border-radius:8px;padding:10px;margin-top:8px">{esc(gp)}</pre></details>')
             if L.get("table"):
                 A('<details open style="margin:6px 0 4px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">File layers</summary>')
                 A(render_arch_diagram(L["table"]))

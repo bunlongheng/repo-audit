@@ -1665,13 +1665,13 @@ a.tech-link { display:inline-flex; align-items:center; }
                 A(render_arch_canvas(L["arch_canvas"]))
             elif L.get("stack_flow"):
                 A(render_arch_flow(L["stack_flow"]))
-            if L.get("critical_path"):
-                A(render_critical_path(L["critical_path"]))
             sq = data.get("sequence")
             if sq and sq.get("svg"):
                 A('<div class="flow" style="margin:4px 0 12px;padding:10px"><div class="section-label" style="margin-bottom:6px">Critical path (Sequences)</div>'
                   f'<a href="{esc(sq.get("url") or "")}" target="_blank" rel="noopener" style="display:block;border:1px solid #e5e7eb;border-radius:12px;background:#fff;overflow:hidden">{_fit_svg(sq["svg"])}</a>'
                   f'<div class="muted" style="margin-top:6px">Click to open in Sequences &middot; <a href="{esc(sq.get("svg_url") or "")}" target="_blank" rel="noopener">SVG</a></div></div>')
+            if L.get("critical_path"):
+                A(render_critical_path(L["critical_path"]))
             gp = data.get("gemini_prompt")
             if gp:
                 A('<details style="margin:6px 0 10px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">Gemini diagram prompt (copy-paste)</summary>')

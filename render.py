@@ -1677,10 +1677,15 @@ a.tech-link { display:inline-flex; align-items:center; }
                 A('<details style="margin:6px 0 10px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">Gemini diagram prompt (copy-paste)</summary>')
                 A(f'<pre style="font-size:10.5px;white-space:pre-wrap;line-height:1.5;background:#f6f8fa;border:1px solid #d0d7de;border-radius:8px;padding:10px;margin-top:8px">{esc(gp)}</pre></details>')
             mmap = data.get("file_layers_mindmap")
-            if mmap and mmap.get("svg"):
-                A('<details open style="margin:6px 0 4px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">File layers</summary>'
-                  f'<a href="{esc(mmap.get("url") or "")}" target="_blank" rel="noopener" style="display:block;margin-top:8px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;overflow:hidden">{_fit_svg(mmap["svg"])}</a>'
-                  f'<div class="muted" style="margin-top:6px">Click to open in Mindmaps &middot; <a href="{esc(mmap.get("svg_url") or "")}" target="_blank" rel="noopener">SVG</a></div></details>')
+            if mmap and (mmap.get("svg") if isinstance(mmap, dict) else any(v.get("svg") for v in mmap)):
+                variants = [mmap] if isinstance(mmap, dict) else [v for v in mmap if v.get("svg")]
+                A('<details open style="margin:6px 0 4px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">File layers</summary>')
+                for v in variants:
+                    if len(variants) > 1:
+                        A(f'<div class="section-label" style="margin:12px 0 4px">{esc(v.get("type") or "mindmap")}</div>')
+                    A(f'<a href="{esc(v.get("url") or "")}" target="_blank" rel="noopener" style="display:block;margin-top:8px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;overflow:hidden">{_fit_svg(v["svg"])}</a>'
+                      f'<div class="muted" style="margin-top:6px">Click to open in Mindmaps &middot; <a href="{esc(v.get("svg_url") or "")}" target="_blank" rel="noopener">SVG</a></div>')
+                A('</details>')
             elif L.get("table"):
                 A('<details open style="margin:6px 0 4px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">File layers</summary>')
                 A(render_arch_diagram(L["table"]))

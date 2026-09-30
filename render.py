@@ -77,7 +77,8 @@ Input contract (the JSON the agent builds at <data.json>):
     "system_design":    {"url":"...","svg_url":"...","svg":"<svg..."},  # Flows diagram (architecture) - MANDATORY on full runs
     "sequence":         {"url":"...","svg_url":"...","svg":"<svg..."},  # Sequences diagram (critical path) - MANDATORY
     "features_mindmap": {"url":"...","svg_url":"...","svg":"<svg..."},  # Mindmaps diagram (feature tree) - MANDATORY
-    "file_layers_mindmap": {"url":"...","svg_url":"...","svg":"..."},   # optional Mindmaps of the layer table
+    "file_layers_sequence": {"url":"...","svg_url":"...","svg":"..."},  # Sequences diagram of the layer table - MANDATORY (owner 2026-09-30)
+    "file_layers_mindmap": {"url":"...","svg_url":"...","svg":"..."},   # legacy Mindmaps variant, used only when the Sequences one is absent
     "top_fixes": [                                 # optional cross-lens "fix these first" (max 5, ranked)
       { "title":"...", "lens":"security",          #   lens key the finding came from
         "severity":"high", "file":"path/foo.ts:42",#   file optional
@@ -1691,8 +1692,17 @@ a.tech-link { display:inline-flex; align-items:center; }
             if gp:
                 A('<details style="margin:6px 0 10px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">Gemini diagram prompt (copy-paste)</summary>')
                 A(f'<pre style="font-size:10.5px;white-space:pre-wrap;line-height:1.5;background:#f6f8fa;border:1px solid #d0d7de;border-radius:8px;padding:10px;margin-top:8px">{esc(gp)}</pre></details>')
+            fls = data.get("file_layers_sequence")
             mmap = data.get("file_layers_mindmap")
-            if mmap and (mmap.get("svg") if isinstance(mmap, dict) else any(v.get("svg") for v in mmap)):
+            if fls and fls.get("svg"):
+                # Owner rule 2026-09-30: the file-layer stack is a Sequences diagram
+                # (layers as participants, dependency direction as messages), never
+                # the renderer-drawn vertical chain.
+                A('<details open style="margin:6px 0 4px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">File layers (Sequences)</summary>')
+                A(f'<a href="{esc(fls.get("url") or "")}" target="_blank" rel="noopener" style="display:block;margin-top:8px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;overflow:hidden">{_fit_svg(fls["svg"])}</a>'
+                  f'<div class="muted" style="margin-top:6px">Click to open in Sequences &middot; <a href="{esc(fls.get("svg_url") or "")}" target="_blank" rel="noopener">SVG</a></div>')
+                A('</details>')
+            elif mmap and (mmap.get("svg") if isinstance(mmap, dict) else any(v.get("svg") for v in mmap)):
                 variants = [mmap] if isinstance(mmap, dict) else [v for v in mmap if v.get("svg")]
                 A('<details open style="margin:6px 0 4px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">File layers</summary>')
                 for v in variants:

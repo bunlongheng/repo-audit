@@ -74,6 +74,10 @@ Input contract (the JSON the agent builds at <data.json>):
                        "tree":[ {"name":"Auth","note":"Supabase",
                                  "children":[ {"name":"Login"} ]} ] }
     },
+    "system_design":    {"url":"...","svg_url":"...","svg":"<svg..."},  # Flows diagram (architecture) - MANDATORY on full runs
+    "sequence":         {"url":"...","svg_url":"...","svg":"<svg..."},  # Sequences diagram (critical path) - MANDATORY
+    "features_mindmap": {"url":"...","svg_url":"...","svg":"<svg..."},  # Mindmaps diagram (feature tree) - MANDATORY
+    "file_layers_mindmap": {"url":"...","svg_url":"...","svg":"..."},   # optional Mindmaps of the layer table
     "top_fixes": [                                 # optional cross-lens "fix these first" (max 5, ranked)
       { "title":"...", "lens":"security",          #   lens key the finding came from
         "severity":"high", "file":"path/foo.ts:42",#   file optional
@@ -1642,7 +1646,18 @@ a.tech-link { display:inline-flex; align-items:center; }
 
         elif key == "features":
             tree = L.get("tree", [])
-            if tree:
+            fm = data.get("features_mindmap")
+            if fm and fm.get("svg"):
+                # Owner rule 2026-09-30: the feature map is a Mindmaps diagram, not
+                # renderer-drawn SVG. Click-through opens the editable map.
+                A('<div class="flow" style="margin:4px 0 12px;padding:10px"><div class="section-label" style="margin-bottom:6px">Feature map (Mindmaps)</div>'
+                  f'<a href="{esc(fm.get("url") or "")}" target="_blank" rel="noopener" style="display:block;border:1px solid #e5e7eb;border-radius:12px;background:#fff;overflow:hidden">{_fit_svg(fm["svg"])}</a>'
+                  f'<div class="muted" style="margin-top:6px">Click to open in Mindmaps &middot; <a href="{esc(fm.get("svg_url") or "")}" target="_blank" rel="noopener">SVG</a></div></div>')
+                if tree:
+                    A('<details class="fmm-list"><summary>Feature list</summary>')
+                    A(render_tree(tree))
+                    A('</details>')
+            elif tree:
                 A(render_features_mindmap(repo, tree))
                 A('<details class="fmm-list"><summary>Feature list</summary>')
                 A(render_tree(tree))

@@ -1754,7 +1754,11 @@ a.tech-link { display:inline-flex; align-items:center; }
             if L.get("metrics"):
                 A('<div class="pills" style="margin-top:12px">')
                 for m in L["metrics"]:
-                    A(f'<div class="pill"><div class="n" style="font-size:16px">{esc(m[1])}</div><div class="l">{esc(m[0])}</div></div>')
+                    if isinstance(m, dict):  # tolerate {label, value} objects from a lens
+                        m = [m.get("label") or m.get("name") or "", m.get("value") if "value" in m else ""]
+                    if not isinstance(m, (list, tuple)) or len(m) < 2:
+                        continue
+                    A(f'<div class="pill"><div class="n" style="font-size:16px">{esc(str(m[1]))}</div><div class="l">{esc(str(m[0]))}</div></div>')
                 A('</div>')
             finds = L.get("findings", [])
             if finds:

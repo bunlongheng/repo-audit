@@ -9,7 +9,7 @@ time and never through a chat transcript again:
                                                  files/LOC/vitality/churn/GitHub health/
                                                  dependency advisories, write DIR/scope.json
                                                  and DIR/base.json (report skeleton)
-  finish  DIR [--no-post] [--no-diagrams] [--reports-dir D]
+  finish  DIR [--no-post] [--no-diagrams] [--reuse-diagrams] [--reports-dir D]
                                                  merge DIR/<lens>.json + DIR/synthesis.json,
                                                  normalise, de-dup GBU, run the evidence gate
                                                  (verify.py --prune), build the 3 app diagrams
@@ -312,8 +312,24 @@ def cmd_scope(target, out):
 
 
 # ----------------------------------------------------------------------------- finish helpers
+def norm_metrics(l):
+    """Renderer contract is [[label, value], ...]; lenses sometimes emit dicts. Coerce or drop."""
+    out = []
+    for m in l.get("metrics") or []:
+        if isinstance(m, (list, tuple)) and len(m) >= 2:
+            out.append([str(m[0]), str(m[1])])
+        elif isinstance(m, dict):
+            label = m.get("label") or m.get("name") or m.get("metric") or m.get("key")
+            value = m.get("value") if "value" in m else (list(m.values())[1] if len(m) >= 2 else None)
+            if label is not None and value is not None:
+                out.append([str(label), str(value)])
+    if "metrics" in l:
+        l["metrics"] = out
+
+
 def norm_findings(lenses, strip):
     for l in lenses.values():
+        norm_metrics(l)
         for f in l.get("findings", []):
             f["severity"] = SEV.get(str(f.get("severity", "low")).lower()[:4], str(f.get("severity", "low")).lower())
             f["confidence"] = CONF.get(str(f.get("confidence", "Med")).lower()[:1], "Med")
@@ -322,12 +338,25 @@ def norm_findings(lenses, strip):
                     f[k] = f[k].replace(strip, "")
 
 
+def gbu_text(x):
+    """GBU items may arrive as finding dicts (lens agents reuse the finding shape); the renderer wants strings."""
+    if isinstance(x, str):
+        return x
+    x = x or {}
+    head = str(x.get("title", "")).strip()
+    where = str(x.get("file", "")).strip()
+    body = str(x.get("consequence") or x.get("evidence") or "").strip()
+    out = head + (f" ({where})" if where else "")
+    return out + (f": {body}" if body else "")
+
+
 def dedup_gbu(g, drop_idx):
     for k in ("bad", "ugly"):
         items = g.get(k, [])
         keep = []
         for i, x in enumerate(items):
-            if i in drop_idx.get(k, []) or x.startswith("[likely dup]"):
+            text = x if isinstance(x, str) else str((x or {}).get("title", ""))
+            if i in drop_idx.get(k, []) or text.startswith("[likely dup]"):
                 continue
             keep.append(x)
         g[k] = keep
@@ -679,7 +708,7 @@ def verify_tech_stack(ts):
 
 
 # ----------------------------------------------------------------------------- finish
-def cmd_finish(out, no_post=False, no_diagrams=False, reports_dir=None):
+def cmd_finish(out, no_post=False, no_diagrams=False, reports_dir=None, reuse_diagrams=False):
     out = Path(out).expanduser()
     base = jload(out / "base.json")
     scope = jload(out / "scope.json", {})
@@ -700,7 +729,7 @@ def cmd_finish(out, no_post=False, no_diagrams=False, reports_dir=None):
         dedup_gbu(lenses["gbu"], synth.get("gbu_drop", {}))
         for k in ("good", "bad", "ugly", "summary"):
             v = lenses["gbu"].get(k)
-            lenses["gbu"][k] = [x.replace(strip, "") for x in v] if isinstance(v, list) else (v or "").replace(strip, "")
+            lenses["gbu"][k] = [gbu_text(x).replace(strip, "") for x in v] if isinstance(v, list) else (v or "").replace(strip, "")
     norm_findings(lenses, strip)
     # synthesis corrections: extra findings / grade moves written by the strong model
     for k, extra in (synth.get("extra_findings") or {}).items():
@@ -755,7 +784,14 @@ def cmd_finish(out, no_post=False, no_diagrams=False, reports_dir=None):
         v["lenses"][k]["findings"] = fs + v["lenses"][k].get("findings", [])
     # diagrams from the 3 apps - never renderer-drawn
     diag = {}
-    if not no_diagrams:
+    prev = jload(out / "data.verified.json", {}) if reuse_diagrams else {}
+    if reuse_diagrams and prev.get("system_design"):
+        for k in ("system_design", "file_layers_sequence", "features_mindmap"):
+            if prev.get(k):
+                v[k] = prev[k]
+                diag[k] = prev[k].get("url")
+        log("re-used diagrams from the previous finish")
+    elif not no_diagrams:
         name = base["repo"].split("/")[-1]
         iac = "Terraform" in (scope.get("stack_hint") or [])
         try:
@@ -788,18 +824,20 @@ def cmd_finish(out, no_post=False, no_diagrams=False, reports_dir=None):
     rdir.mkdir(parents=True, exist_ok=True)
     slug_file = re.sub(r"\W+", "-", base["repo"]).strip("-").lower()
     report = rdir / ("repo-audit-%s-%s.html" % (slug_file, TODAY))
-    rend = sh(["python3", str(HERE / "render.py"), str(out / "data.verified.json"), "--no-open", "--out", str(report)],
-              cwd=str(rdir.parent), timeout=300)
-    log(rend.splitlines()[-1] if rend else "render produced no output")
+    r = subprocess.run(["python3", str(HERE / "render.py"), str(out / "data.verified.json"), "--no-open", "--out", str(report)],
+                       cwd=str(rdir.parent), capture_output=True, text=True, timeout=300)
+    log((r.stdout.strip().splitlines() or ["render produced no output"])[-1])
+    if r.returncode != 0 or not report.exists():
+        sys.exit("finish: render FAILED (exit %s): %s" % (r.returncode, (r.stderr or r.stdout)[-1200:]))
     logs = HOME / ".claude" / "logs" / "repo-audit"
     logs.mkdir(parents=True, exist_ok=True)
     shutil.copy(out / "data.verified.json", logs / ("%s-%s.json" % (base["repo"].split("/")[-1], TODAY)))
     posted = "skipped"
     helper = HOME / ".claude" / "lib" / "stickies.py"
     if not no_post and helper.exists():
-        posted = sh("zsh -lc 'python3 %s %s --title %s --folder Audits'" % (helper, report, json.dumps("Repo Audit - " + base["repo"])),
-                    timeout=120).splitlines()[-1:] or ["no output"]
-        posted = posted[0]
+        pr = subprocess.run(["zsh", "-lc", "python3 %s %s --title %s --folder Audits" % (helper, report, json.dumps("Repo Audit - " + base["repo"]))],
+                            capture_output=True, text=True, timeout=120)
+        posted = ((pr.stdout.strip() or pr.stderr.strip()).splitlines() or ["no output (exit %s)" % pr.returncode])[-1]
     tot = {}
     for k in GRADED:
         for f in (v["lenses"].get(k) or {}).get("findings", []):
@@ -822,7 +860,8 @@ def main(argv):
     if cmd == "scope":
         cmd_scope(rest[0], opt("--out", "/tmp/repo-audit-run"))
     elif cmd == "finish":
-        cmd_finish(rest[0], no_post="--no-post" in rest, no_diagrams="--no-diagrams" in rest, reports_dir=opt("--reports-dir"))
+        cmd_finish(rest[0], no_post="--no-post" in rest, no_diagrams="--no-diagrams" in rest, reports_dir=opt("--reports-dir"),
+                   reuse_diagrams="--reuse-diagrams" in rest)
     else:
         sys.exit("unknown command %r (scope | finish)" % cmd)
 

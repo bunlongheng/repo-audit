@@ -716,6 +716,8 @@ def cmd_finish(out, no_post=False, no_diagrams=False, reports_dir=None, reuse_di
         sys.exit("finish: %s/base.json missing - run scope first" % out)
     repo = Path(base["path"])
     strip = str(repo) + "/"
+    # snapshot the previous finish BEFORE the gate rewrites data.verified.json (for --reuse-diagrams)
+    prev = jload(out / "data.verified.json", {}) if reuse_diagrams else {}
     synth = jload(out / "synthesis.json", {}) or {}
     lenses = dict(base.get("lenses", {}))
     for k in LENSES:
@@ -784,7 +786,6 @@ def cmd_finish(out, no_post=False, no_diagrams=False, reports_dir=None, reuse_di
         v["lenses"][k]["findings"] = fs + v["lenses"][k].get("findings", [])
     # diagrams from the 3 apps - never renderer-drawn
     diag = {}
-    prev = jload(out / "data.verified.json", {}) if reuse_diagrams else {}
     if reuse_diagrams and prev.get("system_design"):
         for k in ("system_design", "file_layers_sequence", "features_mindmap"):
             if prev.get(k):

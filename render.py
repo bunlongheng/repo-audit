@@ -1226,7 +1226,9 @@ def main():
     post_cfg = data.get("post", {})
 
     all_finds = []
-    for k in ("infra", "security", "performance", "quality", "tests", "docs", "uiux"):
+    # Every graded lens contributes findings (architect and features emit them too
+    # since 2026-09-30); GBU is report-only and stays out of the count.
+    for k in ("architect", "infra", "security", "performance", "quality", "tests", "docs", "uiux", "features"):
         all_finds += (lenses.get(k) or {}).get("findings", [])
     n = len(all_finds)
     by_sev = {k: sum(1 for f in all_finds if (f.get("severity") or "").lower() == k)
@@ -1666,6 +1668,13 @@ a.tech-link { display:inline-flex; align-items:center; }
             else:
                 A('<p class="empty">no feature map provided</p>')
 
+            ffinds = L.get("findings", [])
+            if ffinds:
+                # Feature-coherence findings (dead routes, env drift, orphans) - rendered
+                # like every other lens since 2026-09-30; they were silently dropped before.
+                A('<div style="margin-top:14px">')
+                render_findings(P, ffinds, repo_url, branch)
+                A('</div>')
         elif key == "architect":
             # Lead with the high-level "how it's built / how it talks" flow (tech-logo
             # tiers + protocol arrows), then the file-layer diagram (auto-built from the

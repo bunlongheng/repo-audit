@@ -29,6 +29,7 @@ import datetime
 import json
 import os
 import re
+import shlex
 import shutil
 import struct
 import subprocess
@@ -573,30 +574,90 @@ def create_flow(payload):
     return resp
 
 
+COL_GAP, ROW_GAP = 440, 320
+
+
+def seed_positions(node_ids, edges):
+    """Layered left-to-right layout: a node's column is the longest path from any source
+    (cycles and back edges are ignored), rows are filled in id order within a column."""
+    ids = list(node_ids)
+    preds = {i: set() for i in ids}
+    for s, t in edges:
+        if s in preds and t in preds and s != t:
+            preds[t].add(s)
+    col = {}
+
+    def depth(n, seen):
+        if n in col:
+            return col[n]
+        if n in seen:
+            return 0
+        seen.add(n)
+        col[n] = 1 + max([depth(p, seen) for p in preds[n]] or [-1])
+        return col[n]
+
+    for n in ids:
+        depth(n, set())
+    rows = {}
+    pos = {}
+    for n in ids:
+        r = rows.get(col[n], 0)
+        rows[col[n]] = r + 1
+        pos[n] = [col[n] * COL_GAP, r * ROW_GAP]
+    return pos
+
+
+def flows_host_run(script_body):
+    """Run a bash script inside the flows repo on whichever machine has it (local first, else the M4)."""
+    local = Path.home() / "Sites" / "flows"
+    if local.is_dir():
+        return sh("cd %s\n%s" % (local, script_body), timeout=120)
+    r = subprocess.run(["ssh", "-o", "ConnectTimeout=8", "M4", "bash -s"], input="cd ~/Sites/flows\n" + script_body,
+                       capture_output=True, text=True, timeout=180)
+    return r.stdout.strip()
+
+
+def retire_previous_flows(title, keep_id):
+    """1 live flow per repo (owner rule 2026-09-30). Every earlier flow with this exact title is
+    moved to Trash (deleted_at, restorable in the app). Flows are delete-locked against the HTTP
+    API, so this goes through the app's own db module on the host that has the repo."""
+    js = (
+        'import "./load-env.mjs"\nimport db from "../lib/db.js"\nimport { ownerId } from "../lib/auth-owner.js"\n'
+        'const owner = await ownerId()\n'
+        'const r = await db.query("UPDATE flows SET deleted_at=now() WHERE user_id=$1 AND deleted_at IS NULL AND title=$2 AND id<>$3", '
+        '[owner, process.argv[2], process.argv[3]])\nconsole.log(r.rowCount)\nprocess.exit(0)\n')
+    script = ("cd mcp && cat > ./_retire_tmp.mjs <<'EOF'\n%s\nEOF\n"
+              "export PATH=/opt/homebrew/bin:$PATH; node ./_retire_tmp.mjs %s %s 2>/dev/null | tail -1; rm -f ./_retire_tmp.mjs\n"
+              % (js, shlex.quote(title), shlex.quote(keep_id)))
+    out = flows_host_run(script)
+    try:
+        return int(out.strip().splitlines()[-1])
+    except (ValueError, IndexError):
+        log("flows retire: unexpected output %r" % out[-120:])
+        return 0
+
+
 def flows_diagram(arch, title, description):
+    """Exactly 1 create per run: positions are laid out locally first (the app's auto-layout can
+    only be inspected after a create, and created flows are edit-locked, so the old fix-up path
+    created a second flow every time). After the create, older same-title flows go to Trash."""
     payload = build_flow_payload(arch, title, description)
     if not payload["nodes"]:
         return None
-    first = create_flow(payload)
-    live = jload_str(sh(["curl", "-s", "--max-time", "20", "https://flows-bheng.vercel.app/api/flows/" + first["id"]])) or {}
-    pos = {n["id"]: [n["position"]["x"], n["position"]["y"]] for n in live.get("nodes", [])}
-    edges = [(e["source"], e["target"]) for e in live.get("edges", [])]
+    ids = [n["id"] for n in payload["nodes"]]
+    edges = [(e["source"], e["target"]) for e in payload["edges"]]
+    pos = unoverlap(seed_positions(ids, edges), edges)
     ov, hits = layout_score(pos, edges)
-    log("flows auto-layout: %d overlaps, %d edges through cards" % (ov, len(hits)))
-    if not hits and not ov:
-        return {"url": first["url"], "svg_url": first["svg_url"], "svg": first.get("svg", "")}
-    pos = unoverlap(pos, edges)
-    ov, hits = layout_score(pos, edges)
-    log("flows after search: %d overlaps, %d hits -> re-creating with explicit positions (created flows are edit-locked)" % (ov, len(hits)))
-    minx = min(v[0] for v in pos.values())
-    miny = min(v[1] for v in pos.values())
+    log("flows layout: %d overlaps, %d edges through cards" % (ov, len(hits)))
     for n in payload["nodes"]:
-        x, y = pos[n["id"]][0] - minx, pos[n["id"]][1] - miny
+        x, y = pos[n["id"]]
         n["position"] = {"x": x, "y": y}
         n["x"], n["y"] = x, y
-    second = create_flow(payload)
-    return {"url": second["url"], "svg_url": second["svg_url"], "svg": second.get("svg", ""),
-            "superseded": first["url"]}
+    created = create_flow(payload)
+    retired = retire_previous_flows(title, created["id"])
+    if retired:
+        log("flows: moved %d earlier '%s' diagram(s) to Trash, 1 live flow per repo" % (retired, title))
+    return {"url": created["url"], "svg_url": created["svg_url"], "svg": created.get("svg", "")}
 
 
 def lane_for(layer, iac):

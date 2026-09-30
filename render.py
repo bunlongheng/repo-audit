@@ -75,7 +75,7 @@ Input contract (the JSON the agent builds at <data.json>):
                                  "children":[ {"name":"Login"} ]} ] }
     },
     "system_design":    {"url":"...","svg_url":"...","svg":"<svg..."},  # Flows diagram (architecture) - MANDATORY on full runs
-    "sequence":         {"url":"...","svg_url":"...","svg":"<svg..."},  # Sequences diagram (critical path) - MANDATORY
+    # "sequence" (critical-path Sequences diagram) was RETIRED 2026-09-30 - ignored if present
     "features_mindmap": {"url":"...","svg_url":"...","svg":"<svg..."},  # Mindmaps diagram (feature tree) - MANDATORY
     "file_layers_sequence": {"url":"...","svg_url":"...","svg":"..."},  # Sequences diagram of the layer table - MANDATORY (owner 2026-09-30)
     "file_layers_mindmap": {"url":"...","svg_url":"...","svg":"..."},   # legacy Mindmaps variant, used only when the Sequences one is absent
@@ -1681,11 +1681,9 @@ a.tech-link { display:inline-flex; align-items:center; }
                 A(render_arch_canvas(L["arch_canvas"]))
             elif L.get("stack_flow"):
                 A(render_arch_flow(L["stack_flow"]))
-            sq = data.get("sequence")
-            if sq and sq.get("svg"):
-                A('<div class="flow" style="margin:4px 0 12px;padding:10px"><div class="section-label" style="margin-bottom:6px">Critical path (Sequences)</div>'
-                  f'<a href="{esc(sq.get("url") or "")}" target="_blank" rel="noopener" style="display:block;border:1px solid #e5e7eb;border-radius:12px;background:#fff;overflow:hidden">{_fit_svg(sq["svg"])}</a>'
-                  f'<div class="muted" style="margin-top:6px">Click to open in Sequences &middot; <a href="{esc(sq.get("svg_url") or "")}" target="_blank" rel="noopener">SVG</a></div></div>')
+            # Owner rule 2026-09-30: no Critical-path Sequences diagram - the Flows diagram
+            # above is the picture; critical_path stays as the numbered step list below.
+            # A stale top-level "sequence" key is ignored on purpose.
             if L.get("critical_path"):
                 A(render_critical_path(L["critical_path"]))
             gp = data.get("gemini_prompt")

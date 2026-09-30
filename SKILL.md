@@ -63,6 +63,33 @@ outside the report: `--issues` files the top fixes as GitHub issues (allowlisted
 owners only, see Step 5), and `--shot` writes a README screenshot PNG. Neither runs
 by default, so "read-only" stays literally true for a plain `/repo-audit` run.
 
+## Workflow mode (DEFAULT since 2026-09-30 - the fast path)
+
+The audit is now ONE saved workflow plus ONE deterministic script; nothing runs through a chat transcript
+by hand any more. Measured on 3 repos on 2026-09-30: the hand-driven glue (scoping, tech stack, diagrams,
+overlap check, gate, render, post) cost 10-15 minutes of sequential turns per repo and drifted slightly each
+time; the script does the same in under 30 seconds and never drifts.
+
+- **`orchestrate.py`** (this skill dir) - the glue. `scope <target> --out DIR` clones/refreshes into `~/code/<name>`,
+  measures files/LOC/vitality/churn/GitHub health/dependency advisories, writes `DIR/scope.json` + `DIR/base.json`.
+  `finish DIR` merges `DIR/<lens>.json` + `DIR/synthesis.json`, normalises, de-dups GBU, runs the evidence gate
+  (`verify.py --prune`, non-file citations held and re-added), builds the 3 app diagrams (Flows with the no-overlap
+  pass and a positioned re-create when the auto layout fails, Sequences staircase, Mindmaps), renders, archives,
+  posts to Stickies, prints a JSON summary. It never calls a model.
+- **`workflow/repo-audit.js`** (also installed at `~/.claude/workflows/repo-audit.js`) - the orchestration. Phases:
+  Scope (haiku script-runner) -> Lenses (10 lens agents + recon, all on the strong model, longest-first, `parallel`
+  barrier because synthesis needs every lens) -> Synthesis (strong model writes `synthesis.json`: top_fixes,
+  bottom_line, verified tech_stack, gbu_drop indexes, extra_findings, grade_overrides) -> Finish (haiku runs the
+  script). Only the 2 script-runner agents are cheap; every judgment agent stays on the session's strong model.
+- **Invoke:** `Workflow({scriptPath: "~/Sites/repo-audit/workflow/repo-audit.js", args: {target: "owner/repo"}})`.
+  Optional args: `out` (run dir, default `/tmp/repo-audit/<name>`), `only: ["security", ...]`, `model`, `noPost: true`.
+  Lens files already present in `out` are SKIPPED (delete a file to re-run that lens) - that is the cheap re-audit
+  path on top of the Workflow tool's own prompt cache (same script + same args = cached agent results).
+- **Resume:** relaunch with `resumeFromRunId`; unchanged lens prompts return instantly.
+- **Manual fallback** (no Workflow tool available): run `orchestrate.py scope`, launch the lens prompts from
+  `workflow/repo-audit.js` yourself with the Agent tool on the strong model, write `synthesis.json`, run
+  `orchestrate.py finish`. The Step 1-4 text below documents what those pieces do and why.
+
 ## Step 0: Prereq check
 
 ```bash
@@ -290,7 +317,7 @@ at token parity with the old sequential run.
 (same script + args = cached agent results for $0), so re-auditing an UNCHANGED repo is
 nearly free and only changed lenses re-run. That is the real efficiency lever.
 
-**Preferred mechanism:** the `Workflow` tool - a deterministic fan-out with a real
+**Preferred mechanism:** the saved workflow in `workflow/repo-audit.js` (see "Workflow mode" above) - a deterministic fan-out with a real
 barrier (and an opt-in verify stage). Hand-launching background `Agent` calls works too
 (that is how this skill has been run), but a Workflow makes the barrier, the join, and
 the cache explicit and reproducible. Either way: scope once -> fan out on the strong

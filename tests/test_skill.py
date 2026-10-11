@@ -95,7 +95,7 @@ class NoArbitraryFileRead(unittest.TestCase):
         self.dir = tempfile.mkdtemp()
         self.secret = os.path.join(self.dir, "secrets.png")   # image extension, not an image
         with open(self.secret, "w") as fh:
-            fh.write("AWS_SECRET_ACCESS_KEY=AKIA_TEST_ONLY_NOT_REAL\n")
+            fh.write("AWS_SECRET_ACCESS_KEY=AKIA_TEST_ONLY_NOT_REAL\n")  # publish-scan: allow
 
     def render_with_icon(self, icon):
         data = {"repo": "fixture", "path": ROOT, "scanned": {"files": 1, "loc": 1},
@@ -125,7 +125,7 @@ class NoArbitraryFileRead(unittest.TestCase):
     def test_a_file_without_an_image_extension_is_not_embedded(self):
         env = os.path.join(self.dir, ".env")
         with open(env, "w") as fh:
-            fh.write("AWS_SECRET_ACCESS_KEY=AKIA_TEST_ONLY_NOT_REAL\n")
+            fh.write("AWS_SECRET_ACCESS_KEY=AKIA_TEST_ONLY_NOT_REAL\n")  # publish-scan: allow
         self.assert_not_embedded(self.render_with_icon(env), "AWS_SECRET_ACCESS_KEY")
 
     def test_a_real_image_outside_the_repo_is_refused(self):

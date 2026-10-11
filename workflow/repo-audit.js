@@ -6,7 +6,7 @@ export const meta = {
     { title: 'Scope', detail: 'clone/refresh, measure, dependency advisories (orchestrate.py scope)' },
     { title: 'Lenses', detail: '10 read-only lens agents + onboarding recon, all on the strong model, longest-first' },
     { title: 'Synthesis', detail: 'strong model ranks top fixes, verifies tech-stack logos, de-dups Good/Bad/Ugly' },
-    { title: 'Finish', detail: 'evidence gate, Flows/Sequences/Mindmaps diagrams, render, archive, Stickies (orchestrate.py finish)' },
+    { title: 'Finish', detail: 'evidence gate, Flows/Sequences/Mindmaps diagrams, render, archive, post (orchestrate.py finish)' },
   ],
 }
 
@@ -15,7 +15,7 @@ export const meta = {
 //         out?: run dir (default /tmp/repo-audit/<name>),
 //         only?: ["security", ...] subset of lenses,
 //         model?: model for lens + synthesis agents (default: inherit = the session's strong model),
-//         noPost?: true to skip the Stickies post,
+//         noPost?: true to skip the report post,
 //         stamp?: "YYYY-MM-DD HH:MM" (workflows cannot read the clock) }
 const A = args || {}
 if (!A.target) throw new Error('args.target is required (owner/repo, GitHub URL, or local path)')
@@ -165,7 +165,7 @@ const FINISH_SCHEMA = {
   type: 'object',
   properties: {
     report: { type: 'string' }, grades: { type: 'object' }, findings: { type: 'object' }, gate: { type: 'array', items: { type: 'string' } },
-    diagrams: { type: 'object' }, stickies: { type: 'string' }, top_fixes: { type: 'array', items: { type: 'string' } }, error: { type: 'string' },
+    diagrams: { type: 'object' }, posted: { type: 'string' }, top_fixes: { type: 'array', items: { type: 'string' } }, error: { type: 'string' },
   },
   required: ['report'],
 }

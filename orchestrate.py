@@ -14,7 +14,7 @@ time and never through a chat transcript again:
                                                  normalise, de-dup GBU, run the evidence gate
                                                  (verify.py --prune), build the 3 app diagrams
                                                  (Flows / Sequences / Mindmaps), render, archive,
-                                                 post to Stickies, print a JSON summary
+                                                 post the report, print a JSON summary
 
 The lens JSONs and synthesis.json are written by the strong-model agents that the saved
 workflow fans out (workflow/repo-audit.js). This file never calls a model.
@@ -47,9 +47,12 @@ SEV = {"crit": "critical", "high": "high", "med": "medium", "medi": "medium", "l
 CONF = {"h": "High", "m": "Med", "l": "Low"}
 M4_SECRET_FILES = {
     "FLOWS_API_SECRET": "~/Sites/flows/.env",
-    "SEQUENCES_API_SECRET": "~/Sites/sequences/.env.local",
-    "MINDMAPS_API_SECRET": "~/Sites/mindmaps/.env.local",
+    "SEQUENCES_API_SECRET": "~/Sites/sequences/.env.local",  # publish-scan: allow
+    "MINDMAPS_API_SECRET": "~/Sites/mindmaps/.env.local",  # publish-scan: allow
 }
+FLOWS_URL = os.environ.get("FLOWS_URL", "https://flows.example.com")
+SEQUENCES_URL = os.environ.get("SEQUENCES_URL", "https://sequences.example.com")
+MINDMAPS_URL = os.environ.get("MINDMAPS_URL", "https://mindmaps.example.com")
 MINDMAPS_USER = "731ace87-64e5-44db-bf2a-82265f06f4d9"
 
 
@@ -292,7 +295,7 @@ def cmd_scope(target, out):
     v.pop("top_authors", None)
     base = {
         "repo": slug, "repo_url": url, "path": str(repo), "branch": branch, "commit": commit,
-        "args": target, "model": "Fable 5.1", "stamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "args": target, "model": os.environ.get("REPO_AUDIT_MODEL", "Claude"), "stamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
         "stack": hints[:8], "tech_stack": [], "scanned": {"files": nfiles, "loc": loc}, "vitality": v,
         "lenses": {} if has_ui else {"uiux": {"grade": "N/A", "summary": "No user-facing surface in this repo."}},
     }
@@ -566,8 +569,8 @@ def unoverlap(pos, edges, rounds=14):
 def create_flow(payload):
     body = json.dumps(payload)
     script = ("cat > /tmp/ra-flow.json <<'EOF'\n%s\nEOF\n"
-              "curl -s -X POST 'https://flows-bheng.vercel.app/api/ai/flows?format=svg' -H \"Authorization: Bearer $SECRET\" "
-              "-H 'Content-Type: application/json' --data @/tmp/ra-flow.json\n") % body
+              "curl -s -X POST '%s/api/ai/flows?format=svg' -H \"Authorization: Bearer $SECRET\" "
+              "-H 'Content-Type: application/json' --data @/tmp/ra-flow.json\n") % (body, FLOWS_URL)
     resp = jload_str(run_with_secret("FLOWS_API_SECRET", script)) or {}
     if "url" not in resp:
         raise RuntimeError("flows create failed: %s" % json.dumps(resp)[:300])
@@ -720,8 +723,8 @@ def layers_sequence(table, name, iac):
     code = "\n".join(lines).replace(";", ",") + "\n"
     seq = {"title": "%s - File Layers" % name, "diagramType": "sequence", "code": code, "return": "svg"}
     script = ("cat > /tmp/ra-seq.json <<'EOF'\n%s\nEOF\n"
-              "curl -s -X POST https://sequences-bheng.vercel.app/api/ai/sequences -H \"Authorization: Bearer $SECRET\" "
-              "-H 'Content-Type: application/json' --data @/tmp/ra-seq.json\n") % json.dumps(seq)
+              "curl -s -X POST %s/api/ai/sequences -H \"Authorization: Bearer $SECRET\" "
+              "-H 'Content-Type: application/json' --data @/tmp/ra-seq.json\n") % (json.dumps(seq), SEQUENCES_URL)
     resp = jload_str(run_with_secret("SEQUENCES_API_SECRET", script)) or {}
     if "url" not in resp:
         raise RuntimeError("sequences create failed: %s" % json.dumps(resp)[:300])
@@ -741,8 +744,8 @@ def features_mindmap(tree, slug):
     mm = {"title": "%s Features (repo-audit)" % slug.split("/")[-1], "type": "logic-chart", "userId": MINDMAPS_USER,
           "sharing": True, "outline": json.dumps(outline)}
     script = ("cat > /tmp/ra-mm.json <<'EOF'\n%s\nEOF\n"
-              "curl -s -X POST https://mindmaps-bheng.vercel.app/api/ai/mindmaps -H \"Authorization: Bearer $SECRET\" "
-              "-H 'Content-Type: application/json' --data @/tmp/ra-mm.json\n") % json.dumps(mm)
+              "curl -s -X POST %s/api/ai/mindmaps -H \"Authorization: Bearer $SECRET\" "
+              "-H 'Content-Type: application/json' --data @/tmp/ra-mm.json\n") % (json.dumps(mm), MINDMAPS_URL)
     resp = jload_str(run_with_secret("MINDMAPS_API_SECRET", script)) or {}
     if "url" not in resp:
         raise RuntimeError("mindmaps create failed: %s" % json.dumps(resp)[:300])
@@ -895,7 +898,7 @@ def cmd_finish(out, no_post=False, no_diagrams=False, reports_dir=None, reuse_di
     logs.mkdir(parents=True, exist_ok=True)
     shutil.copy(out / "data.verified.json", logs / ("%s-%s.json" % (base["repo"].split("/")[-1], TODAY)))
     posted = "skipped"
-    helper = HOME / ".claude" / "lib" / "stickies.py"
+    helper = Path(os.environ.get("REPO_AUDIT_POSTER") or "/nonexistent")
     if not no_post and helper.exists():
         pr = subprocess.run(["zsh", "-lc", "python3 %s %s --title %s --folder Audits" % (helper, report, json.dumps("Repo Audit - " + base["repo"]))],
                             capture_output=True, text=True, timeout=120)
@@ -905,7 +908,7 @@ def cmd_finish(out, no_post=False, no_diagrams=False, reports_dir=None, reuse_di
         for f in (v["lenses"].get(k) or {}).get("findings", []):
             tot[f["severity"]] = tot.get(f["severity"], 0) + 1
     summary = {"report": str(report), "grades": {k: (v["lenses"].get(k) or {}).get("grade") for k in GRADED if v["lenses"].get(k)},
-               "findings": tot, "gate": gate_line, "diagrams": diag, "stickies": posted, "top_fixes": [t["title"] for t in v.get("top_fixes", [])]}
+               "findings": tot, "gate": gate_line, "diagrams": diag, "posted": posted, "top_fixes": [t["title"] for t in v.get("top_fixes", [])]}
     print(json.dumps(summary))
 
 

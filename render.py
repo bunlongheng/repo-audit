@@ -74,11 +74,6 @@ Input contract (the JSON the agent builds at <data.json>):
                        "tree":[ {"name":"Auth","note":"Supabase",
                                  "children":[ {"name":"Login"} ]} ] }
     },
-    "system_design":    {"url":"...","svg_url":"...","svg":"<svg..."},  # Flows diagram (architecture) - MANDATORY on full runs
-    # "sequence" (critical-path Sequences diagram) was RETIRED 2026-09-30 - ignored if present
-    "features_mindmap": {"url":"...","svg_url":"...","svg":"<svg..."},  # Mindmaps diagram (feature tree) - MANDATORY
-    "file_layers_sequence": {"url":"...","svg_url":"...","svg":"..."},  # Sequences diagram of the layer table - MANDATORY (owner 2026-09-30)
-    "file_layers_mindmap": {"url":"...","svg_url":"...","svg":"..."},   # legacy Mindmaps variant, used only when the Sequences one is absent
     "top_fixes": [                                 # optional cross-lens "fix these first" (max 5, ranked)
       { "title":"...", "lens":"security",          #   lens key the finding came from
         "severity":"high", "file":"path/foo.ts:42",#   file optional
@@ -109,7 +104,8 @@ Input contract (the JSON the agent builds at <data.json>):
            "consequence":"...", "evidence":"...", "fix":"...", "effort":"S|M|L" }
   All judgment text comes from the agent. This script only renders it.
 """
-import json, os, sys, html, datetime, re, base64
+import json
+import datetime as _dt, os, sys, html, datetime, re, base64
 
 # Verified-dead simpleicons slugs -> working alternatives (tested 2026-08-17)
 SLUG_FIX = {
@@ -555,6 +551,14 @@ def render_flow(flow):
     return "".join(out)
 
 
+# Every diagram block sits in this wrapper: the full content column, left edge
+# shared with the headings, prose and tables around it. Before this, the four
+# inline-styled blocks picked 640px, 780px and the canvas's own width, and two of
+# them centred - so the page stepped in and out as you scrolled. Matches the
+# .flow / .lyr / .mm rhythm exactly. One knob: change it here.
+DIAG_BLOCK = "margin:4px 0 16px;width:100%;box-sizing:border-box"
+
+
 def render_layers(layers):
     """Vertical layer stack with a single dependency direction (top -> down).
     For layered / hexagonal architectures. Light theme, responsive."""
@@ -589,7 +593,7 @@ def render_arch_diagram(table):
     pal = ["#0969da", "#1f883d", "#9a6700", "#8250df", "#cf222e",
            "#0550ae", "#116329", "#953800", "#6639ba", "#a40e26"]
     out = ['<div style="display:flex;flex-direction:column;align-items:stretch;'
-           'gap:0;margin:12px 0 18px;max-width:780px">']
+           f'gap:0;{DIAG_BLOCK}">']
     for i, r in enumerate(rows):
         layer = esc(str(r[0]))
         role = md_inline(str(r[1])) if len(r) > 1 else ""
@@ -652,7 +656,7 @@ def render_arch_flow(flow):
     links = flow.get("links", [])
     # distinct accent per tier for at-a-glance hierarchy on a phone (reads top-to-bottom)
     PAL = ["#2563eb", "#7c3aed", "#16a34a", "#d97706", "#0891b2", "#db2777"]
-    out = ['<div style="margin:14px auto 20px;max-width:780px">']
+    out = [f'<div style="{DIAG_BLOCK}">']
     for i, tier in enumerate(tiers):
         c = PAL[i % len(PAL)]
         out.append(f'<div style="border:2px solid {c};border-radius:13px;'
@@ -696,10 +700,143 @@ def render_arch_flow(flow):
     return "".join(out)
 
 
-def _fit_svg(svg):
-    """Fit-view: scale an inline SVG to the container width, no horizontal scroll (owner 2026-09-28)."""
-    import re as _re
-    return _re.sub(r"<svg\b([^>]*)>", lambda m: "<svg" + _re.sub(r'\s(width|height)="[^"]*"', "", m.group(1)) + ' style="width:100%;height:auto;display:block" preserveAspectRatio="xMidYMid meet">', svg, count=1)
+def _render_only(base_env, default_base, path, secret_env, body, what):
+    """POST a render-only picture request (source "repo-audit": nothing is stored) and
+    return an <img> embedding the svg. HARD rule: with the secret set, any failure exits
+    non-zero rather than shipping the built-in diagram. No secret -> "" (built-in)."""
+    import urllib.request
+    secret = os.environ.get(secret_env, "")
+    if not secret:
+        return ""
+    base = os.environ.get(base_env, default_base).rstrip("/")
+    req = urllib.request.Request(base + path, data=json.dumps(dict(body, source="repo-audit", store=False)).encode(),
+                                 method="POST", headers={"Content-Type": "application/json",
+                                                         "Authorization": "Bearer " + secret})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            svg = json.loads(r.read()).get("svg") or ""
+    except Exception as ex:
+        detail = ex.read().decode("utf-8", "replace")[:300] if hasattr(ex, "read") else ""
+        sys.exit("repo-audit: %s render failed (%s %s) - fix it and re-render" % (what, ex, detail))
+    if not svg:
+        sys.exit("repo-audit: %s returned no svg - fix it and re-render" % what)
+    return ('<div style="margin:12px 0;overflow-x:auto"><img alt="%s diagram" style="max-width:100%%;height:auto;'
+            'display:block" src="data:image/svg+xml;base64,%s"></div>' % (what, base64.b64encode(svg.encode()).decode()))
+
+
+def render_sequences_trace(cp, title):
+    """critical_path -> Mermaid sequenceDiagram rendered by the Sequences app. Each hop's
+    file is a participant, so the trace reads as the request moving between files."""
+    if not cp or not cp.get("steps"):
+        return ""
+    clean = lambda t: re.sub(r"[;#\n\r]+", ",", str(t or "")).strip()[:90]
+    parts, lines, prev = {}, [], "U"
+    for st in cp["steps"]:
+        f = (str(st.get("src") or "?").split(":")[0]).rsplit("/", 1)[-1] or "?"
+        if f not in parts:
+            parts[f] = "P%d" % (len(parts) + 1)
+        cur = parts[f]
+        lines.append("  %s->>%s: %s" % (prev, cur, clean(st.get("label"))))
+        prev = cur
+    head = ["sequenceDiagram", "  autonumber", "  actor U as User"] + \
+           ["  participant %s as %s" % (pid, clean(f)) for f, pid in parts.items()]
+    return _render_only("SEQUENCES_API_BASE", "http://localhost:3002", "/api/ai/sequences",
+                        "SEQUENCES_API_SECRET", {"title": title + " - " + clean(cp.get("title") or "Critical path"),
+                                                 "code": "\n".join(head + lines)}, "Sequences")
+
+
+def render_mindmaps_features(root_label, tree):
+    """features tree -> the Mindmaps app's JSON outline, rendered there."""
+    if not tree:
+        return ""
+    def conv(nd):
+        nd = {"name": nd} if isinstance(nd, str) else nd
+        kids = _tree_kids(nd)
+        name = _tree_name(nd)
+        name = name if len(name) <= 80 else name[:79].rsplit(" ", 1)[0] + "…"
+        return {name: [conv(k) for k in kids]} if kids else name
+    outline = json.dumps({root_label: [conv(n) for n in tree]})
+    return _render_only("MINDMAPS_API_BASE", "http://localhost:5173", "/api/ai/mindmaps",
+                        "MINDMAPS_API_SECRET", {"title": root_label + " - Features", "outline": outline}, "Mindmaps")
+
+
+def _flows_monogram(label):
+    """Last-resort 96px initial tile as a data URI, for a logo Flows cannot fetch."""
+    svg = ('<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96"><rect width="96" height="96" rx="20" '
+           'fill="#64748b"/><text x="48" y="64" font-family="Helvetica,Arial" font-size="48" font-weight="700" '
+           'fill="#fff" text-anchor="middle">' + html.escape((label or "?")[:1].upper()) + '</text></svg>')
+    return "data:image/svg+xml;base64," + base64.b64encode(svg.encode()).decode()
+
+
+def render_flows_diagram(canvas, title):
+    """HARD rule: the architecture diagram is rendered by the Flows app (POST
+    /api/ai/flows, source "repo-audit" = render only, never stored) and the svg embedded.
+    With FLOWS_API_SECRET set, any Flows failure exits non-zero. Only a machine with no
+    Flows configured (secret unset) gets "" and the built-in canvas."""
+    import urllib.request
+    secret = os.environ.get("FLOWS_API_SECRET", "")
+    base = os.environ.get("FLOWS_API_BASE", "http://localhost:5174")
+    if not secret or not canvas or not canvas.get("nodes"):
+        return ""
+    # Simple Icons slug -> Flows catalog key: the catalog logo is drawn natively by Flows.
+    catalog = {"postgresql": "postgres", "redis": "redis", "mysql": "mysql", "mongodb": "mongodb",
+               "auth0": "auth0", "python": "python", "fastapi": "fastapi", "apachekafka": "kafka",
+               "rabbitmq": "rabbitmq", "nginx": "nginx", "grafana": "grafana", "prometheus": "prometheus",
+               "anthropic": "claude", "claude": "claude", "hubspot": "hubspot", "mailchimp": "mailchimp",
+               "launchdarkly": "launchdarkly", "elasticsearch": "elasticsearch"}
+    nodes, used = [], set()
+    for n in canvas["nodes"]:
+        icon = n.get("icon") or ""
+        m = re.match(r"https://cdn\.simpleicons\.org/([^/?]+)", icon)
+        key = catalog.get(m.group(1)) if m else None
+        nid = key if key and key not in used else "n-" + str(n["id"])
+        used.add(nid)
+        node = {"id": nid, "label": n.get("name", n["id"]), "sub": n.get("role", "")}
+        if not nid.startswith("n-"):
+            pass  # catalog logo wins
+        elif m:
+            node["icon"] = "https://cdn.simpleicons.org/" + m.group(1)  # brand colour, not the role tint
+        elif icon:
+            node["icon"] = icon
+        else:
+            node["icon"] = _flows_monogram(node["label"])
+        nodes.append(node)
+    ids = {str(n["id"]): nodes[i]["id"] for i, n in enumerate(canvas["nodes"])}
+    edges = []
+    for i, e in enumerate(canvas.get("edges", [])):
+        edge = {"id": "e%d" % (i + 1), "source": ids[str(e["from"])], "target": ids[str(e["to"])]}
+        if e.get("label"): edge["label"] = str(e["label"])[:60]
+        if e.get("dashed"): edge["style"] = {"bs": "dashed"}
+        edges.append(edge)
+    svg = ""
+    for attempt in range(2):
+        body = json.dumps({"title": title + " - Architecture", "source": "repo-audit",
+                           "nodes": nodes, "edges": edges}).encode()
+        req = urllib.request.Request(base.rstrip("/") + "/api/ai/flows", data=body, method="POST",
+                                     headers={"Content-Type": "application/json",
+                                              "Authorization": "Bearer " + secret})
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                svg = json.loads(r.read()).get("svg") or ""
+            break
+        except Exception as ex:
+            detail = ex.read().decode("utf-8", "replace") if hasattr(ex, "read") else ""
+            bad = re.search(r"remote icon for node\(s\): ([^.]+)\.", detail)
+            if attempt == 0 and bad:
+                # One unfetchable logo should not cost the whole diagram: drop just those icons.
+                bad_ids = {x.strip() for x in bad.group(1).split(",")}
+                for node in nodes:
+                    if node["id"] in bad_ids: node["icon"] = _flows_monogram(node["label"])
+                continue
+            # HARD rule: with Flows configured, a failed render stops the report rather
+            # than shipping the built-in canvas in its place.
+            sys.exit("repo-audit: Flows render failed (%s %s) - fix Flows and re-render; "
+                     "the built-in canvas is not an accepted substitute" % (ex, detail[:300]))
+    if not svg:
+        sys.exit("repo-audit: Flows returned no svg - fix Flows and re-render")
+    b64 = base64.b64encode(svg.encode()).decode()
+    return ('<div style="margin:12px 0;overflow-x:auto"><img alt="Architecture diagram (Flows)" '
+            'style="max-width:100%;height:auto;display:block" src="data:image/svg+xml;base64,' + b64 + '"></div>')
 
 
 def render_arch_canvas(canvas):
@@ -719,9 +856,9 @@ def render_arch_canvas(canvas):
     def cy(n): return n["y"] + NH // 2
 
     parts = []
-    parts.append(f'<div style="margin:18px auto 24px;max-width:{W}px;overflow-x:auto">')
+    parts.append(f'<div style="{DIAG_BLOCK};overflow-x:auto">')
     parts.append(f'<svg viewBox="0 0 {W} {H}" width="{W}" height="{H}" '
-                 f'style="width:100%;max-width:{W}px;height:auto;display:block;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif">')
+                 f'style="width:100%;height:auto;display:block;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif">')
 
     # defs: arrow marker + drop shadow filter
     parts.append('<defs>')
@@ -817,7 +954,7 @@ def render_critical_path(cp):
     {title, steps:[{n, label, src, note?}]}. Fully inline-styled to survive any viewer."""
     if not cp or not cp.get("steps"):
         return ""
-    out = ['<div style="margin:6px 0 20px;max-width:100%;border:1px solid #e6e9ee;border-radius:13px;'
+    out = [f'<div style="{DIAG_BLOCK};border:1px solid #e6e9ee;border-radius:13px;'
            'background:#fff;padding:15px 18px;box-shadow:0 2px 8px rgba(20,30,50,.07)">']
     title = esc(cp.get("title", "Critical request path"))
     out.append('<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">'
@@ -878,7 +1015,7 @@ def render_depgraph(g):
     W = PAD + maxc * CX + NW + PAD
     H = PAD + maxr * CY + NH + PAD
     s = [f'<svg class="dg" viewBox="0 0 {int(W)} {int(H)}" xmlns="http://www.w3.org/2000/svg" '
-         f'style="width:100%;max-width:{int(W)}px;height:auto">']
+         f'style="width:100%;height:auto">']
     s.append('<defs><marker id="dgar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" '
              'markerUnits="strokeWidth"><path d="M0,0 L7,3 L0,6 Z" fill="#9aa4af"/></marker></defs>')
     for a, b in g.get("edges", []):
@@ -1001,7 +1138,7 @@ def render_features_mindmap(root_label, tree):
     def ny(n): return PADY + n["y"] + (ROWH - NH) / 2
 
     s = [f'<div class="fmm"><svg viewBox="0 0 {int(W)} {int(H)}" '
-         f'xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:{int(W)}px;height:auto">']
+         f'xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">']
     # edges: tinted to the target node's branch color family so connectors read
     # as part of the same colored branch.
     for a, b in edges:
@@ -1155,6 +1292,12 @@ def main():
     _only = re.search(r"--only=([\w,\-]+)", _args)
     if _only:
         repo_slug += f" ({_only.group(1).replace(',', ', ')})"
+    # Every run is its own note. The ext API upserts by title, so a bare slug
+    # made a re-run overwrite the earlier report and the before/after was lost
+    # (owner rule 2026-09-26: never overwrite a report, keep every version).
+    # The date + time suffix makes each run unique; the grid still sorts newest
+    # first via resurface.
+    repo_slug += " - " + (data.get("date") or _dt.date.today().isoformat()) + " " + _dt.datetime.now().strftime("%H:%M")
     path = data.get("path", "")
     branch = data.get("branch", "main")
     # Expose to md_inline so auto-detected file:line refs in prose link to the repo.
@@ -1226,9 +1369,7 @@ def main():
     post_cfg = data.get("post", {})
 
     all_finds = []
-    # Every graded lens contributes findings (architect and features emit them too
-    # since 2026-09-30); GBU is report-only and stays out of the count.
-    for k in ("architect", "infra", "security", "performance", "quality", "tests", "docs", "uiux", "features"):
+    for k in ("infra", "security", "performance", "quality", "tests", "docs", "uiux"):
         all_finds += (lenses.get(k) or {}).get("findings", [])
     n = len(all_finds)
     by_sev = {k: sum(1 for f in all_finds if (f.get("severity") or "").lower() == k)
@@ -1243,7 +1384,7 @@ def main():
     A('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>')
     A('''<style>
 * { box-sizing:border-box; margin:0; padding:0; }
-html { overflow-x:hidden; } svg { max-width:100%; }
+html { overflow-x:hidden; }
 /* Owner-locked: whole report renders at 67% scale (reads like browser zoom 67%) - denser, fits cleanly. Never remove. */
 body { zoom:0.67; background:#f6f8fa; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; min-height:100vh; padding:28px 44px; overflow-x:hidden; width:100%; }
 .page { max-width:1680px; width:100%; margin:0 auto; position:relative; }
@@ -1649,76 +1790,28 @@ a.tech-link { display:inline-flex; align-items:center; }
 
         elif key == "features":
             tree = L.get("tree", [])
-            fm = data.get("features_mindmap")
-            if fm and fm.get("svg"):
-                # Owner rule 2026-09-30: the feature map is a Mindmaps diagram, not
-                # renderer-drawn SVG. Click-through opens the editable map.
-                A('<div class="flow" style="margin:4px 0 12px;padding:10px"><div class="section-label" style="margin-bottom:6px">Feature map (Mindmaps)</div>'
-                  f'<a href="{esc(fm.get("url") or "")}" target="_blank" rel="noopener" style="display:block;border:1px solid #e5e7eb;border-radius:12px;background:#fff;overflow:hidden">{_fit_svg(fm["svg"])}</a>'
-                  f'<div class="muted" style="margin-top:6px">Click to open in Mindmaps &middot; <a href="{esc(fm.get("svg_url") or "")}" target="_blank" rel="noopener">SVG</a></div></div>')
-                if tree:
-                    A('<details class="fmm-list"><summary>Feature list</summary>')
-                    A(render_tree(tree))
-                    A('</details>')
-            elif tree:
-                A(render_features_mindmap(repo, tree))
+            if tree:
+                A(render_mindmaps_features(repo, tree) or render_features_mindmap(repo, tree))
                 A('<details class="fmm-list"><summary>Feature list</summary>')
                 A(render_tree(tree))
                 A('</details>')
             else:
                 A('<p class="empty">no feature map provided</p>')
 
-            ffinds = L.get("findings", [])
-            if ffinds:
-                # Feature-coherence findings (dead routes, env drift, orphans) - rendered
-                # like every other lens since 2026-09-30; they were silently dropped before.
-                A('<div style="margin-top:14px">')
-                render_findings(P, ffinds, repo_url, branch)
-                A('</div>')
         elif key == "architect":
             # Lead with the high-level "how it's built / how it talks" flow (tech-logo
             # tiers + protocol arrows), then the file-layer diagram (auto-built from the
             # table). The verbose prose summary and the raw table go into collapsibles -
             # diagrams + bullet points carry the section.
-            sd = data.get("system_design")
-            if sd and sd.get("svg"):
-                A('<div class="flow" style="margin:4px 0 12px;padding:10px"><div class="section-label" style="margin-bottom:6px">Architecture (Flows)</div>'
-                  f'<a href="{esc(sd.get("url") or "")}" target="_blank" rel="noopener" style="display:block;border:1px solid #e5e7eb;border-radius:12px;background:#fff;overflow:hidden">'
-                  + _fit_svg(sd["svg"]) + '</a>'
-                  f'<div class="muted" style="margin-top:6px">Click to open in Flows &middot; <a href="{esc(sd.get("svg_url") or "")}" target="_blank" rel="noopener">SVG</a></div></div>')
-            elif L.get("arch_canvas"):
-                A(render_arch_canvas(L["arch_canvas"]))
+            if L.get("arch_canvas"):
+                A(render_flows_diagram(L["arch_canvas"], str(data.get("repo", "repo")))
+                  or render_arch_canvas(L["arch_canvas"]))
             elif L.get("stack_flow"):
                 A(render_arch_flow(L["stack_flow"]))
-            # Owner rule 2026-09-30: no Critical-path Sequences diagram - the Flows diagram
-            # above is the picture; critical_path stays as the numbered step list below.
-            # A stale top-level "sequence" key is ignored on purpose.
             if L.get("critical_path"):
+                A(render_sequences_trace(L["critical_path"], str(data.get("repo", "repo"))))
                 A(render_critical_path(L["critical_path"]))
-            gp = data.get("gemini_prompt")
-            if gp:
-                A('<details style="margin:6px 0 10px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">Gemini diagram prompt (copy-paste)</summary>')
-                A(f'<pre style="font-size:10.5px;white-space:pre-wrap;line-height:1.5;background:#f6f8fa;border:1px solid #d0d7de;border-radius:8px;padding:10px;margin-top:8px">{esc(gp)}</pre></details>')
-            fls = data.get("file_layers_sequence")
-            mmap = data.get("file_layers_mindmap")
-            if fls and fls.get("svg"):
-                # Owner rule 2026-09-30: the file-layer stack is a Sequences diagram
-                # (layers as participants, dependency direction as messages), never
-                # the renderer-drawn vertical chain.
-                A('<details open style="margin:6px 0 4px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">File layers (Sequences)</summary>')
-                A(f'<a href="{esc(fls.get("url") or "")}" target="_blank" rel="noopener" style="display:block;margin-top:8px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;overflow:hidden">{_fit_svg(fls["svg"])}</a>'
-                  f'<div class="muted" style="margin-top:6px">Click to open in Sequences &middot; <a href="{esc(fls.get("svg_url") or "")}" target="_blank" rel="noopener">SVG</a></div>')
-                A('</details>')
-            elif mmap and (mmap.get("svg") if isinstance(mmap, dict) else any(v.get("svg") for v in mmap)):
-                variants = [mmap] if isinstance(mmap, dict) else [v for v in mmap if v.get("svg")]
-                A('<details open style="margin:6px 0 4px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">File layers</summary>')
-                for v in variants:
-                    if len(variants) > 1:
-                        A(f'<div class="section-label" style="margin:12px 0 4px">{esc(v.get("type") or "mindmap")}</div>')
-                    A(f'<a href="{esc(v.get("url") or "")}" target="_blank" rel="noopener" style="display:block;margin-top:8px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;overflow:hidden">{_fit_svg(v["svg"])}</a>'
-                      f'<div class="muted" style="margin-top:6px">Click to open in Mindmaps &middot; <a href="{esc(v.get("svg_url") or "")}" target="_blank" rel="noopener">SVG</a></div>')
-                A('</details>')
-            elif L.get("table"):
+            if L.get("table"):
                 A('<details open style="margin:6px 0 4px"><summary style="cursor:pointer;color:#57606a;font-size:12px;font-weight:600">File layers</summary>')
                 A(render_arch_diagram(L["table"]))
                 A('</details>')
@@ -1754,11 +1847,7 @@ a.tech-link { display:inline-flex; align-items:center; }
             if L.get("metrics"):
                 A('<div class="pills" style="margin-top:12px">')
                 for m in L["metrics"]:
-                    if isinstance(m, dict):  # tolerate {label, value} objects from a lens
-                        m = [m.get("label") or m.get("name") or "", m.get("value") if "value" in m else ""]
-                    if not isinstance(m, (list, tuple)) or len(m) < 2:
-                        continue
-                    A(f'<div class="pill"><div class="n" style="font-size:16px">{esc(str(m[1]))}</div><div class="l">{esc(str(m[0]))}</div></div>')
+                    A(f'<div class="pill"><div class="n" style="font-size:16px">{esc(m[1])}</div><div class="l">{esc(m[0])}</div></div>')
                 A('</div>')
             finds = L.get("findings", [])
             if finds:

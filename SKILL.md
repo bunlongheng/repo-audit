@@ -550,6 +550,7 @@ must preserve them, and `golden/sample.html` must reflect them:
 - **Whole report renders at 67% scale.** `body { zoom:0.67 }` in render.py - the owner
   found 100% too zoomed-in and 67% "fits all, cleanly" (2026-07-02). All px sizes below
   are pre-zoom values. Never remove the zoom.
+- **Diagrams fill the card width (owner rule 2026-10-17).** Every Flows / Sequences / Mindmaps svg is embedded at `width:100%` (with `max-height:1600px;object-fit:contain`), never `max-width:100%` alone - that leaves a small diagram at its native size with empty space beside it. Before posting, look at the rendered report: no diagram may sit in a corner of a wide card.
 - **Finding badges float right, always.** Each finding `.head` is title (left, `flex:1`)
   + a `.badges` group pushed right via `margin-left:auto`. Never let badges wrap into the
   title's flow on the left.

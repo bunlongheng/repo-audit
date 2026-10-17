@@ -720,8 +720,10 @@ def _render_only(base_env, default_base, path, secret_env, body, what):
         sys.exit("repo-audit: %s render failed (%s %s) - fix it and re-render" % (what, ex, detail))
     if not svg:
         sys.exit("repo-audit: %s returned no svg - fix it and re-render" % what)
-    return ('<div style="margin:12px 0;overflow-x:auto"><img alt="%s diagram" style="max-width:100%%;height:auto;'
-            'display:block" src="data:image/svg+xml;base64,%s"></div>' % (what, base64.b64encode(svg.encode()).decode()))
+    # Vector diagrams fill the card width: a max-width alone leaves a small svg at its native size
+    # with empty space beside it (owner 2026-10-17). max-height + contain stops a tall one growing forever.
+    return ('<div style="margin:12px 0"><img alt="%s diagram" style="width:100%%;height:auto;max-height:1600px;'
+            'object-fit:contain;display:block" src="data:image/svg+xml;base64,%s"></div>' % (what, base64.b64encode(svg.encode()).decode()))
 
 
 def render_sequences_trace(cp, title):
@@ -732,7 +734,12 @@ def render_sequences_trace(cp, title):
     clean = lambda t: re.sub(r"[;#\n\r]+", ",", str(t or "")).strip()[:90]
     parts, lines, prev = {}, [], "U"
     for st in cp["steps"]:
-        f = (str(st.get("src") or "?").split(":")[0]).rsplit("/", 1)[-1] or "?"
+        src = str(st.get("src") or "?").rsplit("/", 1)[-1]
+        f = src.split(":")[0] or "?"
+        # A hop inside the same file is a self-call, which Sequences cuts to 3 letters ("Par...").
+        # Give it its own file:line participant so it draws as a full, labelled arrow (owner 2026-10-17).
+        if parts.get(f) == prev:
+            f = src
         if f not in parts:
             parts[f] = "P%d" % (len(parts) + 1)
         cur = parts[f]

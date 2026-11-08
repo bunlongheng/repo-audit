@@ -375,13 +375,13 @@ Any other diagram worth one (a flow -> Sequences, a hierarchy -> Mindmaps, a top
 **Flows picture (owner rule 2026-10-04):** the architecture diagram for the report
 is rendered only, never stored. Call `create_flow` (or `POST /api/ai/flows`) with
 `source: "repo-audit"` plus `lanes`, and embed the returned `svg` as a base64
-`data:image/svg+xml` image in the report. See the "Diagram Handoff" block at the
-top of `~/.claude/skills/repo-recon/SKILL.md` for the exact body. Mindmaps and
+`data:image/svg+xml` image in the report. See `diagram-handoff.md` in this skill
+for the exact body. Mindmaps and
 Sequences read the same `source` field, so any picture an audit asks of them
 carries it too, and neither stores one: both answer `200 {stored: false, svg}`.
 Embed the svg - an audit's diagram is never linked, because there is no url.
 
-`render.py` automatically renders the `recon` block as an "Onboarding Brief" section at the bottom of the report if the key is present. If `recon` is absent (e.g. `--only` scoped run), no section is rendered. **This replaces `/repo-recon` entirely - do not invoke that skill.**
+`render.py` automatically renders the `recon` block as an "Onboarding Brief" section at the bottom of the report if the key is present. If `recon` is absent (e.g. `--only` scoped run), no section is rendered. For a light, no-score picture of a repo (what, why, when, where, how, good/bad/ugly, team) use `/repo-recon` (split back out 2026-11-08).
 
 ## Step 2d: PRE-RENDER SELF-CHECK (MANDATORY before writing JSON - owner 2026-08-13)
 
